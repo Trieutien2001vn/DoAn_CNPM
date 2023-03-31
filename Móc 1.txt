@@ -1,6 +1,10 @@
 Thống nhất nhiệm vụ.
 Sắp xếp các chức năng usecase.
 Chi tiết các công việc.
-Chia nhỏ
+Chia nhỏ.
+Hoàn thiện tài liệu SRS
 
-Móc 1: 3 tuần hoàn thành usecase, giao diện đăng ký, đăng nhập, api cho hệ thống.
+Móc 1: 3 tuần hoàn thành usecase, tài liệu SRS, giao diện đăng ký, đăng nhập, api cho hệ thống.
+Tuần 1: Hoàn thiện usecase, tài liệu SRS.
+Tuần 2: Viết api cho hệ thống.
+Tuần 3: Ghép api cho các giao diện đăng ký, đăng nhập phân quyền.
