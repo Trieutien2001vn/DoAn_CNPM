@@ -1,0 +1,6 @@
+Thống nhất nhiệm vụ.
+Sắp xếp các chức năng usecase.
+Chi tiết các công việc.
+Chia nhỏ
+
+Móc 1: 3 tuần hoàn thành usecase, giao diện đăng ký, đăng nhập, api cho hệ thống.

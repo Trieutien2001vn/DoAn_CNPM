@@ -1,0 +1,7 @@
+Các công việc cần làm 
++ Định nghĩa các yêu cầu của dự án phần mềm
+ - Yêu cầu chức năng: dùng Mô hình usecase
+ - Yêu cầu phi chức năng.
++ Phát triển tài liệu SRS.
++ Đề xuất kiến trúc ban đầu cho dự án phần mềm
++ Xác định các kỹ thuật và công cụ phát triển dự án.
