@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    font-family: 'Epilogue', sans-serif;
+}
+.logo {
+    --animate-delay: 5s;
+}
+.textfield-darkmode input {
+    color: #808191;
+}
+.textfield-darkmode input::placeholder {
+    color: #4B5264;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    color: transparent;
+    background: none;
+    z-index: 1;
+  }
