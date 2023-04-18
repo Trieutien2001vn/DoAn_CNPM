@@ -165,40 +165,6 @@ function RegisterPage() {
                 </Typography>
               </Link>
             </Typography>
-            <Button
-              sx={{
-                height: "52px",
-                marginTop: "20px",
-                fontSize: "16px",
-                fontWeight: 600,
-                color: darkMode ? "whitish.pureWhite" : "neutral.text2",
-                borderRadius: "10px",
-                borderColor: "whitish.strockColor",
-                textTransform: "none",
-              }}
-              startIcon={<LogoGoogle />}
-              variant="outlined"
-              fullWidth
-            >
-              Sign up with google
-            </Button>
-            <Typography
-              sx={{
-                width: "161px",
-                height: "42px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto",
-                marginTop: "10px",
-                marginBottom: "10px",
-                fontSize: "14px",
-                fontWeight: 400,
-                color: darkMode ? "whitish.pureWhite" : "neutral.text2",
-              }}
-            >
-              Or sign up with email
-            </Typography>
             <Box
               component="form"
               onSubmit={handleSubmit(onSubmit)}
