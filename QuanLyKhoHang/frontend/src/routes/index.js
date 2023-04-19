@@ -1,9 +1,8 @@
-
 import HomePage from "../pages/home/HomePage";
 import ChangePasswordPage from "../pages/Login/ChangePasswordPage";
 import LoginPage from "../pages/Login/LoginPage";
-import RegisterPage from "../pages/register/RegisterPage";
 import VerifyEmailPage from "../pages/register/VerifyEmailPage";
+import PrivateRoute from "./PrivateRoute";
 import RestrictedRoute from "./RestrictedRoute";
 
 const restrictedRoutes = [
@@ -13,15 +12,6 @@ const restrictedRoutes = [
     page: (
       <RestrictedRoute>
         <LoginPage />
-      </RestrictedRoute>
-    ),
-  },
-  {
-    id: "register",
-    path: "/register",
-    page: (
-      <RestrictedRoute>
-        <RegisterPage />
       </RestrictedRoute>
     ),
   },
@@ -57,9 +47,12 @@ const privateRoutes = [
   {
     id: "homepage",
     path: "/",
-    page: <HomePage />,
+    page: (
+      <PrivateRoute>
+        <HomePage />
+      </PrivateRoute>
+    ),
   },
- 
 ];
 
 export { restrictedRoutes, privateRoutes };

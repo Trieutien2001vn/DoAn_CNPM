@@ -5,13 +5,12 @@ import Logo from "../../components/svgs/Logo";
 import SwitchDarkmode from "../../components/switch/SwitchDarkmode";
 import { useGlobalTheme } from "../../context/themeContext";
 import { AiFillStepBackward } from "react-icons/ai";
-import axiosPublic from "../../utils/axiosPublic";
+import { axiosPublic } from '~/utils/httpRequest';
 import LoadingButton from "@mui/lab/LoadingButton";
 import useSnackbarContext from "../../hooks/hookContext/useSnackbarContext";
 
 function VerifyEmailPage({ isForgotPassword }) {
   const navigate = useNavigate();
-  console.log("is forgot password => ", isForgotPassword);
 
   const [darkMode] = useGlobalTheme();
   const [otp, setOtp] = useState(["", "", "", ""]);

@@ -7,8 +7,6 @@ export default function ModalBase({ children, open, handleClose }) {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
         {children}
       </Modal>

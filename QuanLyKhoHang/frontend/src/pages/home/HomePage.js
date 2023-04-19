@@ -1,20 +1,25 @@
-import { Container, Grid } from "@mui/material";
-import React from "react";
-import MainLayout from "../../components/layouts/MainLayout";
-import privateRoute from "../../routes/PrivateRoute";
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { logoutUser } from '~/redux/actions/auth.action';
+import { axiosPrivate } from '~/utils/httpRequest';
 
 function HomePage() {
+  const dispatch = useDispatch();
+
+  const handleGetDmvt = async () => {
+    const resp = await axiosPrivate.post('/v1/danhmuc/dmvt/search');
+    if (resp && resp.status === 200) {
+      console.log(resp.data);
+    }
+  };
+
   return (
-    <MainLayout>
-      <Container maxWidth="xl" sx={{ width: "100%", height: "100%" }}>
-        <Grid sx={{ height: "100%" }} container>
-          <Grid item xs={2}></Grid>
-          <Grid item xs={7}></Grid>
-          <Grid item xs={3}></Grid>
-        </Grid>
-      </Container>
-    </MainLayout>
+    <div>
+      <h1>HomePage</h1>
+      <button onClick={() => logoutUser(dispatch)}>Logout</button>
+      <button onClick={handleGetDmvt}>Dmvt</button>
+    </div>
   );
 }
 
-export default privateRoute(HomePage);
+export default HomePage;
