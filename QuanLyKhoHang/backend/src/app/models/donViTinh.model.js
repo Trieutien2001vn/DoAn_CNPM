@@ -1,37 +1,39 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
 
-const storeSchema = new mongoose.Schema(
+const donViTinhSchema = new mongoose.Schema(
   {
-    code: {
+    ma_dvt: {
       type: String,
       required: true,
       unique: true,
       index: true,
     },
-    name: {
+    ten_dvt: {
       type: String,
       required: true,
       index: true,
     },
-    address: {
+    createdBy: {
       type: String,
       default: "",
     },
     updatedBy: {
       type: String,
-      ref: "User",
       default: "",
     },
   },
-  { autoIndex: false, timestamps: true, collection: "stores" }
+  { timestamps: true, collection: "don_vi_tinh" }
 );
-storeSchema.index({ code: "text", name: "text" }, { default_language: "none" });
-storeSchema.plugin(mongooseDelete, {
+donViTinhSchema.index(
+  { ma_dvt: "text", ten_dvt: "text" },
+  { default_language: "none" }
+);
+donViTinhSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: String,
   overrideMethods: "all",
 });
 
-module.exports = mongoose.model("Store", storeSchema);
+module.exports = mongoose.model("DonViTinh", donViTinhSchema);
