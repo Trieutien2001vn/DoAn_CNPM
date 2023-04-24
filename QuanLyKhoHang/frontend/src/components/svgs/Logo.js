@@ -1,26 +1,22 @@
-import { Box } from "@mui/material";
-import React from "react";
+import { Box } from '@mui/material';
+import React from 'react';
 
 function Logo() {
   return (
     <>
       <Box
         sx={{
-          width: "42px",
-          height: "42px",
-          backgroundColor: "darkmode.darkSoft",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: "10px",
-          flexShrink: 0
+          width: '42px',
+          height: '42px',
+          backgroundColor: 'darkmode.darkSoft',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '10px',
+          flexShrink: 0,
         }}
-        className={`animate__animated animate__tada animate__slow animate__infinite`}
       >
-        <Box
-          className={`animate__animated animate__zoomIn animate__slow animate__infinite`}
-          component="span"
-        >
+        <Box>
           <svg
             width="26"
             height="22"

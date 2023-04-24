@@ -11,23 +11,22 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '~/redux/actions/auth.action';
-import useSnackbarContext from '~/hooks/hookContext/useSnackbarContext';
-import ModalEmailForgetPassword from './ModalEmailForgetPassword';
 import SwitchDarkmode from '~/components/switch/SwitchDarkmode';
+import useSnackbarContext from '~/hooks/hookContext/useSnackbarContext';
 
 const schema = yup.object({
-  email: yup.string().required('Vui lòng nhập email').email('Email không hợp lệ'),
+  email: yup
+    .string()
+    .required('Vui lòng nhập email')
+    .email('Email không hợp lệ'),
   mat_khau: yup.string().required('Vui lòng nhập mật khẩu'),
 });
 
 function LoginPage() {
   const [darkMode] = useGlobalTheme();
   const dataLogin = useSelector((state) => state.auth.login);
-  const {
-    message: [, setMessageLogin],
-    type: [, setTypeSnackbar],
-  } = useSnackbarContext();
   const modalEmailForgetPasswordRef = useRef();
+  const alertSnackbar = useSnackbarContext();
 
   const {
     register,
@@ -49,7 +48,7 @@ function LoginPage() {
   const onSubmit = (values) => {
     return new Promise((resovle) => {
       setTimeout(() => {
-        loginUser(dispatch, navigate, setMessageLogin, setTypeSnackbar, values);
+        loginUser(dispatch, navigate, values, alertSnackbar);
         resovle();
       }, 500);
     });
@@ -57,17 +56,22 @@ function LoginPage() {
 
   return (
     <>
-      <ModalEmailForgetPassword ref={modalEmailForgetPasswordRef} />
       <Box
         sx={{
           position: 'relative',
-          backgroundColor: darkMode ? 'darkmode.darkBG' : 'whitish.liteBackground',
+          backgroundColor: darkMode
+            ? 'darkmode.darkBG'
+            : 'whitish.liteBackground',
           paddingTop: '40px',
           overflow: 'hidden',
         }}
       >
         <Container sx={{ position: 'relative', zIndex: 2 }} maxWidth="xl">
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
             <Logo />
             <SwitchDarkmode />
           </Stack>
@@ -76,14 +80,22 @@ function LoginPage() {
               sx={{
                 width: '95%',
                 maxWidth: '556px',
-                backgroundColor: darkMode ? 'darkmode.darkSecondary' : 'whitish.pureWhite',
+                backgroundColor: darkMode
+                  ? 'darkmode.darkSecondary'
+                  : 'whitish.pureWhite',
                 margin: '0 auto',
                 borderRadius: '10px',
                 padding: '50px 60px',
               }}
             >
-              <Typography variant="h5" sx={{ fontSize: '20px', fontWeight: 550, textAlign: 'center' }}>
-                <TypeIt style={{ color: darkMode ? '#fff' : '#171725' }} options={{ loop: true }}>
+              <Typography
+                variant="h5"
+                sx={{ fontSize: '20px', fontWeight: 550, textAlign: 'center' }}
+              >
+                <TypeIt
+                  style={{ color: darkMode ? '#fff' : '#171725' }}
+                  options={{ loop: true }}
+                >
                   Chào mừng trở lại!
                 </TypeIt>
               </Typography>

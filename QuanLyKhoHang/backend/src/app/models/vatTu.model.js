@@ -51,12 +51,31 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     ds_vt_cung_loai: {
-      type: [{type: String}],
+      type: [String],
       default: null,
     },
     mo_ta: {
       type: String,
       default: "",
+    },
+    ds_thuoc_tinh: {
+      type: [
+        {
+          ten_thuoc_tinh: {
+            type: String,
+            default: "",
+          },
+          gia_tri: {
+            type: String,
+            default: "",
+          },
+        },
+      ],
+      default: null,
+    },
+    theo_doi_lo: {
+      type: Boolean,
+      default: false,
     },
     hinh_anh1: {
       type: String,

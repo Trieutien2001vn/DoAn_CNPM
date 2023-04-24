@@ -179,6 +179,7 @@ const danhMucController = {
         .find(condition)
         .skip(skip)
         .limit(limit)
+        .sort({ createdAt: -1 })
         .collation({ locale: "vi", strength: 1 });
       const count = await model.find(condition).count();
       return res.status(200).json({ data: documents, count });
