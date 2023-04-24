@@ -80,9 +80,8 @@ const xacThucController = {
       const tokenSaved = await tokenModel.findOne({ email: email });
       if (tokenSaved) {
         await tokenModel.deleteOne({ email });
-      } else {
-        await tokenModel.create({ email, value: refreshToken });
       }
+      await tokenModel.create({ email, value: refreshToken });
       const { mat_khau: pw, ...userSend } = user.toObject();
       return res
         .status(200)

@@ -30,6 +30,10 @@ const loSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    ton_kho: {
+      type: Number,
+      default: 0,
+    },
     createdBy: {
       type: String,
       default: "",
