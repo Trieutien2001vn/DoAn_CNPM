@@ -5,8 +5,8 @@ const roleMiddleWare = require("../app/middlewares/role.middware");
 
 router.post(
   "/dangKy",
-  authMiddleWare.verifyToken,
-  roleMiddleWare.checkAdmin,
+  // authMiddleWare.verifyToken,
+  // roleMiddleWare.checkAdmin,
   xacThucController.dangKy
 );
 router.post("/dangNhap", xacThucController.dangNhap);
