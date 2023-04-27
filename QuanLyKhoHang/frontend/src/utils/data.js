@@ -1,5 +1,8 @@
 import FormProduct from '~/pages/listProduct/FormProduct';
 import { numeralCustom } from './helpers';
+import FormNVT from '~/components/form/FormNVT';
+import FormDVT from '~/components/form/FormDVT';
+import FormKho from '~/components/form/FormKho';
 
 const dsDanhMuc = {
   dmvt: {
@@ -75,7 +78,7 @@ const dsDanhMuc = {
         sortable: true,
       },
     ],
-    Form: FormProduct,
+    Form: FormNVT,
   },
   dmdvt: {
     title: 'đơn vị tính',
@@ -96,7 +99,41 @@ const dsDanhMuc = {
         sortable: true,
       },
     ],
-    Form: FormProduct,
+    Form: FormDVT,
+  
+  },
+  dmkho: {
+    title: 'kho',
+    columns: [
+      {
+        name: 'Mã',
+        selector: (row) => row.ma_kho,
+        sortable: true,
+      },
+      {
+        name: 'Tên',
+        selector: (row) => row.ten_kho,
+        sortable: true,
+      },
+      
+      {
+        name: 'Địa chỉ',
+        selector: (row) => row.dia_chi,
+        sortable: true,
+      },
+      {
+        name: 'Điện thoại',
+        selector: (row) => row.dien_thoai,
+        sortable: true,
+      },
+      {
+        name: 'Email',
+        selector: (row) => row.email,
+        sortable: true,
+      },
+    ],
+    Form: FormKho,
+  
   },
 };
 
