@@ -18,7 +18,9 @@ function List() {
       title={danhMuc?.title}
       columns={danhMuc?.columns}
       maDanhMuc={maDanhMuc}
+      uniqueKey={danhMuc.uniqueKey}
       Form={danhMuc.Form}
+      Filter={danhMuc?.Filter}
     />
   );
 }
