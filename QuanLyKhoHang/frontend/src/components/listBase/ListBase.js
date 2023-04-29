@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import AdminLayout from '~/components/layouts/AdminLayout';
-import FilterSearch from '~/components/filter/FilterSearch';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import ButtonBase from '~/components/button/ButtonBase';
@@ -9,19 +8,28 @@ import { TbTableExport } from 'react-icons/tb';
 import TableBase from '~/components/table/TableBase';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 
-function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
+function ListBase({
+  title,
+  maDanhMuc,
+  uniqueKey,
+  columns,
+  Form,
+  Filter,
+  isDeleted = false,
+}) {
   const { asyncGetList, asyncGetListDeleted } = useApisContext();
   const [data, setData] = useState([]);
   const [load, setLoad] = useState(1);
   const [loading, setLoading] = useState(false);
   const [openForm, setOpenForm] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [defaultValues, setDefaultValues] = useState();
+  const [condition, setCondition] = useState({});
   const [paginationOption, setPaginationOption] = useState({
     limit: 20,
     page: 1,
     totalRows: 0,
   });
-
   // row per page change
   const handleRowPerPageChange = (value) => {
     setPaginationOption({ ...paginationOption, limit: value });
@@ -30,6 +38,7 @@ function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
   const handleRowClicked = (data) => {
     setDefaultValues(data);
     setOpenForm(true);
+    setIsEdit(true);
   };
   // get products
   const getListData = async () => {
@@ -38,6 +47,7 @@ function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
     const resp = await funcGetList(maDanhMuc, {
       limit: paginationOption.limit,
       page: paginationOption.page,
+      ...condition,
     });
     if (resp) {
       setData(resp.data);
@@ -49,7 +59,13 @@ function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
   useEffect(() => {
     getListData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maDanhMuc, paginationOption.limit, paginationOption.page, load]);
+  }, [
+    maDanhMuc,
+    paginationOption.limit,
+    paginationOption.page,
+    condition,
+    load,
+  ]);
 
   return (
     <>
@@ -62,15 +78,14 @@ function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
           }}
           setLoad={setLoad}
           defaultValues={defaultValues}
+          isEdit={isEdit}
         />
       )}
       <AdminLayout>
         <Box sx={{ padding: '10px 0' }}>
           <Grid container spacing="10px" alignItems="flex-start">
             <Grid item xs={3} lg={2}>
-              <Stack spacing="10px">
-                <FilterSearch title="Mã sản phẩm" />
-              </Stack>
+              {Filter && <Filter setCondition={setCondition} />}
             </Grid>
             <Grid item xs={9} lg={10}>
               <Stack direction="row" justifyContent="space-between">
@@ -82,7 +97,10 @@ function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
                     <>
                       <ButtonBase
                         startIcon={<AiOutlinePlusCircle fontSize="14px" />}
-                        onClick={() => setOpenForm(true)}
+                        onClick={() => {
+                          setOpenForm(true);
+                          setIsEdit(false);
+                        }}
                       >
                         Thêm mới
                       </ButtonBase>
@@ -101,6 +119,7 @@ function ListBase({ title, maDanhMuc, columns, Form, isDeleted = false }) {
               <Box>
                 <TableBase
                   maDanhMuc={maDanhMuc}
+                  uniquekey={uniqueKey}
                   columns={columns || []}
                   data={data}
                   title={title}

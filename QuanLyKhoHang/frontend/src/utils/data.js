@@ -1,12 +1,19 @@
-import FormProduct from '~/pages/listProduct/FormProduct';
+import FormProduct from '~/components/form/product/FormProduct';
 import { numeralCustom } from './helpers';
 import FormNVT from '~/components/form/FormNVT';
 import FormDVT from '~/components/form/FormDVT';
 import FormKho from '~/components/form/FormKho';
+import FilterProduct from '~/components/filter/product/FilterProduct';
+import FilterProductGroup from '~/components/filter/productGroup/FilterProductGroup';
+import FilterDVT from '~/components/filter/donViTinh/FilterDVT';
+import FilterKho from '~/components/filter/kho/FilterKho';
 
 const dsDanhMuc = {
   dmvt: {
     title: 'hàng hóa',
+    uniqueKey: 'ma_vt',
+    Form: FormProduct,
+    Filter: FilterProduct,
     columns: [
       {
         name: 'Mã',
@@ -23,7 +30,14 @@ const dsDanhMuc = {
       {
         name: 'Barcode',
         selector: (row) => row.barcode,
-        width: '100px',
+        width: '150px',
+        center: true,
+        sortable: true,
+      },
+      {
+        name: 'Nhóm hàng hóa',
+        selector: (row) => row.ten_nvt,
+        width: '150px',
         center: true,
         sortable: true,
       },
@@ -50,17 +64,13 @@ const dsDanhMuc = {
         center: true,
         sortable: true,
       },
-      {
-        name: 'Xuất xứ',
-        selector: (row) => row.xuat_xu,
-        center: true,
-        sortable: true,
-      },
     ],
-    Form: FormProduct,
   },
   dmnvt: {
     title: 'nhóm hàng hóa',
+    uniqueKey: 'ma_nvt',
+    Filter: FilterProductGroup,
+    Form: FormNVT,
     columns: [
       {
         name: 'Mã',
@@ -78,10 +88,12 @@ const dsDanhMuc = {
         sortable: true,
       },
     ],
-    Form: FormNVT,
   },
   dmdvt: {
     title: 'đơn vị tính',
+    uniqueKey: 'ma_dvt',
+    Filter: FilterDVT,
+    Form: FormDVT,
     columns: [
       {
         name: 'Mã',
@@ -99,41 +111,45 @@ const dsDanhMuc = {
         sortable: true,
       },
     ],
-    Form: FormDVT,
-  
   },
   dmkho: {
     title: 'kho',
+    uniqueKey: 'ma_kho',
+    Form: FormKho,
+    Filter: FilterKho,
     columns: [
       {
         name: 'Mã',
         selector: (row) => row.ma_kho,
         sortable: true,
+        width: '100px',
       },
       {
         name: 'Tên',
         selector: (row) => row.ten_kho,
         sortable: true,
+        minWidth: '200px',
       },
-      
+
       {
         name: 'Địa chỉ',
         selector: (row) => row.dia_chi,
         sortable: true,
+        minWidth: '250px',
       },
       {
         name: 'Điện thoại',
         selector: (row) => row.dien_thoai,
         sortable: true,
+        width: '170px',
       },
       {
         name: 'Email',
         selector: (row) => row.email,
         sortable: true,
+        width: '200px',
       },
     ],
-    Form: FormKho,
-  
   },
 };
 

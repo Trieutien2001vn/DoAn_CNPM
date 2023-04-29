@@ -6,12 +6,14 @@ import {
   Stack,
   InputLabel,
   Autocomplete,
+  IconButton,
 } from '@mui/material';
 import styled from 'styled-components';
 import { MdClose } from 'react-icons/md';
 import { VscLoading } from 'react-icons/vsc';
 import useSnackbarContext from '~/hooks/hookContext/useSnackbarContext';
 import useApisContext from '~/hooks/hookContext/useApisContext';
+import ButtonBase from '../button/ButtonBase';
 
 const AutoCompleteStyled = styled(Autocomplete)`
   width: 100%;
@@ -45,6 +47,7 @@ function SelectApiInput({
   renderOption,
   searchFileds = ['ma_vt', 'ten_vt'],
   value,
+  FormAdd,
   autocompleteProps,
   ...props
 }) {
@@ -57,6 +60,7 @@ function SelectApiInput({
   const [page, setPage] = useState(1);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
 
   const timerRef = useRef();
 
@@ -74,6 +78,7 @@ function SelectApiInput({
             },
           })
         );
+        condition.$or.push({ $text: { $search: search } });
       }
       const resp = await asyncGetList(apiCode, condition);
       if (resp) {
@@ -98,6 +103,10 @@ function SelectApiInput({
     if (subtract <= 10) {
       setPage(page + 1);
     }
+  };
+  // open form add
+  const openFormAdd = () => {
+    setOpenForm(true);
   };
 
   React.useEffect(() => {
@@ -124,112 +133,113 @@ function SelectApiInput({
   }, [searchText]);
 
   return (
-    <Stack
-      spacing="5px"
-      sx={{ width: '100%' }}
-      alignItems="flex-start"
-      {...props}
-    >
-      {label && (
-        <InputLabel sx={{ fontSize: '13px', cursor: 'pointer' }}>
-          {label}{' '}
-          {required && (
-            <Typography
-              component="span"
-              sx={{ color: 'error.main', fontSize: '12px' }}
-            >
-              *
-            </Typography>
-          )}
-        </InputLabel>
+    <>
+      {openForm && (
+        <FormAdd
+          open={openForm}
+          handleClose={() => setOpenForm(false)}
+          defaultValues={{ [searchFileds[0]]: search }}
+        />
       )}
-      <AutoCompleteStyled
-        key={load}
-        isOptionEqualToValue={() => true}
-        open={!!searchText}
-        placeholder={placeholder}
-        forcePopupIcon={false}
-        options={options}
-        value={value}
-        onBlur={() => setSearchText('')}
-        onChange={(e, newValue) => onSelect(newValue)}
-        ListboxProps={{
-          onScroll: handleListBoxScroll,
-          sx: { '& .MuiAutocomplete-option': { fontSize: '12px' } },
-        }}
-        noOptionsText={
-          <Typography
-            style={{
-              fontSize: '13px',
-              fontStyle: 'italic',
-              textAlign: 'center',
-            }}
-          >
-            Không tìm thấy kết quả
-          </Typography>
-        }
-        getOptionLabel={getOptionLabel}
-        filterOptions={filterOptions}
-        renderOption={renderOption}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="outlined"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: loading ? (
-                <Box
-                  className="round-loading"
-                  sx={{
-                    width: '20px',
-                    height: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '50%',
-                    backgroundColor: '#ededed',
-                    marginRight: '5px',
-                    cursor: 'pointer',
-                    color: '#999',
-                  }}
-                >
-                  <VscLoading fontSize="14px" />
-                </Box>
-              ) : (
-                <>
-                  {!!selectedValue ? (
-                    <Box
-                      onClick={() => {
-                        onSelect(null);
-                        setOptions([]);
-                        setLoad(load + 1);
-                      }}
-                      sx={{
-                        width: '20px',
-                        height: '20px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        borderRadius: '50%',
-                        backgroundColor: '#ededed',
-                        marginRight: '5px',
-                        cursor: 'pointer',
-                        color: '#999',
-                      }}
-                    >
-                      <MdClose fontSize="14px" />
-                    </Box>
-                  ) : null}
-                </>
-              ),
-            }}
-          />
+      <Stack
+        spacing="5px"
+        sx={{ width: '100%' }}
+        alignItems="flex-start"
+        {...props}
+      >
+        {label && (
+          <InputLabel sx={{ fontSize: '13px', cursor: 'pointer' }}>
+            {label}{' '}
+            {required && (
+              <Typography
+                component="span"
+                sx={{ color: 'error.main', fontSize: '12px' }}
+              >
+                *
+              </Typography>
+            )}
+          </InputLabel>
         )}
-        {...autocompleteProps}
-      />
-    </Stack>
+        <AutoCompleteStyled
+          key={load}
+          isOptionEqualToValue={() => true}
+          open={!!searchText}
+          placeholder={placeholder}
+          forcePopupIcon={false}
+          options={options}
+          value={value}
+          onBlur={() => setSearchText('')}
+          onChange={(e, newValue) => onSelect(newValue)}
+          ListboxProps={{
+            onScroll: handleListBoxScroll,
+            sx: { '& .MuiAutocomplete-option': { fontSize: '12px' } },
+          }}
+          noOptionsText={
+            <Stack spacing="10px" alignItems="center">
+              <Typography
+                sx={{
+                  fontSize: '13px',
+                  fontStyle: 'italic',
+                  textAlign: 'center',
+                }}
+              >
+                Không tìm thấy kết quả
+              </Typography>
+              <ButtonBase onClick={openFormAdd}>Thêm '{search}'</ButtonBase>
+            </Stack>
+          }
+          getOptionLabel={getOptionLabel}
+          filterOptions={filterOptions}
+          renderOption={renderOption}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              value={searchText}
+              sx={{ '& .MuiInputBase-root': { paddingRight: '5px' } }}
+              onChange={(e) => setSearchText(e.target.value)}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: loading ? (
+                  <Box
+                    className="round-loading"
+                    sx={{
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '50%',
+                      backgroundColor: '#ededed',
+                      marginRight: '5px',
+                      cursor: 'pointer',
+                      color: '#999',
+                    }}
+                  >
+                    <VscLoading fontSize="14px" />
+                  </Box>
+                ) : (
+                  <>
+                    {!!selectedValue ? (
+                      <IconButton
+                        onClick={() => {
+                          onSelect(null);
+                          setOptions([]);
+                          setLoad(load + 1);
+                        }}
+                      >
+                        <MdClose fontSize="14px" />
+                      </IconButton>
+                    ) : null}
+                  </>
+                ),
+              }}
+            />
+          )}
+          {...autocompleteProps}
+        />
+      </Stack>
+    </>
   );
 }
 

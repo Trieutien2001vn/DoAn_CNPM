@@ -15,8 +15,8 @@ router.post(
 router.post(
   "/product/thumbnail",
   authMiddleWare.verifyToken,
-  roleMiddleWare.checkAdminOrManager,
-  upload.array("thumbnails", Infinity),
+  roleMiddleWare.exceptNhanVienBanHang,
+  upload.single("thumbnail"),
   uploadController.uploadProductThumbnail
 );
 // upload file excel mẫu cho danh mục

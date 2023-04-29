@@ -9,15 +9,16 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import DataTable from 'react-data-table-component';
-import { BsTrash, BsArrowReturnLeft } from 'react-icons/bs';
-import { MdRestore, MdOutlineRestorePage } from 'react-icons/md';
-import { RiFileDamageLine } from 'react-icons/ri';
+import { FaTrash, FaTrashRestore } from 'react-icons/fa';
+import { RiFileDamageFill, RiChatHistoryFill } from 'react-icons/ri';
+import { TiArrowBack } from 'react-icons/ti';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 import useConfirmContext from '~/hooks/hookContext/useConfirmContext';
 import { useNavigate } from 'react-router-dom';
 
 function TableBase({
   maDanhMuc,
+  uniquekey,
   columns,
   data,
   title,
@@ -47,7 +48,7 @@ function TableBase({
   const handleDeleteRow = async () => {
     if (selectedRows && selectedRows.length > 0) {
       const dataPost = {
-        uniqueValues: selectedRows.map((item) => item.ma_vt),
+        uniqueValues: selectedRows.map((item) => item[uniquekey]),
       };
       const resp = await asyncDelete(maDanhMuc, dataPost);
       if (!resp?.message) {
@@ -63,7 +64,7 @@ function TableBase({
   const handleDestroyRow = async () => {
     if (selectedRows && selectedRows.length > 0) {
       const dataPost = {
-        uniqueValues: selectedRows.map((item) => item.ma_vt),
+        uniqueValues: selectedRows.map((item) => item[uniquekey]),
       };
       const resp = await asyncDestroy(maDanhMuc, dataPost);
       if (!resp?.message) {
@@ -79,7 +80,7 @@ function TableBase({
   const handleRestore = async () => {
     if (selectedRows && selectedRows.length > 0) {
       const dataPost = {
-        uniqueValues: selectedRows.map((item) => item.ma_vt),
+        uniqueValues: selectedRows.map((item) => item[uniquekey]),
       };
       const resp = await asyncRestore(maDanhMuc, dataPost);
       if (!resp?.message) {
@@ -114,7 +115,7 @@ function TableBase({
                 '&:hover': { backgroundColor: 'primary.second' },
               }}
             >
-              <BsArrowReturnLeft fontSize="14px" />
+              <TiArrowBack fontSize="14px" />
             </IconButton>
           </Tooltip>
           {selectedRows && selectedRows.length > 0 && (
@@ -162,7 +163,7 @@ function TableBase({
                       '&:hover': { backgroundColor: 'error.main' },
                     }}
                   >
-                    <RiFileDamageLine fontSize="14px" />
+                    <RiFileDamageFill fontSize="14px" />
                   </IconButton>
                 </Tooltip>
               ) : (
@@ -209,7 +210,7 @@ function TableBase({
                       '&:hover': { backgroundColor: 'error.main' },
                     }}
                   >
-                    <BsTrash fontSize="14px" />
+                    <FaTrash fontSize="14px" />
                   </IconButton>
                 </Tooltip>
               )}
@@ -228,7 +229,7 @@ function TableBase({
                       '&:hover': { backgroundColor: 'secondary.main' },
                     }}
                   >
-                    <MdOutlineRestorePage fontSize="14px" />
+                    <FaTrashRestore fontSize="14px" />
                   </IconButton>
                 </Tooltip>
               )}
@@ -244,7 +245,7 @@ function TableBase({
                   '&:hover': { backgroundColor: 'secondary.main' },
                 }}
               >
-                <MdRestore fontSize="14px" />
+                <RiChatHistoryFill fontSize="14px" />
               </IconButton>
             </Tooltip>
           )}

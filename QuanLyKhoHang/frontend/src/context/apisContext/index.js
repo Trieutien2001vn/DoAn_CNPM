@@ -112,6 +112,23 @@ function ApisProvider({ children }) {
       alertSnackbar('error', error?.message || 'Server error');
     }
   };
+  const uploadFile = async (formData, enpoint, folder, version = 'v1') => {
+    try {
+      const resp = await axiosPrivate.post(
+        `/${version}${enpoint}?folder=${folder}`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      if (resp && resp.status === 200) {
+        return resp.data;
+      } else {
+        alertSnackbar('error', resp?.data?.message);
+        return resp.data;
+      }
+    } catch (error) {
+      alertSnackbar('error', error?.message || 'Server errors');
+    }
+  };
 
   return (
     <ApisContext.Provider
@@ -122,6 +139,7 @@ function ApisProvider({ children }) {
         asyncDelete,
         asyncDestroy,
         asyncRestore,
+        uploadFile,
       }}
     >
       {children}

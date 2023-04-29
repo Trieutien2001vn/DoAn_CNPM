@@ -1,43 +1,11 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { v4 } from 'uuid';
+import { TabContext, TabList } from '@mui/lab';
 
-function TabPanel({ children, value, index, ...other }) {
-  return (
-    <Box
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-      sx={{ paddingTop: '10px' }}
-    >
-      {value === index && <Box>{children}</Box>}
-    </Box>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-function TabsBase({
-  tabLabels = [{ label: 'Label', id: 1 }],
-  tabPanels = ['Panel 1'],
-}) {
-  const [value, setValue] = React.useState(0);
+function TabsBase({ tabLabels = [{ label: 'Label', value: '1' }], children }) {
+  const [value, setValue] = React.useState('1');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -45,33 +13,21 @@ function TabsBase({
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          sx={{ minHeight: 'unset', height: '42px' }}
-        >
-          {tabLabels.map((tab) => (
-            <Tab
-              key={v4()}
-              label={tab.label}
-              {...a11yProps(tab.id)}
-              sx={{
-                padding: '5px',
-                minHeight: 'unset',
-                height: '42px',
-                fontSize: '13px',
-                textTransform: 'capitalize',
-              }}
-            />
-          ))}
-        </Tabs>
-      </Box>
-      {tabPanels.map((tabPanel, index) => (
-        <TabPanel key={v4()} value={value} index={index}>
-          {tabPanel}
-        </TabPanel>
-      ))}
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} sx={{ minHeight: '34px' }}>
+            {tabLabels.map((tabLabel) => (
+              <Tab
+                key={v4()}
+                label={tabLabel.label}
+                value={tabLabel.value}
+                sx={{ textTransform: 'none', minHeight: '34px' }}
+              />
+            ))}
+          </TabList>
+        </Box>
+        {children}
+      </TabContext>
     </Box>
   );
 }
