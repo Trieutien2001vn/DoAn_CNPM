@@ -93,12 +93,8 @@ const xacThucController = {
   // refresh token
   async lamMoi(req, res, next) {
     try {
-      const { email, refreshToken } = req.body;
-      if (!email || !refreshToken) {
-        return next(createError(400, "Cần cung cấp đủ email và refresh token"));
-      }
+      const { refreshToken } = req.body;
       const tokenExisted = await tokenModel.findOne({
-        email,
         value: refreshToken,
       });
       if (!tokenExisted) {
@@ -111,10 +107,10 @@ const xacThucController = {
           if (err) {
             return next(createError(400, "Refresh token không hợp lệ"));
           }
-          await tokenModel.deleteOne({ email, value: refreshToken });
+          await tokenModel.deleteOne({ value: refreshToken });
           const accessToken = generateAccessToken(decoded);
           const newRefreshToken = generateRefreshToken(decoded);
-          await tokenModel.create({ email, value: newRefreshToken });
+          await tokenModel.create({ value: newRefreshToken });
           return res
             .status(200)
             .json({ accessToken, refreshToken: newRefreshToken });

@@ -1,24 +1,25 @@
+import { useNavigate } from 'react-router-dom';
 import useToken from './useToken';
-
-const { useSelector, useDispatch } = require('react-redux');
-const { updateToken } = require('~/redux/reducrers/auth.reducer');
-const { axiosPublic } = require('~/utils/httpRequest');
+import { useDispatch } from 'react-redux';
+import { axiosPublic } from '~/utils/httpRequest';
+import { logoutSuccess, updateToken } from '~/redux/reducrers/auth.reducer';
 
 const useRefreshToken = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.login.user);
+  const navigate = useNavigate();
   const { refreshToken } = useToken();
   const refresh = async () => {
     try {
       const resp = await axiosPublic.post('/v1/xacThuc/lamMoi', {
-        email: user.user.email,
-        refreshToken,
+        refreshToken: refreshToken,
       });
       if (resp && resp.status === 200) {
         dispatch(updateToken(resp.data));
         return resp.data.accessToken;
       }
     } catch (error) {
+      dispatch(logoutSuccess());
+      navigate('/login');
       return null;
     }
   };

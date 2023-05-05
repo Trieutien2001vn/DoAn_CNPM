@@ -92,6 +92,14 @@ const validateCreatePhieuNhapKho = ({ ma_phieu, ma_kho, ten_kho }) => {
   });
   return modelSchema.validate({ ma_phieu, ma_kho, ten_kho });
 };
+// chung tu
+const validateCreateChungTu = ({ ma_ct, ten_ct }) => {
+  const modelSchema = joi.object({
+    ma_ct: joi.string().required(),
+    ten_ct: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_ct, ten_ct });
+};
 
 module.exports = {
   validateCreatePhanQuyen,
@@ -105,4 +113,5 @@ module.exports = {
   validateCreateLo,
   validateCreateNhaCungCap,
   validateCreatePhieuNhapKho,
+  validateCreateChungTu,
 };

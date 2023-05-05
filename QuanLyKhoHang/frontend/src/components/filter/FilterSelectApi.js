@@ -8,6 +8,7 @@ function FilterSelectApi({
   value,
   searchFileds,
   onSelect = () => {},
+  FormAdd,
 }) {
   return (
     <FilterBox title={title}>
@@ -19,6 +20,7 @@ function FilterSelectApi({
         value={value}
         selectedValue={value}
         onSelect={onSelect}
+        FormAdd={FormAdd}
       />
     </FilterBox>
   );
