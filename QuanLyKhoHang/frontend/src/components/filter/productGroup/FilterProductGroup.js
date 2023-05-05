@@ -10,8 +10,18 @@ function FilterProductGroup({ setCondition }) {
   useEffect(() => {
     const condition = {
       $or: [
-        { ma_nvt: { $regex: filter.nhom_vat_tu, $options: 'i' } },
-        { ten_nvt: { $regex: filter.nhom_vat_tu, $options: 'i' } },
+        {
+          ma_nvt: {
+            $regex: filter.nhom_vat_tu.split(' ').join('.*'),
+            $options: 'i',
+          },
+        },
+        {
+          ten_nvt: {
+            $regex: filter.nhom_vat_tu.split(' ').join('.*'),
+            $options: 'i',
+          },
+        },
         { $text: { $search: filter.nhom_vat_tu } },
       ],
     };

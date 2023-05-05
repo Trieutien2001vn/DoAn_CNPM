@@ -14,7 +14,7 @@ function ListBase({
   uniqueKey,
   columns,
   Form,
-  Filter,
+  Filter, 
   isDeleted = false,
 }) {
   const { asyncGetList, asyncGetListDeleted } = useApisContext();
@@ -60,7 +60,6 @@ function ListBase({
     getListData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    maDanhMuc,
     paginationOption.limit,
     paginationOption.page,
     condition,

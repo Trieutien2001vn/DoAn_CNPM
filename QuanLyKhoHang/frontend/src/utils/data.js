@@ -7,6 +7,10 @@ import FilterProduct from '~/components/filter/product/FilterProduct';
 import FilterProductGroup from '~/components/filter/productGroup/FilterProductGroup';
 import FilterDVT from '~/components/filter/donViTinh/FilterDVT';
 import FilterKho from '~/components/filter/kho/FilterKho';
+import FormSupplier from '~/components/form/supplier/FormSupplier';
+import FilterSupplier from '~/components/filter/supplier/FilterSupplier';
+import FormChungTu from '~/components/form/chungtu/FormChungTu';
+import FilterChungTu from '~/components/filter/chungTu/FilterChungTu';
 
 const dsDanhMuc = {
   dmvt: {
@@ -128,26 +132,107 @@ const dsDanhMuc = {
         name: 'Tên',
         selector: (row) => row.ten_kho,
         sortable: true,
-        minWidth: '200px',
+        width: '200px',
+        wrap: true,
       },
 
       {
         name: 'Địa chỉ',
         selector: (row) => row.dia_chi,
         sortable: true,
-        minWidth: '250px',
+        width: '250px',
+        wrap: true,
       },
       {
         name: 'Điện thoại',
         selector: (row) => row.dien_thoai,
         sortable: true,
-        width: '170px',
+        minWidth: '170px',
+        center: true,
       },
       {
         name: 'Email',
         selector: (row) => row.email,
         sortable: true,
+        minWidth: '200px',
+        center: true,
+      },
+    ],
+  },
+  dmncc: {
+    title: 'nhà cung cấp',
+    uniqueKey: 'ma_ncc',
+    Form: FormSupplier,
+    Filter: FilterSupplier,
+    columns: [
+      {
+        name: 'Mã',
+        selector: (row) => row.ma_ncc,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Tên',
+        selector: (row) => row.ten_ncc,
+        sortable: true,
         width: '200px',
+        wrap: true,
+      },
+      {
+        name: 'Địa chỉ',
+        selector: (row) => row.dia_chi,
+        sortable: true,
+        center: true,
+        width: '200px',
+        wrap: true,
+      },
+      {
+        name: 'Điện thoại',
+        selector: (row) => row.dien_thoai,
+        sortable: true,
+        center: true,
+        minWidth: '120px',
+      },
+      {
+        name: 'Email',
+        selector: (row) => row.email,
+        sortable: true,
+        center: true,
+        minWidth: '120px',
+      },
+      {
+        name: 'Người tạo',
+        selector: (row) => row.createdBy,
+        sortable: true,
+        center: true,
+        minWidth: '200px',
+      },
+    ],
+  },
+  dmct: {
+    title: 'chứng từ',
+    uniqueKey: 'ma_ct',
+    Form: FormChungTu,
+    Filter: FilterChungTu,
+    columns: [
+      {
+        name: 'Mã',
+        selector: (row) => row.ma_ct,
+        sortable: true,
+        width: '100px',
+      },
+      {
+        name: 'Tên',
+        selector: (row) => row.ten_ct,
+        sortable: true,
+        width: '200px',
+      },
+      {
+        name: 'Diễn giải',
+        selector: (row) => row.dien_giai,
+        sortable: true,
+        minWidth: '100px',
+        wrap: true,
       },
     ],
   },

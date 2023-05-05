@@ -1,16 +1,16 @@
 import { Grid } from '@mui/material';
 import React from 'react';
-import ModalBase from '../modal/ModalBase';
-import ButtonBase from '../button/ButtonBase';
+import ModalBase from '~/components/modal/ModalBase';
+import ButtonBase from '~/components/button/ButtonBase';
 import { v4 } from 'uuid';
 import { FiSave } from 'react-icons/fi';
-import TextInput from '../input/TextInput';
+import TextInput from '~/components/input/TextInput';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 import { useForm } from 'react-hook-form';
 
-export default function FormKho({
+export default function FormChungTu({
   open,
   handleClose,
   setLoad = () => {},
@@ -18,9 +18,8 @@ export default function FormKho({
   isEdit = false,
 }) {
   const schema = yup.object({
-    ma_kho: yup.string().required('Vui lòng nhập mã kho'),
-    ten_kho: yup.string().required('Vui lòng nhập tên kho'),
-    email: yup.string().email('Email không đúng định dạng'),
+    ma_ct: yup.string().required('Vui lòng nhập mã chứng từ'),
+    ten_ct: yup.string().required('Vui lòng nhập tên chứng từ'),
   });
   const {
     handleSubmit,
@@ -36,7 +35,7 @@ export default function FormKho({
 
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
-    await asyncPostData('dmkho', values, method).then((resp) => {
+    await asyncPostData('dmct', values, method).then((resp) => {
       if (!resp?.message) {
         handleClose();
         reset();
@@ -49,7 +48,7 @@ export default function FormKho({
       open={open}
       handleClose={handleClose}
       width="700px"
-      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} kho`}
+      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} chứng từ`}
       actions={[
         <ButtonBase
           key={v4()}
@@ -68,46 +67,29 @@ export default function FormKho({
         <Grid item xs={12} md={6}>
           <TextInput
             disabled={isEdit}
-            label="Mã kho"
-            placeholder="kcty"
-            name="ma_kho"
+            label="Mã chứng từ"
+            placeholder="VD: pnk"
+            name="ma_ct"
             register={register}
             required
-            errorMessage={errors?.ma_kho?.message}
+            errorMessage={errors?.ma_ct?.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
-            label="Tên kho"
-            placeholder="kcty"
-            name="ten_kho"
+            label="Tên chứng từ"
+            placeholder="Tên gọi của chưng từ"
+            name="ten_ct"
             register={register}
             required
-            errorMessage={errors?.ten_kho?.message}
+            errorMessage={errors?.ten_ct?.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
-            label="Địa chỉ"
-            placeholder="Địa điểm kho"
-            name="dia_chi"
-            register={register}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            label="Email"
-            placeholder="email"
-            name="email"
-            register={register}
-            errorMessage={errors.email?.message}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            label="Điện thoại"
-            placeholder="Số điện thoại"
-            name="dien_thoai"
+            label="Diễn giải"
+            placeholder="Giải thích nội dung chứng từ"
+            name="dien_giai"
             register={register}
           />
         </Grid>

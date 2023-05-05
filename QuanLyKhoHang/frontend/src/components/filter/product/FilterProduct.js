@@ -1,9 +1,10 @@
+import React, { memo } from 'react';
 import { Stack } from '@mui/material';
-import React from 'react';
 import FilterSearch from '../FilterSearch';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import FilterSelectApi from '../FilterSelectApi';
+import { dsDanhMuc } from '~/utils/data';
 
 function FilterProduct({ setCondition }) {
   const [filter, setFilter] = useState({
@@ -60,9 +61,10 @@ function FilterProduct({ setCondition }) {
         searchFileds={['ma_nvt', 'ten_nvt']}
         value={filter.nhom_vat_tu}
         onSelect={(value) => setFilter({ ...filter, nhom_vat_tu: value })}
+        FormAdd={dsDanhMuc.dmnvt.Form}
       />
     </Stack>
   );
 }
 
-export default FilterProduct;
+export default memo(FilterProduct);

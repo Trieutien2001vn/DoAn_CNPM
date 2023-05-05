@@ -54,8 +54,8 @@ function ApisProvider({ children }) {
       if (resp && resp.status === 200) {
         return resp.data;
       } else {
-        alertSnackbar('error', resp?.data?.message);
-        return resp.data;
+        alertSnackbar('error', resp.response.data?.message || 'Server error');
+        return resp.response.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.message || 'Server error');
