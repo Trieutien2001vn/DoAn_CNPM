@@ -93,7 +93,6 @@ function InfoTab({ control, register, errors, isEdit = false }) {
             <TextInput
               label="Giá vốn"
               placeholder="Giá nhập hàng hóa"
-              type="number"
               value={numeralCustom(value).format()}
               onChange={(e) => {
                 const number = e.target.value;
@@ -111,7 +110,6 @@ function InfoTab({ control, register, errors, isEdit = false }) {
             <TextInput
               label="Giá bán lẻ"
               placeholder="Giá bán 1 đơn vị hàng hóa"
-              type="number"
               value={numeralCustom(value).format()}
               onChange={(e) => {
                 const number = e.target.value;

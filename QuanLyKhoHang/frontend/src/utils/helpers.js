@@ -1,4 +1,5 @@
 import numeral from 'numeral';
+import moment from 'moment';
 
 numeral.register('locale', 'vi', {
   delimiters: {
@@ -16,4 +17,8 @@ numeral.register('locale', 'vi', {
   },
 });
 numeral.locale('vi');
-export { numeral as numeralCustom };
+function formatDateDisplay(date) {
+  if (!date) return;
+  return moment(date).format('DD/MM/YYYY');
+}
+export { numeral as numeralCustom, formatDateDisplay };

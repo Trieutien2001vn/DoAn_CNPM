@@ -7,8 +7,8 @@ function DescriptionTab({ register }) {
     <Box>
       <AreaInput
         register={register}
-        name="mo_ta"
-        placeholder="Mô tả chi tiết hàng hóa"
+        name="dien_giai"
+        placeholder="Mô tả chi tiết phiếu"
       />
     </Box>
   );

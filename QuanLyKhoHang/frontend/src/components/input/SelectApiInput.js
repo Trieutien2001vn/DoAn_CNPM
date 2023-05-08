@@ -7,6 +7,7 @@ import {
   InputLabel,
   Autocomplete,
   IconButton,
+  FormHelperText,
 } from '@mui/material';
 import styled from 'styled-components';
 import { MdClose } from 'react-icons/md';
@@ -42,12 +43,15 @@ function SelectApiInput({
   selectedValue,
   onSelect = () => {},
   apiCode = 'dmvt',
+  condition = {},
   getOptionLabel,
   filterOptions = (option) => option,
   renderOption,
   searchFileds = ['ma_vt', 'ten_vt'],
   value,
   FormAdd,
+  errorMessage,
+  disabled = false,
   autocompleteProps,
   ...props
 }) {
@@ -68,19 +72,19 @@ function SelectApiInput({
   const handleGetData = async (search, page, oldOptions = []) => {
     try {
       setLoading(true);
-      const condition = { page, limit: 20, $or: [] };
+      const selfCondition = { page, limit: 20, $or: [], ...condition };
       if (search) {
         searchFileds.forEach((searchFiled) =>
-          condition.$or.push({
+          selfCondition.$or.push({
             [searchFiled]: {
               $regex: search.split(' ').join('.*'),
               $options: 'i',
             },
           })
         );
-        condition.$or.push({ $text: { $search: search } });
+        selfCondition.$or.push({ $text: { $search: search } });
       }
-      const resp = await asyncGetList(apiCode, condition);
+      const resp = await asyncGetList(apiCode, selfCondition);
       if (resp) {
         setOptions(resp.data || []);
         setCount(resp.count);
@@ -161,10 +165,10 @@ function SelectApiInput({
           </InputLabel>
         )}
         <AutoCompleteStyled
+          disabled={disabled}
           key={load}
           isOptionEqualToValue={() => true}
           open={!!searchText}
-          placeholder={placeholder}
           forcePopupIcon={false}
           options={options}
           value={value}
@@ -185,7 +189,9 @@ function SelectApiInput({
               >
                 Không tìm thấy kết quả
               </Typography>
-              <ButtonBase onClick={openFormAdd}>Thêm '{search}'</ButtonBase>
+              {!!FormAdd && (
+                <ButtonBase onClick={openFormAdd}>Thêm '{search}'</ButtonBase>
+              )}
             </Stack>
           }
           getOptionLabel={getOptionLabel}
@@ -194,6 +200,7 @@ function SelectApiInput({
           renderInput={(params) => (
             <TextField
               {...params}
+              placeholder={placeholder}
               variant="outlined"
               value={searchText}
               sx={{ '& .MuiInputBase-root': { paddingRight: '5px' } }}
@@ -220,7 +227,7 @@ function SelectApiInput({
                   </Box>
                 ) : (
                   <>
-                    {!!selectedValue ? (
+                    {!!selectedValue && !disabled ? (
                       <IconButton
                         onClick={() => {
                           onSelect(null);
@@ -238,6 +245,20 @@ function SelectApiInput({
           )}
           {...autocompleteProps}
         />
+        {errorMessage && (
+          <FormHelperText
+            error
+            sx={{
+              fontSize: '12px',
+              fontStyle: 'italic',
+              color: 'error.main',
+              lineHeight: '13px',
+              paddingLeft: '5px',
+            }}
+          >
+            {errorMessage}
+          </FormHelperText>
+        )}
       </Stack>
     </>
   );
