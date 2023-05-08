@@ -83,7 +83,7 @@ const validateCreateNhaCungCap = ({ ma_ncc, ten_ncc }) => {
   });
   return modelSchema.validate({ ma_ncc, ten_ncc });
 };
-// nha cung cap
+// phieu nhap kho
 const validateCreatePhieuNhapKho = ({ ma_phieu, ma_kho, ten_kho }) => {
   const modelSchema = joi.object({
     ma_phieu: joi.string().required(),

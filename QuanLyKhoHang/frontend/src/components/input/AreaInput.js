@@ -2,27 +2,23 @@ import {
   FormHelperText,
   InputLabel,
   Stack,
-  TextField,
+  TextareaAutosize,
   Typography,
 } from '@mui/material';
 import React from 'react';
 import { v4 } from 'uuid';
 
-function TextInput({
-  type = 'text',
-  name,
-  value,
-  onChange,
-  label,
-  errorMessage,
-  required = false,
-  placeholder,
-  disabled = false,
+function AreaInput({
   register = () => {},
-  defaultValue,
+  name,
+  placeholder,
+  label,
+  required = false,
+  errorMessage,
   ...props
 }) {
   const id = v4();
+
   return (
     <Stack
       spacing="5px"
@@ -43,28 +39,17 @@ function TextInput({
           )}
         </InputLabel>
       )}
-      <TextField
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        disabled={disabled}
-        name={name}
+      <TextareaAutosize
         {...register(name)}
-        inputProps={type === 'number' ? { min: 0 } : {}}
-        fullWidth
-        sx={{
-          '& .MuiInputBase-root': {
-            height: '42px',
-            '& input': {
-              height: '100%',
-            },
-          },
-          '& .MuiInputBase-input': { padding: '0 10px', fontSize: '13px' },
+        placeholder={placeholder}
+        style={{
+          width: '100%',
+          border: '1px solid #ccc',
+          outline: 'none',
+          minHeight: '50px',
+          borderRadius: '4px',
+          padding: '5px',
         }}
-        variant="outlined"
       />
       {errorMessage && (
         <FormHelperText
@@ -84,4 +69,4 @@ function TextInput({
   );
 }
 
-export default TextInput;
+export default AreaInput;

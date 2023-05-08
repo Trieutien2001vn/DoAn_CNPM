@@ -7,7 +7,11 @@ const soKhoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    ten_ct: {
+    ma_loai_ct: {
+      type: String,
+      required: true,
+    },
+    ten_loai_ct: {
       type: String,
       required: true,
     },
@@ -23,6 +27,12 @@ const soKhoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    ma_lo: {
+      type: String,
+    },
+    ten_lo: {
+      type: String,
+    },
     ma_vt: {
       type: String,
       required: true,
@@ -35,17 +45,19 @@ const soKhoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    tien_nhap: {
-      type: Number,
-      default: 0,
-    },
     sl_xuat: {
       type: Number,
       default: 0,
     },
-    tien_xuat: {
+    ton_dau: {
       type: Number,
       default: 0,
+      require: true,
+    },
+    ton_cuoi: {
+      type: Number,
+      default: 0,
+      required: true,
     },
     createdBy: {
       type: String,

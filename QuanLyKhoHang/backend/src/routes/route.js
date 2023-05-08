@@ -4,6 +4,7 @@ const uploadRoute = require("./upload.route");
 const phanQuyenRoute = require("./phanQuyen.route");
 const fileRoute = require("./file.route");
 const danhMucRoute = require("./danhmuc.route");
+const tonKhoRoute = require("./tonKho.route");
 const createError = require("http-errors");
 
 const initApiRoute = (app) => {
@@ -13,6 +14,7 @@ const initApiRoute = (app) => {
   app.use("/api/v1/upload", uploadRoute);
   app.use("/api/v1/file", fileRoute);
   app.use("/api/v1/danhmuc", danhMucRoute);
+  app.use("/api/v1/tonkho", tonKhoRoute);
 
   // handle error
   app.use((req, res, next) => {

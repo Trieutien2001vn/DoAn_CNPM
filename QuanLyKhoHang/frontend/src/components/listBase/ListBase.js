@@ -14,7 +14,7 @@ function ListBase({
   uniqueKey,
   columns,
   Form,
-  Filter, 
+  Filter,
   isDeleted = false,
 }) {
   const { asyncGetList, asyncGetListDeleted } = useApisContext();
@@ -59,12 +59,7 @@ function ListBase({
   useEffect(() => {
     getListData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    paginationOption.limit,
-    paginationOption.page,
-    condition,
-    load,
-  ]);
+  }, [paginationOption.limit, paginationOption.page, condition, load]);
 
   return (
     <>
@@ -83,10 +78,20 @@ function ListBase({
       <AdminLayout>
         <Box sx={{ padding: '10px 0' }}>
           <Grid container spacing="10px" alignItems="flex-start">
-            <Grid item xs={3} lg={2}>
-              {Filter && <Filter setCondition={setCondition} />}
+            <Grid item xs={5} sm={4} md={2}>
+              <Box
+                className="custome-scrolly"
+                sx={{
+                  width: '100%',
+                  height: 'calc(100vh - 50px - 42px - 20px)',
+                  overflow: 'auto',
+                  padding: '1px',
+                }}
+              >
+                {Filter && <Filter setCondition={setCondition} />}
+              </Box>
             </Grid>
-            <Grid item xs={9} lg={10}>
+            <Grid item xs={7} sm={8} md={10}>
               <Stack direction="row" justifyContent="space-between">
                 <Typography sx={{ fontSize: '20px', fontWeight: 500 }}>
                   {`${isDeleted ? 'Khôi phục' : 'Danh sách'} ${title}`}

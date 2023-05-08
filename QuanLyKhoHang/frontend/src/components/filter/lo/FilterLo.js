@@ -4,19 +4,17 @@ import FilterSearch from '../FilterSearch';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
-function FilterKho({ setCondition }) {
+function FilterLo({ setCondition }) {
   const [filter, setFilter] = useState({
-    kho: '',
+    lo: '',
   });
 
   useEffect(() => {
     const condition = {
       $or: [
-        { ma_kho: { $regex: filter.kho.split(' ').join('.*'), $options: 'i' } },
-        {
-          ten_kho: { $regex: filter.kho.split(' ').join('.*'), $options: 'i' },
-        },
-        { $text: { $search: filter.kho } },
+        { ma_lo: { $regex: filter.lo.split(' ').join('.*'), $options: 'i' } },
+        { ten_lo: { $regex: filter.lo.split(' ').join('.*'), $options: 'i' } },
+        { $text: { $search: filter.lo } },
       ],
     };
     setCondition(condition);
@@ -26,11 +24,11 @@ function FilterKho({ setCondition }) {
   return (
     <Stack sx={{ width: '100%' }} spacing="10px">
       <FilterSearch
-        title="Mã, tên kho"
-        onSearch={(value) => setFilter({ kho: value })}
+        title="Mã, tên lô"
+        onSearch={(value) => setFilter({ lo: value })}
       />
     </Stack>
   );
 }
 
-export default FilterKho;
+export default FilterLo;

@@ -8,6 +8,7 @@ function FilterSelectApi({
   value,
   searchFileds,
   onSelect = () => {},
+  getOptionLabel = (option) => option.ten_nvt,
   FormAdd,
 }) {
   return (
@@ -15,7 +16,7 @@ function FilterSelectApi({
       <SelectApiInput
         title={title}
         apiCode={apiCode}
-        getOptionLabel={(option) => option.ten_nvt}
+        getOptionLabel={getOptionLabel}
         searchFileds={searchFileds}
         value={value}
         selectedValue={value}
