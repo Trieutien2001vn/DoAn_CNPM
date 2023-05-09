@@ -62,7 +62,7 @@ export default function FormPNK({
     resolver: yupResolver(schema),
   });
   const { asyncPostData } = useApisContext();
-  const [details, setDetails] = useState(defaultValues?.details || []);
+    const [details, setDetails] = useState(defaultValues?.details || []);
 
   const generateDataPost = (values) => {
     const { kho, nha_cung_cap, ...data } = values;

@@ -13,6 +13,7 @@ import InfoTab from './InfoTab';
 import DescriptionTab from './DescriptionTab';
 import ImageTab from './ImageTab';
 import { useState } from 'react';
+import LoTab from './LoTab';
 
 const schema = yup.object({
   ma_vt: yup.string().required('Vui lòng nhập mã hàng hóa'),
@@ -32,6 +33,7 @@ function FormProduct({
     hinh_anh3: null,
   });
   const { asyncPostData, uploadFile } = useApisContext();
+  const [details, setDetails] = useState(defaultValues?.details || []);
   const {
     register,
     handleSubmit,
@@ -150,6 +152,7 @@ function FormProduct({
           { label: 'Thông tin', value: '1' },
           { label: 'Mô tả', value: '2' },
           { label: 'Hình ảnh', value: '3' },
+          { label: (isEdit && defaultValues?.theo_doi_lo) ? 'Lô' : '', value: '4' },
         ]}
       >
         <TabPanel value="1" sx={{ padding: '10px 0 0 0' }}>
@@ -168,6 +171,14 @@ function FormProduct({
             setThumbnails={setThumbnails}
             defaultValues={defaultValues}
           />
+        </TabPanel>
+        <TabPanel value="4" sx={{ padding: '10px 0 0 0' }}>
+         {
+           isEdit && defaultValues?.theo_doi_lo &&
+           <LoTab
+             maVt={defaultValues?.ma_vt}
+           />
+         }
         </TabPanel>
       </TabsBase>
     </ModalBase>
