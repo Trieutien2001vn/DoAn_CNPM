@@ -10,10 +10,18 @@ export default function ModalBase({
   title,
   actions,
   width,
+  sx = {},
+  ...props
 }) {
   return (
     <div>
-      <Modal open={open} onClose={handleClose}>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        disableAutoFocus
+        sx={sx}
+        {...props}
+      >
         <Box
           sx={{
             width: width || 'fit-content',
@@ -48,7 +56,7 @@ export default function ModalBase({
             className="custome-scrolly"
             sx={{
               height: 'auto',
-              maxHeight: '70vh',
+              maxHeight: '80vh',
               overflow: 'auto',
               padding: '0 20px 10px 20px',
             }}

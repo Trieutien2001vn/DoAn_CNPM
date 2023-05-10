@@ -14,6 +14,14 @@ const loSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    ma_kho: {
+      type: String,
+      required: true,
+    },
+    ten_kho: {
+      type: String,
+      required: true,
+    },
     ngay_san_xuat: {
       type: Date,
       default: "",

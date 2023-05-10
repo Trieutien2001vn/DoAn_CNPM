@@ -118,6 +118,7 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true, collection: "vat_tu" }
 );
+
 productSchema.index(
   { ma_vt: "text", ten_vt: "text" },
   { default_language: "none" }

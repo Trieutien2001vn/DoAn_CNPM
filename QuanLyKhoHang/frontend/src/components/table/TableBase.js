@@ -29,8 +29,10 @@ function TableBase({
   progressPending = false,
   paginationTotalRows,
   paginationPerPage = 20,
+  fixedHeaderScrollHeight,
   loadData = () => {},
   isDeleted = false,
+  isOpenDm,
 }) {
   const theme = useTheme();
   const { asyncDelete, asyncDestroy, asyncRestore } = useApisContext();
@@ -96,7 +98,7 @@ function TableBase({
   return (
     <DataTable
       fixedHeader
-      fixedHeaderScrollHeight="calc(100vh - 50px - 42px - 34px - 34px - 20px - 10px - 18px - 56px)"
+      fixedHeaderScrollHeight={fixedHeaderScrollHeight}
       persistTableHead
       actions={
         <Stack
@@ -105,68 +107,9 @@ function TableBase({
           spacing="10px"
           sx={{ height: '34px' }}
         >
-          <Tooltip placement="top" title="Quay lại" arrow>
-            <IconButton
-              onClick={() => navigate(-1)}
-              sx={{
-                backgroundColor: 'primary.second',
-                color: 'whitish.pureWhite',
-                borderRadius: '4px',
-                '&:hover': { backgroundColor: 'primary.second' },
-              }}
-            >
-              <TiArrowBack fontSize="14px" />
-            </IconButton>
-          </Tooltip>
-          {selectedRows && selectedRows.length > 0 && (
+          {isOpenDm ? (
             <>
-              {isDeleted ? (
-                <Tooltip placement="top" title="Xóa vĩnh viễn" arrow>
-                  <IconButton
-                    onClick={() =>
-                      confirmContext({
-                        title: 'Xác nhận',
-                        onConfirm: handleDestroyRow,
-                        content: (
-                          <Box sx={{ padding: '0 10px' }}>
-                            <Typography
-                              sx={{ fontSize: '14px', textAlign: 'center' }}
-                            >
-                              Bạn có chắc muốn xóa vĩnh viễn{' '}
-                              <b>
-                                {selectedRows.length < data.length
-                                  ? selectedRows.length
-                                  : 'tất cả'}
-                              </b>{' '}
-                              {title} <br /> đã chọn không ?
-                            </Typography>
-                            <Typography
-                              sx={{
-                                fontSize: '12px',
-                                textAlign: 'left',
-                                fontStyle: 'italic',
-                                color: 'primary.main',
-                                marginTop: '10px',
-                              }}
-                            >
-                              Lưu ý: sau khi đồng ý, {title} sẽ bị xóa vĩnh viễn
-                              và không thể khôi phục lại được.
-                            </Typography>
-                          </Box>
-                        ),
-                      })
-                    }
-                    sx={{
-                      backgroundColor: 'error.main',
-                      color: 'whitish.pureWhite',
-                      borderRadius: '4px',
-                      '&:hover': { backgroundColor: 'error.main' },
-                    }}
-                  >
-                    <RiFileDamageFill fontSize="14px" />
-                  </IconButton>
-                </Tooltip>
-              ) : (
+              {selectedRows?.length > 0 && (
                 <Tooltip placement="top" title="Chuyển vào thùng rác" arrow>
                   <IconButton
                     onClick={() =>
@@ -215,13 +158,141 @@ function TableBase({
                 </Tooltip>
               )}
             </>
-          )}
-          {isDeleted ? (
+          ) : (
             <>
-              {selectedRows?.length > 0 && (
-                <Tooltip placement="top" title="Khôi phục" arrow>
+              <Tooltip placement="top" title="Quay lại" arrow>
+                <IconButton
+                  onClick={() => navigate(-1)}
+                  sx={{
+                    backgroundColor: 'primary.second',
+                    color: 'whitish.pureWhite',
+                    borderRadius: '4px',
+                    '&:hover': { backgroundColor: 'primary.second' },
+                  }}
+                >
+                  <TiArrowBack fontSize="14px" />
+                </IconButton>
+              </Tooltip>
+              {selectedRows && selectedRows.length > 0 && (
+                <>
+                  {isDeleted ? (
+                    <Tooltip placement="top" title="Xóa vĩnh viễn" arrow>
+                      <IconButton
+                        onClick={() =>
+                          confirmContext({
+                            title: 'Xác nhận',
+                            onConfirm: handleDestroyRow,
+                            content: (
+                              <Box sx={{ padding: '0 10px' }}>
+                                <Typography
+                                  sx={{ fontSize: '14px', textAlign: 'center' }}
+                                >
+                                  Bạn có chắc muốn xóa vĩnh viễn{' '}
+                                  <b>
+                                    {selectedRows.length < data.length
+                                      ? selectedRows.length
+                                      : 'tất cả'}
+                                  </b>{' '}
+                                  {title} <br /> đã chọn không ?
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: '12px',
+                                    textAlign: 'left',
+                                    fontStyle: 'italic',
+                                    color: 'primary.main',
+                                    marginTop: '10px',
+                                  }}
+                                >
+                                  Lưu ý: sau khi đồng ý, {title} sẽ bị xóa vĩnh
+                                  viễn và không thể khôi phục lại được.
+                                </Typography>
+                              </Box>
+                            ),
+                          })
+                        }
+                        sx={{
+                          backgroundColor: 'error.main',
+                          color: 'whitish.pureWhite',
+                          borderRadius: '4px',
+                          '&:hover': { backgroundColor: 'error.main' },
+                        }}
+                      >
+                        <RiFileDamageFill fontSize="14px" />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip placement="top" title="Chuyển vào thùng rác" arrow>
+                      <IconButton
+                        onClick={() =>
+                          confirmContext({
+                            title: 'Xác nhận',
+                            onConfirm: handleDeleteRow,
+                            content: (
+                              <Box sx={{ padding: '0 10px' }}>
+                                <Typography
+                                  sx={{ fontSize: '14px', textAlign: 'center' }}
+                                >
+                                  Bạn có chắc muốn chuyển{' '}
+                                  <b>
+                                    {selectedRows.length < data.length
+                                      ? selectedRows.length
+                                      : 'tất cả'}
+                                  </b>{' '}
+                                  {title} <br /> vào thùng rác không ?
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontSize: '12px',
+                                    textAlign: 'left',
+                                    fontStyle: 'italic',
+                                    color: 'primary.main',
+                                    marginTop: '10px',
+                                  }}
+                                >
+                                  Lưu ý: sau khi đồng ý, {title} sẽ được chuyển
+                                  vào thùng rác. Bạn có thể vào thùng rác để
+                                  khôi phục lại.
+                                </Typography>
+                              </Box>
+                            ),
+                          })
+                        }
+                        sx={{
+                          backgroundColor: 'error.main',
+                          color: 'whitish.pureWhite',
+                          borderRadius: '4px',
+                          '&:hover': { backgroundColor: 'error.main' },
+                        }}
+                      >
+                        <FaTrash fontSize="14px" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </>
+              )}
+              {isDeleted ? (
+                <>
+                  {selectedRows?.length > 0 && (
+                    <Tooltip placement="top" title="Khôi phục" arrow>
+                      <IconButton
+                        onClick={handleRestore}
+                        sx={{
+                          backgroundColor: 'secondary.main',
+                          color: 'whitish.pureWhite',
+                          borderRadius: '4px',
+                          '&:hover': { backgroundColor: 'secondary.main' },
+                        }}
+                      >
+                        <FaTrashRestore fontSize="14px" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </>
+              ) : (
+                <Tooltip placement="top" title="Xem thùng rác" arrow>
                   <IconButton
-                    onClick={handleRestore}
+                    onClick={() => navigate('restore')}
                     sx={{
                       backgroundColor: 'secondary.main',
                       color: 'whitish.pureWhite',
@@ -229,25 +300,11 @@ function TableBase({
                       '&:hover': { backgroundColor: 'secondary.main' },
                     }}
                   >
-                    <FaTrashRestore fontSize="14px" />
+                    <RiChatHistoryFill fontSize="14px" />
                   </IconButton>
                 </Tooltip>
               )}
             </>
-          ) : (
-            <Tooltip placement="top" title="Xem thùng rác" arrow>
-              <IconButton
-                onClick={() => navigate('restore')}
-                sx={{
-                  backgroundColor: 'secondary.main',
-                  color: 'whitish.pureWhite',
-                  borderRadius: '4px',
-                  '&:hover': { backgroundColor: 'secondary.main' },
-                }}
-              >
-                <RiChatHistoryFill fontSize="14px" />
-              </IconButton>
-            </Tooltip>
           )}
         </Stack>
       }

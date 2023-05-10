@@ -1,8 +1,8 @@
 import FormProduct from '~/components/form/product/FormProduct';
 import { formatDateDisplay, numeralCustom } from './helpers';
-import FormNVT from '~/components/form/FormNVT';
-import FormDVT from '~/components/form/FormDVT';
-import FormKho from '~/components/form/FormKho';
+import FormNVT from '~/components/form/productGroup/FormNVT';
+import FormDVT from '~/components/form/dvt/FormDVT';
+import FormKho from '~/components/form/kho/FormKho';
 import FilterProduct from '~/components/filter/product/FilterProduct';
 import FilterProductGroup from '~/components/filter/productGroup/FilterProductGroup';
 import FilterDVT from '~/components/filter/donViTinh/FilterDVT';
@@ -15,6 +15,8 @@ import FormPNK from '~/components/form/pnk/FormPNK';
 import FormLo from '~/components/form/lo/FormLo';
 import FilterLo from '~/components/filter/lo/FilterLo';
 import FilterPNK from '~/components/filter/pnk/FilterPNK';
+import FormPXK from '~/components/form/pxk/FormPXK';
+import FilterPXK from '~/components/filter/pxk/FilterPXK';
 
 const dsDanhMuc = {
   dmvt: {
@@ -233,6 +235,13 @@ const dsDanhMuc = {
         wrap: true,
       },
       {
+        name: 'Kho',
+        selector: (row) => row.ten_kho,
+        sortable: true,
+        minWidth: '200px',
+        wrap: true,
+      },
+      {
         name: 'Tên hàng',
         selector: (row) => row.ten_vt,
         sortable: true,
@@ -293,6 +302,67 @@ const dsDanhMuc = {
         name: 'Mã phiếu',
         selector: (row) => row.ma_phieu,
         sortable: true,
+        width: '120px',
+        wrap: true,
+      },
+      {
+        name: 'Mã chứng từ',
+        selector: (row) => row.ma_ct,
+        sortable: true,
+        minWidth: '120px',
+        wrap: true,
+      },
+      {
+        name: 'Kho',
+        selector: (row) => row.ten_kho,
+        sortable: true,
+        center: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Ngày chứng từ',
+        selector: (row) => row.ngay_ct,
+        sortable: true,
+        center: true,
+        format: (row) => formatDateDisplay(row.ngay_ct),
+        minWidth: '150px',
+      },
+      {
+        name: 'Ngày nhập hàng',
+        selector: (row) => row.ngay_nhap_hang,
+        sortable: true,
+        minWidth: '150px',
+        center: true,
+        format: (row) => formatDateDisplay(row.ngay_nhap_hang),
+      },
+      {
+        name: 'Nhà cung cấp',
+        selector: (row) => row.ten_ncc,
+        sortable: true,
+        minWidth: '130px',
+        center: true,
+        wrap: true,
+      },
+      {
+        name: 'Tổng tiền nhập',
+        selector: (row) => row.tong_tien_nhap,
+        sortable: true,
+        center: true,
+        minWidth: '150px',
+        format: (row) => numeralCustom(row.tong_tien_nhap).format(),
+      },
+    ],
+  },
+  dmpxk: {
+    title: 'phiếu xuất kho',
+    uniqueKey: 'ma_phieu',
+    Form: FormPXK,
+    Filter: FilterPXK,
+    columns: [
+      {
+        name: 'Mã phiếu',
+        selector: (row) => row.ma_phieu,
+        sortable: true,
         minWidth: '100px',
       },
       {
@@ -317,28 +387,20 @@ const dsDanhMuc = {
         minWidth: '100px',
       },
       {
-        name: 'Ngày nhập hàng',
-        selector: (row) => row.ngay_nhap_hang,
+        name: 'Ngày xuất hàng',
+        selector: (row) => row.ngay_xuat_hang,
         sortable: true,
-        minWidth: '100px',
         center: true,
-        format: (row) => formatDateDisplay(row.ngay_nhap_hang),
+        format: (row) => formatDateDisplay(row.ngay_xuat_hang),
+        minWidth: '100px',
       },
       {
-        name: 'Nhà cung cấp',
-        selector: (row) => row.ten_ncc,
-        sortable: true,
-        minWidth: '100px',
-        center: true,
-        wrap: true,
-      },
-      {
-        name: 'Tổng tiền nhập',
-        selector: (row) => row.tong_tien_nhap,
+        name: 'Tổng tiền xuất',
+        selector: (row) => row.tong_tien_xuat,
         sortable: true,
         center: true,
         minWidth: '100px',
-        format: (row) => numeralCustom(row.tong_tien_nhap).format(),
+        format: (row) => numeralCustom(row.tong_tien_xuat).format(),
       },
     ],
   },

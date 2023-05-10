@@ -1,13 +1,13 @@
 import React from 'react';
-import ModalBase from '../modal/ModalBase';
-import ButtonBase from '../button/ButtonBase';
+import ModalBase from '../../modal/ModalBase';
+import ButtonBase from '../../button/ButtonBase';
 import { v4 } from 'uuid';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { FiSave } from 'react-icons/fi';
 import { Grid } from '@mui/material';
-import TextInput from '../input/TextInput';
+import TextInput from '../../input/TextInput';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 
 export default function FormDVT({

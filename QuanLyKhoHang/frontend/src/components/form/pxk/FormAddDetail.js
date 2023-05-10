@@ -22,18 +22,14 @@ const baseSchema = {
     .object()
     .typeError('Hàng hóa chưa có đơn vị tính')
     .required('Hàng hóa chưa có đơn vị tính'),
-  gia_von: yup
+  gia_xuat: yup
     .number()
-    .typeError('Giá vốn phải là số')
-    .required('Vui lòng nhập giá vốn'),
-  so_luong_nhap: yup
+    .typeError('Giá xuất phải là số')
+    .required('Vui lòng nhập giá xuất'),
+  so_luong_xuat: yup
     .number()
     .typeError('Số lượng phải là số')
     .required('Vui lòng nhập số lượng'),
-  tien_nhap: yup
-    .number()
-    .typeError('Tiền nhập phải là số')
-    .required('Vui lòng nhập tiền nhập'),
 };
 
 function FormAddDetail({
@@ -72,9 +68,10 @@ function FormAddDetail({
         }
       : {},
   });
+
   const vatTu = watch('vat_tu');
-  const soLuongNhap = watch('so_luong_nhap');
-  const giaVon = watch('gia_von');
+  const soLuongXuat = watch('so_luong_xuat');
+  const giaXuat = watch('gia_xuat');
   useEffect(() => {
     if (vatTu) {
       setValue('don_vi_tinh', {
@@ -100,10 +97,10 @@ function FormAddDetail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vatTu]);
   useEffect(() => {
-    const tienNhap = (soLuongNhap || 0) * (giaVon || 0);
-    setValue('tien_nhap', tienNhap);
+    const tienXuat = (soLuongXuat || 0) * (giaXuat || 0);
+    setValue('tien_xuat', tienXuat);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soLuongNhap, giaVon]);
+  }, [soLuongXuat, giaXuat]);
 
   const handleSave = (values) => {
     return new Promise((resovle) => {
@@ -146,7 +143,7 @@ function FormAddDetail({
                 label="Hàng hóa"
                 required
                 apiCode="dmvt"
-                placeholder="Hàng nhập kho"
+                placeholder="Hàng xuất kho"
                 searchFileds={['ma_vt', 'ten_vt']}
                 getOptionLabel={(option) => option.ten_vt}
                 selectedValue={value}
@@ -182,51 +179,50 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="gia_von"
+            name="gia_xuat"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Giá vốn"
+                label="Giá xuất"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
                 }}
-                errorMessage={errors?.gia_von?.message}
+                errorMessage={errors?.gia_xuat?.message}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="so_luong_nhap"
+            name="so_luong_xuat"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Số lượng nhập"
+                label="Số lượng xuất"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
                 }}
-                errorMessage={errors?.so_luong_nhap?.message}
+                errorMessage={errors?.so_luong_xuat?.message}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="tien_nhap"
+            name="tien_xuat"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Tiền nhập"
+                label="Tiền xuất"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
                 }}
-                errorMessage={errors?.tien_nhap?.message}
               />
             )}
           />

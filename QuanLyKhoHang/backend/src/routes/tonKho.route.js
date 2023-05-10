@@ -17,5 +17,15 @@ router.post(
   authMiddleware.verifyToken,
   tonKhoController.getInventoryOnStore
 );
+router.post(
+  "/tontheolo",
+  authMiddleware.verifyToken,
+  tonKhoController.getInventoryByConsignment
+);
+router.post(
+  "/tonchitietlo",
+  authMiddleware.verifyToken,
+  tonKhoController.getDetailInventoryByConsignment
+);
 
 module.exports = router;
