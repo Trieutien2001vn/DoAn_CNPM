@@ -13,7 +13,7 @@ function InfoTab({ register, control, isEdit, errors }) {
         <TextInput
           disabled={isEdit}
           label="Mã phiếu"
-          placeholder="VD: PNK0001"
+          placeholder="VD: PXK0001"
           name="ma_phieu"
           register={register}
           required
@@ -22,12 +22,13 @@ function InfoTab({ register, control, isEdit, errors }) {
       </Grid>
       <Grid item xs={12} md={6}>
         <TextInput
+          required
           type="date"
-          label="Ngày nhập hàng"
-          placeholder="Ngày hàng vào kho"
-          name="ngay_nhap_hang"
+          label="Ngày xuất hàng"
+          placeholder="Ngày hàng xuất kho"
+          name="ngay_xuat_hang"
           register={register}
-          errorMessage={errors?.ngay_nhap_hang?.message}
+          errorMessage={errors?.ngay_xuat_hang?.message}
         />
       </Grid>
       <Grid item xs={12} md={6}>
@@ -40,7 +41,7 @@ function InfoTab({ register, control, isEdit, errors }) {
               label="Kho"
               required
               apiCode="dmkho"
-              placeholder="Kho nhập"
+              placeholder="Kho xuất"
               searchFileds={['ma_kho', 'ten_kho']}
               getOptionLabel={(option) => option.ten_kho}
               selectedValue={value}
@@ -55,26 +56,7 @@ function InfoTab({ register, control, isEdit, errors }) {
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
-          name="nha_cung_cap"
-          render={({ field: { onChange, value } }) => (
-            <SelectApiInput
-              label="Nhà cung cấp"
-              apiCode="dmncc"
-              placeholder="Nhà cung cấp"
-              searchFileds={['ma_ncc', 'ten_ncc']}
-              getOptionLabel={(option) => option.ten_ncc}
-              selectedValue={value}
-              value={value || { ma_ncc: '', ten_ncc: '' }}
-              onSelect={onChange}
-              FormAdd={dsDanhMuc['dmncc'].Form}
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="tong_tien_nhap"
+          name="tong_tien_xuat"
           render={({ field: { value, onChange } }) => (
             <TextInput
               value={numeralCustom(value).format()}
@@ -82,8 +64,8 @@ function InfoTab({ register, control, isEdit, errors }) {
                 const val = numeralCustom(e.target.value).value();
                 onChange(val);
               }}
-              label="Tổng tiền nhập"
-              placeholder="Tiền nhập hàng"
+              label="Tổng tiền xuất"
+              placeholder="Tiền xuất hàng"
             />
           )}
         />

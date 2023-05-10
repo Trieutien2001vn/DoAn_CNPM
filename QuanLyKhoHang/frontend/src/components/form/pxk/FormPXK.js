@@ -15,7 +15,7 @@ import DescriptionTab from './DescriptionTab';
 import DetailsTab from './DetailsTab';
 import { useState } from 'react';
 
-export default function FormPNK({
+export default function FormPXK({
   open,
   handleClose,
   setLoad = () => {},
@@ -28,10 +28,10 @@ export default function FormPNK({
       .object()
       .typeError('Vui lòng chọn kho')
       .required('Vui lòng chọn kho'),
-    ngay_nhap_hang: yup
+    ngay_xuat_hang: yup
       .date()
-      .typeError('Vui lòng chọn ngày nhập hàng')
-      .required('Vui lòng chọn ngày nhập hàng'),
+      .typeError('Vui lòng chọn ngày xuất hàng')
+      .required('Vui lòng chọn ngày xuất hàng'),
   });
   const {
     handleSubmit,
@@ -48,30 +48,24 @@ export default function FormPNK({
             ma_kho: defaultValues?.ma_kho,
             ten_kho: defaultValues?.ten_kho,
           },
-          nha_cung_cap: {
-            ma_ncc: defaultValues?.ma_ncc,
-            ten_ncc: defaultValues?.ten_ncc,
-          },
-          ngay_nhap_hang: moment(defaultValues.ngay_nhap_hang).format(
+          ngay_xuat_hang: moment(defaultValues.ngay_xuat_hang).format(
             'YYYY-MM-DD'
           ),
         }
       : {
-          ngay_nhap_hang: moment().format('YYYY-MM-DD'),
+          ngay_xuat_hang: moment().format('YYYY-MM-DD'),
         },
     resolver: yupResolver(schema),
   });
   const { asyncPostData } = useApisContext();
-    const [details, setDetails] = useState(defaultValues?.details || []);
+  const [details, setDetails] = useState(defaultValues?.details || []);
 
   const generateDataPost = (values) => {
-    const { kho, nha_cung_cap, ...data } = values;
+    const { kho, ...data } = values;
     const result = {
       ...data,
       ma_kho: kho?.ma_kho || '',
       ten_kho: kho?.ten_kho || '',
-      ma_ncc: nha_cung_cap?.ma_ncc || '',
-      ten_ncc: nha_cung_cap?.ten_ncc || '',
       details,
     };
     return result;
@@ -80,7 +74,7 @@ export default function FormPNK({
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
     const dataPost = generateDataPost(values);
-    await asyncPostData('dmpnk', dataPost, method).then((resp) => {
+    await asyncPostData('dmpxk', dataPost, method).then((resp) => {
       if (!resp.message) {
         handleClose();
         reset();
@@ -94,7 +88,7 @@ export default function FormPNK({
       open={open}
       handleClose={handleClose}
       width="900px"
-      title={`${isEdit ? 'Chỉnh sửa' : 'Tạo'} phiếu nhập kho`}
+      title={`${isEdit ? 'Chỉnh sửa' : 'Tạo'} phiếu xuất kho`}
       actions={[
         <ButtonBase
           key={v4()}
@@ -112,7 +106,7 @@ export default function FormPNK({
       <TabsBase
         tabLabels={[
           { label: 'Thông tin', value: '1' },
-          { label: 'Chi tiết nhập', value: '2' },
+          { label: 'Chi tiết xuất', value: '2' },
           { label: 'Diễn giải', value: '3' },
         ]}
       >

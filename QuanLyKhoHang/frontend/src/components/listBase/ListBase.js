@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Stack, Typography } from '@mui/material';
-import AdminLayout from '~/components/layouts/AdminLayout';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { SiMicrosoftexcel } from 'react-icons/si';
 import ButtonBase from '~/components/button/ButtonBase';
@@ -16,6 +15,9 @@ function ListBase({
   Form,
   Filter,
   isDeleted = false,
+  isOpenDm = false,
+  fixedHeaderScrollHeight,
+  filterHeight,
 }) {
   const { asyncGetList, asyncGetListDeleted } = useApisContext();
   const [data, setData] = useState([]);
@@ -75,71 +77,74 @@ function ListBase({
           isEdit={isEdit}
         />
       )}
-      <AdminLayout>
-        <Box sx={{ padding: '10px 0' }}>
-          <Grid container spacing="10px" alignItems="flex-start">
-            <Grid item xs={5} sm={4} md={2}>
-              <Box
-                className="custome-scrolly"
-                sx={{
-                  width: '100%',
-                  height: 'calc(100vh - 50px - 42px - 20px)',
-                  overflow: 'auto',
-                  padding: '1px',
-                }}
-              >
-                {Filter && <Filter setCondition={setCondition} />}
-              </Box>
-            </Grid>
-            <Grid item xs={7} sm={8} md={10}>
-              <Stack direction="row" justifyContent="space-between">
-                <Typography sx={{ fontSize: '20px', fontWeight: 500 }}>
-                  {`${isDeleted ? 'Khôi phục' : 'Danh sách'} ${title}`}
-                </Typography>
-                <Stack direction="row" spacing="10px">
-                  {!isDeleted && (
-                    <>
-                      <ButtonBase
-                        startIcon={<AiOutlinePlusCircle fontSize="14px" />}
-                        onClick={() => {
-                          setOpenForm(true);
-                          setIsEdit(false);
-                        }}
-                      >
-                        Thêm mới
-                      </ButtonBase>
-                      <ButtonBase
-                        startIcon={<SiMicrosoftexcel fontSize="14px" />}
-                      >
-                        Import excel
-                      </ButtonBase>
-                    </>
-                  )}
-                  <ButtonBase startIcon={<TbTableExport fontSize="14px" />}>
-                    Export excel
-                  </ButtonBase>
-                </Stack>
-              </Stack>
-              <Box>
-                <TableBase
-                  maDanhMuc={maDanhMuc}
-                  uniquekey={uniqueKey}
-                  columns={columns || []}
-                  data={data}
-                  title={title}
-                  progressPending={loading}
-                  paginationTotalRows={paginationOption.totalRows}
-                  paginationPerPage={paginationOption.limit}
-                  onChangeRowsPerPage={handleRowPerPageChange}
-                  onRowClicked={handleRowClicked}
-                  loadData={getListData}
-                  isDeleted={isDeleted}
-                />
-              </Box>
-            </Grid>
+      <Box sx={{ padding: '10px 0' }}>
+        <Grid container spacing="10px" alignItems="flex-start">
+          <Grid item xs={5} sm={4} md={2.5}>
+            <Box
+              className="custome-scrolly"
+              sx={{
+                width: '100%',
+                height: filterHeight || 'calc(100vh - 50px - 42px - 20px)',
+                overflow: 'auto',
+                padding: '1px',
+              }}
+            >
+              {Filter && <Filter setCondition={setCondition} />}
+            </Box>
           </Grid>
-        </Box>
-      </AdminLayout>
+          <Grid item xs={7} sm={8} md={9.5}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography sx={{ fontSize: '20px', fontWeight: 500 }}>
+                {`${isDeleted ? 'Khôi phục' : 'Danh sách'} ${title}`}
+              </Typography>
+              <Stack direction="row" spacing="10px">
+                {!isDeleted && (
+                  <>
+                    <ButtonBase
+                      startIcon={<AiOutlinePlusCircle fontSize="14px" />}
+                      onClick={() => {
+                        setOpenForm(true);
+                        setIsEdit(false);
+                      }}
+                    >
+                      Thêm mới
+                    </ButtonBase>
+                    <ButtonBase
+                      startIcon={<SiMicrosoftexcel fontSize="14px" />}
+                    >
+                      Import excel
+                    </ButtonBase>
+                  </>
+                )}
+                <ButtonBase startIcon={<TbTableExport fontSize="14px" />}>
+                  Export excel
+                </ButtonBase>
+              </Stack>
+            </Stack>
+            <Box>
+              <TableBase
+                maDanhMuc={maDanhMuc}
+                uniquekey={uniqueKey}
+                columns={columns || []}
+                data={data}
+                title={title}
+                progressPending={loading}
+                paginationTotalRows={paginationOption.totalRows}
+                paginationPerPage={paginationOption.limit}
+                onChangeRowsPerPage={handleRowPerPageChange}
+                onRowClicked={handleRowClicked}
+                loadData={getListData}
+                isDeleted={isDeleted}
+                fixedHeaderScrollHeight={
+                  fixedHeaderScrollHeight ||
+                  'calc(100vh - 50px - 42px - 34px - 34px - 20px - 18px - 56px)'
+                }
+                isOpenDm={isOpenDm}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
     </>
   );
 }

@@ -23,6 +23,10 @@ export default function FormLo({
   const schema = yup.object({
     ma_lo: yup.string().required('Vui lòng nhập mã lô'),
     ten_lo: yup.string().required('Vui lòng nhập tên lô'),
+    kho: yup
+      .object()
+      .typeError('Vui lòng chọn kho')
+      .required('Vui lòng chọn kho'),
     vat_tu: yup
       .object()
       .typeError('Vui lòng chọn hàng hóa')
@@ -40,6 +44,9 @@ export default function FormLo({
       ? {
           ma_lo: defaultValues.ma_lo,
           ten_lo: defaultValues.ten_lo,
+          kho: defaultValues.ma_kho
+            ? { ma_kho: defaultValues.ma_kho, ten_kho: defaultValues.ten_kho }
+            : { ma_kho: '', ten_kho: '' },
           vat_tu: defaultValues.ma_vt
             ? { ma_vt: defaultValues.ma_vt, ten_vt: defaultValues.ten_vt }
             : { ma_vt: '', ten_vt: '' },
@@ -54,8 +61,14 @@ export default function FormLo({
   const { asyncPostData } = useApisContext();
 
   const generateDataPost = (values) => {
-    const { vat_tu, ...data } = values;
-    return { ...data, ma_vt: vat_tu.ma_vt, ten_vt: vat_tu.ten_vt };
+    const { kho, vat_tu, ...data } = values;
+    return {
+      ...data,
+      ma_kho: kho.ma_kho,
+      ten_kho: kho.ten_kho,
+      ma_vt: vat_tu.ma_vt,
+      ten_vt: vat_tu.ten_vt,
+    };
   };
 
   const handleSave = async (values) => {
@@ -113,21 +126,24 @@ export default function FormLo({
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextInput
-            label="Ngày sản xuất"
-            type="date"
-            placeholder="Ngày sản xuất"
-            name="ngay_san_xuat"
-            register={register}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            label="Hạn sử dụng"
-            type="date"
-            placeholder="Hạn sử dụng"
-            name="han_su_dung"
-            register={register}
+          <Controller
+            control={control}
+            name="kho"
+            render={({ field: { onChange, value } }) => (
+              <SelectApiInput
+                label="Kho"
+                required
+                apiCode="dmkho"
+                placeholder="Kho theo lô"
+                searchFileds={['ma_kho', 'ten_kho']}
+                getOptionLabel={(option) => option.ten_kho}
+                selectedValue={value}
+                value={value || { ma_kho: '', ten_kho: '' }}
+                onSelect={onChange}
+                FormAdd={dsDanhMuc['dmkho'].Form}
+                errorMessage={errors?.kho?.message}
+              />
+            )}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -149,6 +165,24 @@ export default function FormLo({
                 errorMessage={errors?.vat_tu?.message}
               />
             )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextInput
+            label="Ngày sản xuất"
+            type="date"
+            placeholder="Ngày sản xuất"
+            name="ngay_san_xuat"
+            register={register}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <TextInput
+            label="Hạn sử dụng"
+            type="date"
+            placeholder="Hạn sử dụng"
+            name="han_su_dung"
+            register={register}
           />
         </Grid>
       </Grid>

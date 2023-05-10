@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   TextField,
   Typography,
@@ -15,6 +15,9 @@ import { VscLoading } from 'react-icons/vsc';
 import useSnackbarContext from '~/hooks/hookContext/useSnackbarContext';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 import ButtonBase from '../button/ButtonBase';
+import ListBase from '../listBase/ListBase';
+import { dsDanhMuc } from '~/utils/data';
+import ModalBase from '../modal/ModalBase';
 
 const AutoCompleteStyled = styled(Autocomplete)`
   width: 100%;
@@ -65,8 +68,12 @@ function SelectApiInput({
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [openForm, setOpenForm] = useState(false);
+  const [openDm, setOpenDm] = useState(false);
 
   const timerRef = useRef();
+  const danhMuc = useMemo(() => {
+    return dsDanhMuc[apiCode];
+  }, [apiCode]);
 
   // handle get data
   const handleGetData = async (search, page, oldOptions = []) => {
@@ -145,6 +152,25 @@ function SelectApiInput({
           defaultValues={{ [searchFileds[0]]: search }}
         />
       )}
+      {openDm && (
+        <ModalBase
+          width="90vw"
+          open={openDm}
+          handleClose={() => setOpenDm(false)}
+        >
+          <ListBase
+            title={danhMuc?.title}
+            columns={danhMuc?.columns}
+            maDanhMuc={apiCode}
+            uniqueKey={danhMuc?.uniqueKey}
+            Form={danhMuc?.Form}
+            Filter={danhMuc?.Filter}
+            fixedHeaderScrollHeight="calc(90vh - 40px - 10px - 30px - 56px - 56px - 10px)"
+            filterHeight="calc(90vh - 40px - 10px - 10px)"
+            isOpenDm
+          />
+        </ModalBase>
+      )}
       <Stack
         spacing="5px"
         sx={{ width: '100%' }}
@@ -192,6 +218,9 @@ function SelectApiInput({
               {!!FormAdd && (
                 <ButtonBase onClick={openFormAdd}>Thêm '{search}'</ButtonBase>
               )}
+              <ButtonBase variant="outlined" onClick={() => setOpenDm(true)}>
+                Mở danh mục
+              </ButtonBase>
             </Stack>
           }
           getOptionLabel={getOptionLabel}
