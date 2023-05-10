@@ -14,6 +14,7 @@ import DescriptionTab from './DescriptionTab';
 import ImageTab from './ImageTab';
 import { useState } from 'react';
 import LoTab from './LoTab';
+import KhoTab from './KhoTab';
 
 const schema = yup.object({
   ma_vt: yup.string().required('Vui lòng nhập mã hàng hóa'),
@@ -33,7 +34,6 @@ function FormProduct({
     hinh_anh3: null,
   });
   const { asyncPostData, uploadFile } = useApisContext();
-  const [details, setDetails] = useState(defaultValues?.details || []);
   const {
     register,
     handleSubmit,
@@ -131,7 +131,7 @@ function FormProduct({
     <ModalBase
       open={open}
       handleClose={handleClose}
-      width="700px"
+      width="800px"
       title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} hàng hóa`}
       actions={[
         <ButtonBase
@@ -152,7 +152,11 @@ function FormProduct({
           { label: 'Thông tin', value: '1' },
           { label: 'Mô tả', value: '2' },
           { label: 'Hình ảnh', value: '3' },
-          { label: (isEdit && defaultValues?.theo_doi_lo) ? 'Lô' : '', value: '4' },
+          {
+            label: isEdit && defaultValues?.theo_doi_lo ? 'Lô hàng' : '',
+            value: '4',
+          },
+          { label: defaultValues?.ma_vt ? 'Thẻ kho' : '', value: '5' },
         ]}
       >
         <TabPanel value="1" sx={{ padding: '10px 0 0 0' }}>
@@ -173,13 +177,18 @@ function FormProduct({
           />
         </TabPanel>
         <TabPanel value="4" sx={{ padding: '10px 0 0 0' }}>
-         {
-           isEdit && defaultValues?.theo_doi_lo &&
-           <LoTab
-             maVt={defaultValues?.ma_vt}
-           />
-         }
+          {isEdit && defaultValues?.theo_doi_lo && (
+            <LoTab maVt={defaultValues?.ma_vt} />
+          )}
         </TabPanel>
+        {defaultValues?.ma_vt && (
+          <TabPanel value="5" sx={{ padding: '10px 0 0 0' }}>
+            <KhoTab
+              maVt={defaultValues?.ma_vt}
+              theoDoiLo={defaultValues?.theo_doi_lo}
+            />
+          </TabPanel>
+        )}
       </TabsBase>
     </ModalBase>
   );
