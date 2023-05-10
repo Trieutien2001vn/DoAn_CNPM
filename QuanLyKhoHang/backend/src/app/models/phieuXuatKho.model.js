@@ -146,7 +146,7 @@ phieuXuatKhoSchema.pre("save", async function (next) {
     pxk.ma_loai_ct = chungTu.ma_ct;
     pxk.ten_loai_ct = chungTu.ten_ct;
 
-    for (let i = 1; i < details.length; i++) {
+    for (let i = 0; i < details.length; i++) {
       const detail = details[i];
       if (detail.ma_lo) {
         const loValidate = await loModel.findOne({
@@ -154,10 +154,11 @@ phieuXuatKhoSchema.pre("save", async function (next) {
           ma_lo: detail.ma_lo,
           ma_vt: detail.ma_vt,
         });
+        console.log({ loValidate });
         if (!loValidate) {
           error = createError(
             404,
-            `Lô '${detail.ma_lo}' với hàng hóa '${detail.ma_vt}' và kho '${pnk.ma_kho}' không tồn tại`
+            `Lô '${detail.ma_lo}' với hàng hóa '${detail.ma_vt}' và kho '${pxk.ma_kho}' không tồn tại`
           );
           break;
         }

@@ -16,14 +16,20 @@ function TabsBase({ tabLabels = [{ label: 'Label', value: '1' }], children }) {
       <TabContext value={value}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={handleChange} sx={{ minHeight: '34px' }}>
-            {tabLabels.map((tabLabel) => (
-              <Tab
-                key={v4()}
-                label={tabLabel.label}
-                value={tabLabel.value}
-                sx={{ textTransform: 'none', minHeight: '34px' }}
-              />
-            ))}
+            {tabLabels.map((tabLabel) => {
+              if (tabLabel.label) {
+                return (
+                  <Tab
+                    key={v4()}
+                    label={tabLabel.label}
+                    value={tabLabel.value}
+                    sx={{ textTransform: 'none', minHeight: '34px' }}
+                  />
+                );
+              } else {
+                return null;
+              }
+            })}
           </TabList>
         </Box>
         {children}
