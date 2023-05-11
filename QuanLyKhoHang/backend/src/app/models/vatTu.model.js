@@ -42,10 +42,6 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    gia_von: {
-      type: Number,
-      default: 0,
-    },
     gia_ban_le: {
       type: Number,
       default: 0,

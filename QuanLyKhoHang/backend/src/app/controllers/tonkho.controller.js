@@ -5,6 +5,7 @@ const khoModel = require("../models/kho.model");
 const loModel = require("../models/lo.model");
 
 const tonKhoController = {
+  // helper functions
   async checkVatTu(ma_vt, next) {
     let error = false;
     try {
@@ -23,6 +24,19 @@ const tonKhoController = {
       return error;
     }
   },
+  async getInventoryOnStoreHelper({ ma_vt, ma_kho }) {
+    const existed = await soKhoModel.findOne({ ma_vt, ma_kho });
+    if (!existed) {
+      return { ton_kho: 0 };
+    }
+    const tonKho = await soKhoModel.aggregate([
+      { $match: { ma_kho, ma_vt } },
+      { $group: { _id: null, ton_kho: { $sum: "$so_luong" } } },
+      { $project: { _id: 0 } },
+    ]);
+    return tonKho[0];
+  },
+  // controller functions
   async getTotalInventory(req, res, next) {
     try {
       const { ma_vt } = req.body;
@@ -98,16 +112,11 @@ const tonKhoController = {
       if (isError) {
         return;
       }
-      const existed = await soKhoModel.findOne({ ma_vt });
-      if (!existed) {
-        return res.status(200).json({ ton_kho: 0 });
-      }
-      const tonKho = await soKhoModel.aggregate([
-        { $match: { ma_kho, ma_vt } },
-        { $group: { _id: null, ton_kho: { $sum: "$so_luong" } } },
-        { $project: { _id: 0 } },
-      ]);
-      return res.status(200).json(tonKho[0]);
+      const tonKho = await tonKhoController.getInventoryOnStoreHelper({
+        ma_vt,
+        ma_kho,
+      });
+      return res.status(200).json(tonKho);
     } catch (error) {
       return next(error);
     }

@@ -5,6 +5,7 @@ const chungTuModel = require("./chungTu.model");
 const loModel = require("./lo.model");
 const createError = require("http-errors");
 const { generateRandomCode } = require("../../utils/myUtil");
+const tonKhoController = require("../controllers/tonkho.controller");
 
 const phieuXuatKhoSchema = new mongoose.Schema(
   {
@@ -148,13 +149,24 @@ phieuXuatKhoSchema.pre("save", async function (next) {
 
     for (let i = 0; i < details.length; i++) {
       const detail = details[i];
+      const tonKhoResp = await tonKhoController.getInventoryOnStoreHelper({
+        ma_vt: detail.ma_vt,
+        ma_kho: pxk.ma_kho,
+      });
+      console.log({ tonKhoResp });
+      if (tonKhoResp?.ton_kho < detail.so_luong_xuat) {
+        error = createError(
+          400,
+          `'${detail.ten_vt}' chỉ tồn ${tonKhoResp.ton_kho} ${detail.ten_dvt} ở ${pxk.ten_kho}`
+        );
+        break;
+      }
       if (detail.ma_lo) {
         const loValidate = await loModel.findOne({
           ma_kho: pxk.ma_kho,
           ma_lo: detail.ma_lo,
           ma_vt: detail.ma_vt,
         });
-        console.log({ loValidate });
         if (!loValidate) {
           error = createError(
             404,

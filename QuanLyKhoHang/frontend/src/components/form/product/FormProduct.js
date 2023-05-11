@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import ButtonBase from '~/components/button/ButtonBase';
@@ -8,13 +8,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 import TabsBase from '~/components/tabs/TabsBase';
 import { FiSave } from 'react-icons/fi';
-import { TabPanel } from '@mui/lab';
+import { Skeleton, TabPanel } from '@mui/lab';
 import InfoTab from './InfoTab';
-import DescriptionTab from './DescriptionTab';
-import ImageTab from './ImageTab';
-import { useState } from 'react';
-import LoTab from './LoTab';
-import KhoTab from './KhoTab';
+const DescriptionTab = lazy(() => import('./DescriptionTab'));
+const ImageTab = lazy(() => import('./ImageTab'));
+const LoTab = lazy(() => import('./LoTab'));
+const KhoTab = lazy(() => import('./KhoTab'));
 
 const schema = yup.object({
   ma_vt: yup.string().required('Vui lòng nhập mã hàng hóa'),
@@ -59,7 +58,6 @@ function FormProduct({
           ten_tat: '',
           nhom_vat_tu: null,
           don_vi_tinh: null,
-          gia_von: 0,
           gia_ban_le: 0,
           xuat_xu: '',
           theo_doi_lo: false,
@@ -168,25 +166,43 @@ function FormProduct({
           />
         </TabPanel>
         <TabPanel value="2" sx={{ padding: '10px 0 0 0' }}>
-          <DescriptionTab register={register} />
+          <Suspense
+            fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
+          >
+            <DescriptionTab register={register} />
+          </Suspense>
         </TabPanel>
         <TabPanel value="3" sx={{ padding: '10px 0 0 0' }}>
-          <ImageTab
-            setThumbnails={setThumbnails}
-            defaultValues={defaultValues}
-          />
+          <Suspense
+            fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
+          >
+            <ImageTab
+              setThumbnails={setThumbnails}
+              defaultValues={defaultValues}
+            />
+          </Suspense>
         </TabPanel>
         <TabPanel value="4" sx={{ padding: '10px 0 0 0' }}>
-          {isEdit && defaultValues?.theo_doi_lo && (
-            <LoTab maVt={defaultValues?.ma_vt} />
-          )}
+          <Suspense
+            fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
+          >
+            {isEdit && defaultValues?.theo_doi_lo && (
+              <LoTab maVt={defaultValues?.ma_vt} />
+            )}
+          </Suspense>
         </TabPanel>
         {defaultValues?.ma_vt && (
           <TabPanel value="5" sx={{ padding: '10px 0 0 0' }}>
-            <KhoTab
-              maVt={defaultValues?.ma_vt}
-              theoDoiLo={defaultValues?.theo_doi_lo}
-            />
+            <Suspense
+              fallback={
+                <Skeleton variant="rounded" width="100%" height="40px" />
+              }
+            >
+              <KhoTab
+                maVt={defaultValues?.ma_vt}
+                theoDoiLo={defaultValues?.theo_doi_lo}
+              />
+            </Suspense>
           </TabPanel>
         )}
       </TabsBase>

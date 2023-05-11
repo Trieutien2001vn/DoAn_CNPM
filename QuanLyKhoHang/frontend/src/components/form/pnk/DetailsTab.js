@@ -143,7 +143,7 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
           data={details}
           columns={columns}
           onRowClicked={handleRowClicked}
-          handleDelete={handleDeleteDetail}
+          handleDelete={isEditMaster ? null : handleDeleteDetail}
           uniqueKey="ma_vt"
         />
       </Stack>

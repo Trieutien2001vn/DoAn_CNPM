@@ -88,23 +88,6 @@ function InfoTab({ control, register, errors, isEdit = false }) {
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
-          name="gia_von"
-          render={({ field: { onChange, value } }) => (
-            <TextInput
-              label="Giá vốn"
-              placeholder="Giá nhập hàng hóa"
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const number = e.target.value;
-                onChange(numeralCustom(number).value());
-              }}
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
           name="gia_ban_le"
           render={({ field: { onChange, value } }) => (
             <TextInput
