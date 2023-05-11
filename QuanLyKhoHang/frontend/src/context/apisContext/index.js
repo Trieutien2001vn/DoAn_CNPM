@@ -16,6 +16,9 @@ function ApisProvider({ children }) {
       );
       if (resp && resp.status === 200) {
         return resp.data;
+      } else {
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp.response.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.response?.data?.message || 'Server error');
@@ -34,6 +37,9 @@ function ApisProvider({ children }) {
       );
       if (resp && resp.status === 200) {
         return resp.data;
+      } else {
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp.response.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.response?.data?.message || 'Server error');
@@ -54,7 +60,7 @@ function ApisProvider({ children }) {
       if (resp && resp.status === 200) {
         return resp.data;
       } else {
-        alertSnackbar('error', resp.response.data?.message || 'Server error');
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
         return resp.response.data;
       }
     } catch (error) {
@@ -71,8 +77,8 @@ function ApisProvider({ children }) {
       if (resp && resp.status === 200) {
         return resp.data;
       } else {
-        alertSnackbar('error', resp?.data?.message);
-        return resp.data;
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp.response.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.message || 'Server error');
@@ -88,8 +94,8 @@ function ApisProvider({ children }) {
       if (resp && resp.status === 200) {
         return resp.data;
       } else {
-        alertSnackbar('error', resp?.data?.message);
-        return resp.data;
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp.response.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.message || 'Server error');
@@ -105,8 +111,8 @@ function ApisProvider({ children }) {
       if (resp && resp.status === 200) {
         return resp.data;
       } else {
-        alertSnackbar('error', resp?.data?.message);
-        return resp.data;
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp.response?.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.message || 'Server error');
@@ -122,11 +128,29 @@ function ApisProvider({ children }) {
       if (resp && resp.status === 200) {
         return resp.data;
       } else {
-        alertSnackbar('error', resp?.data?.message);
-        return resp.data;
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp?.response?.data;
       }
     } catch (error) {
       alertSnackbar('error', error?.message || 'Server errors');
+    }
+  };
+  const callApi = async ({
+    method = 'post',
+    endpoint,
+    data = {},
+    version = 'v1',
+  }) => {
+    try {
+      const resp = await axiosPrivate[method](`/${version}${endpoint}`, data);
+      if (resp && resp.status === 200) {
+        return resp.data;
+      } else {
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp?.response?.data;
+      }
+    } catch (error) {
+      alertSnackbar('error', error?.message || 'Server error');
     }
   };
 
@@ -140,6 +164,7 @@ function ApisProvider({ children }) {
         asyncDestroy,
         asyncRestore,
         uploadFile,
+        callApi,
       }}
     >
       {children}

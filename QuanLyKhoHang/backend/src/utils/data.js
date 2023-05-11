@@ -7,6 +7,7 @@ const {
   validateCreateNhaCungCap,
   validateCreatePhieuNhapKho,
   validateCreateChungTu,
+  validateCreatePhieuXuatKho,
 } = require("./validate");
 const khoModel = require("../app/models/kho.model");
 const vatTuModel = require("../app/models/vatTu.model");
@@ -15,6 +16,7 @@ const donViTinhModel = require("../app/models/donViTinh.model");
 const loModel = require("../app/models/lo.model");
 const nhaCungCapModel = require("../app/models/nhaCungCap.model");
 const phieuNhapKhoModel = require("../app/models/phieuNhapKho.model");
+const phieuXuatKhoModel = require("../app/models/phieuXuatKho.model");
 const chungTuModel = require("../app/models/chungTu.model");
 
 const dsDanhMuc = [
@@ -98,6 +100,23 @@ const dsDanhMuc = [
     uniqueField: "ma_phieu",
     model: phieuNhapKhoModel,
     validate: validateCreatePhieuNhapKho,
+    fields: [
+      "ma_phieu",
+      "ma_kho",
+      "ten_kho",
+      "ngay_lap_phieu",
+      "ngay_nhap_hang",
+      "ma_ncc",
+      "ten_ncc",
+      "mo_ta",
+      "details",
+    ],
+  },
+  {
+    maDanhMuc: "dmpxk",
+    uniqueField: "ma_phieu",
+    model: phieuXuatKhoModel,
+    validate: validateCreatePhieuXuatKho,
     fields: [
       "ma_phieu",
       "ma_kho",

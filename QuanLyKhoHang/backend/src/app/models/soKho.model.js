@@ -49,15 +49,10 @@ const soKhoSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    ton_dau: {
+    so_luong: {
       type: Number,
       default: 0,
       require: true,
-    },
-    ton_cuoi: {
-      type: Number,
-      default: 0,
-      required: true,
     },
     createdBy: {
       type: String,
