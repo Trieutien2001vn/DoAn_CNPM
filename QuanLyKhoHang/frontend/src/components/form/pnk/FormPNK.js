@@ -14,6 +14,8 @@ import { useForm } from 'react-hook-form';
 import DescriptionTab from './DescriptionTab';
 import DetailsTab from './DetailsTab';
 import { useState } from 'react';
+import { useRef } from 'react';
+import { useEffect } from 'react';
 
 export default function FormPNK({
   open,
@@ -63,6 +65,7 @@ export default function FormPNK({
   });
   const { asyncPostData } = useApisContext();
     const [details, setDetails] = useState(defaultValues?.details || []);
+    const tabRef = useRef()
 
   const generateDataPost = (values) => {
     const { kho, nha_cung_cap, ...data } = values;
@@ -88,6 +91,11 @@ export default function FormPNK({
       }
     });
   };
+  useEffect(() => {
+    if(Object.keys(errors).length > 0) {
+      tabRef.current.handleChange('1')
+    }
+  }, [errors])
 
   return (
     <ModalBase
@@ -115,6 +123,7 @@ export default function FormPNK({
           { label: 'Chi tiết nhập', value: '2' },
           { label: 'Diễn giải', value: '3' },
         ]}
+        ref={tabRef}
       >
         <TabPanel value="1" sx={{ padding: '10px 0 0 0' }}>
           <InfoTab
