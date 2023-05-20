@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { v4 } from 'uuid';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,7 +13,6 @@ import InfoTab from './InfoTab';
 import { useForm } from 'react-hook-form';
 import DescriptionTab from './DescriptionTab';
 import DetailsTab from './DetailsTab';
-import { useState } from 'react';
 
 export default function FormPXK({
   open,
@@ -59,6 +58,7 @@ export default function FormPXK({
   });
   const { asyncPostData } = useApisContext();
   const [details, setDetails] = useState(defaultValues?.details || []);
+  const tabRef = useRef();
 
   const generateDataPost = (values) => {
     const { kho, ...data } = values;
@@ -82,6 +82,11 @@ export default function FormPXK({
       }
     });
   };
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      tabRef.current?.handleChange(null, '1');
+    }
+  }, [errors]);
 
   return (
     <ModalBase
@@ -109,6 +114,7 @@ export default function FormPXK({
           { label: 'Chi tiết xuất', value: '2' },
           { label: 'Diễn giải', value: '3' },
         ]}
+        ref={tabRef}
       >
         <TabPanel value="1" sx={{ padding: '10px 0 0 0' }}>
           <InfoTab

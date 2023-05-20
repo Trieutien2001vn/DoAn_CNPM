@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Stack, Typography } from '@mui/material';
 import TableDisplay from '~/components/table/TableDisplay';
 import useApisContext from '~/hooks/hookContext/useApisContext';
@@ -340,4 +340,4 @@ function KhoTab({ maVt, theoDoiLo }) {
   );
 }
 
-export default KhoTab;
+export default memo(KhoTab);

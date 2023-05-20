@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 } from 'uuid';
 import ButtonBase from '~/components/button/ButtonBase';
@@ -10,6 +10,7 @@ import TabsBase from '~/components/tabs/TabsBase';
 import { FiSave } from 'react-icons/fi';
 import { Skeleton, TabPanel } from '@mui/lab';
 import InfoTab from './InfoTab';
+import { useEffect } from 'react';
 const DescriptionTab = lazy(() => import('./DescriptionTab'));
 const ImageTab = lazy(() => import('./ImageTab'));
 const LoTab = lazy(() => import('./LoTab'));
@@ -32,6 +33,7 @@ function FormProduct({
     hinh_anh2: null,
     hinh_anh3: null,
   });
+  const [dvts, setDvts] = useState(defaultValues?.ds_dvt || []);
   const { asyncPostData, uploadFile } = useApisContext();
   const {
     register,
@@ -64,6 +66,7 @@ function FormProduct({
         },
     resolver: yupResolver(schema),
   });
+  const tabRef = useRef()
 
   const uploadThumbnail = async (values) => {
     let count = 0;
@@ -96,6 +99,7 @@ function FormProduct({
     result.ten_nvt = nhom_vat_tu?.ten_nvt || '';
     result.ma_dvt = don_vi_tinh?.ma_dvt || '';
     result.ten_dvt = don_vi_tinh?.ten_dvt || '';
+    result.ds_dvt = dvts;
     return result;
   };
 
@@ -124,6 +128,11 @@ function FormProduct({
         }
       });
   };
+  useEffect(() => {
+    if(Object.keys(errors).length > 0) {
+      tabRef.current.handleChange(null, '1')
+    }
+  }, [errors])
 
   return (
     <ModalBase
@@ -156,6 +165,7 @@ function FormProduct({
           },
           { label: defaultValues?.ma_vt ? 'Thẻ kho' : '', value: '5' },
         ]}
+        ref={tabRef}
       >
         <TabPanel value="1" sx={{ padding: '10px 0 0 0' }}>
           <InfoTab
@@ -163,6 +173,8 @@ function FormProduct({
             register={register}
             errors={errors}
             isEdit={isEdit}
+            dvts={dvts}
+            setDvts={setDvts}
           />
         </TabPanel>
         <TabPanel value="2" sx={{ padding: '10px 0 0 0' }}>

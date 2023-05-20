@@ -63,6 +63,14 @@ const phieuXuatKhoSchema = new mongoose.Schema(
             type: Number,
             default: 0,
           },
+          ty_le_ck: {
+            type: Number,
+            default: 0,
+          },
+          tien_ck: {
+            type: Number,
+            default: 0,
+          },
           ma_dvt: {
             type: String,
             default: "",
@@ -112,7 +120,7 @@ const phieuXuatKhoSchema = new mongoose.Schema(
 );
 
 const generateUniqueValue = async (model) => {
-  let maChungTu = generateRandomCode(6, "PXK");
+  let maChungTu = generateRandomCode(6, "pxk");
   const doc = await model.findOne({ ma_ct: maChungTu });
   if (doc) {
     return await generateUniqueValue();
@@ -130,7 +138,12 @@ phieuXuatKhoSchema.pre("save", async function (next) {
       mongoose.model("PhieuXuatKho", phieuXuatKhoSchema)
     );
     pxk.ma_ct = maChungTu;
-    pxk.ngay_ct = new Date();
+    const date = new Date();
+    date.setHours(0);
+    date.setMinutes(0);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+    pxk.ngay_ct = date;
     const details = pxk.details || [];
     // tính tổng tiền nhập dựa trên các sản phẩm nhập
     const tong_tien_xuat =
@@ -153,7 +166,6 @@ phieuXuatKhoSchema.pre("save", async function (next) {
         ma_vt: detail.ma_vt,
         ma_kho: pxk.ma_kho,
       });
-      console.log({ tonKhoResp });
       if (tonKhoResp?.ton_kho < detail.so_luong_xuat) {
         error = createError(
           400,
@@ -185,11 +197,49 @@ phieuXuatKhoSchema.pre("save", async function (next) {
     return next(error);
   }
 });
+// đệ quy tìm lần nhập kho đầu tiên còn tồn kho
+const findFirstImport = async ({
+  maVt,
+  tonKhoObj,
+  maCts = [""],
+  giaVons = [],
+  soLuongXuat = 1,
+}) => {
+  /*
+  Gọi
+  T = tổng tồn kho hiện tại
+  NK = số lượng nhập kho gần nhất
+  HT = T - NK (hiệu số tồn kho)
+  - Nếu HT > 0 (lần nhập kho trước vần còn tồn => phải tìm lần nhập kho trước)
+  + T = HT
+  + NK = số lượng nhập kho lần gần tiếp theo
+  + Tính lại HT
+  - Nếu HT <= 0 (Dừng và lấy giá vốn nhập ở lần nhập hiện tại )
+  */
+  const tonKho =
+    tonKhoObj || (await tonKhoController.getTotalInventoryHelper(maVt));
+  const pnkNearest = await soKhoModel
+    .findOne({ ma_loai_ct: "pnk", ma_vt: maVt, ma_ct: { $nin: maCts } })
+    .sort({ ngay_ct: -1, createdAt: -1 });
+  const HT = (tonKho?.ton_kho || 0) - (pnkNearest?.sl_nhap || 0);
+  if (HT > 0) {
+    return await findFirstImport({
+      maVt,
+      tonKhoObj: { ton_kho: HT },
+      maCts: [...maCts, pnkNearest.ma_ct],
+      giaVons: [...giaVons, pnkNearest.gia_von],
+    });
+  } else {
+    return [{ so_luong: tonKhoObj.ton_kho, gia_von: pnkNearest.gia_von }];
+  }
+};
 
 phieuXuatKhoSchema.post("save", async function (next) {
   try {
     const pxk = this;
     pxk.details.forEach(async (detail) => {
+      // luu vao so kho
+      // const giaVon = await findFirstImport({ maVt: detail.ma_vt });
       const soKho = {
         ma_ct: pxk.ma_ct,
         ma_loai_ct: pxk.ma_loai_ct,
@@ -203,8 +253,10 @@ phieuXuatKhoSchema.post("save", async function (next) {
         ten_vt: detail.ten_vt,
         sl_xuat: detail.so_luong_xuat,
         so_luong: -detail.so_luong_xuat,
+        // gia_von: giaVon,
       };
       await soKhoModel.create(soKho);
+      // luu vao so quy
     });
   } catch (error) {
     next(error);
@@ -214,7 +266,7 @@ phieuXuatKhoSchema.post("save", async function (next) {
 phieuXuatKhoSchema.pre("updateOne", async function (next) {
   // không cập nhật kho
   // không cập nhật hàng hóa
-  let isError = false;
+  let error;
   try {
     const pxk = this._update;
     const { ma_kho, ma_ct } = pxk;
@@ -228,40 +280,59 @@ phieuXuatKhoSchema.pre("updateOne", async function (next) {
     if (pxk.details.length !== doc.details.length) {
       return next(createError(400, `Không được thêm hay xóa hàng hóa đã xuất`));
     }
-    pxk.details.forEach(async (item, index) => {
-      if (item._id !== doc.details[index]._id.toString()) {
-        isError = true;
-        return next(
+    for (let i = 0; i < pxk.details.length; i++) {
+      let detail = pxk.details[i];
+      const tonKhoResp = await tonKhoController.getInventoryOnStoreHelper({
+        ma_vt: detail.ma_vt,
+        ma_kho: pxk.ma_kho,
+      });
+      if (
+        (tonKhoResp?.ton_kho || 0) + doc.details[i].so_luong_xuat <
+        detail.so_luong_xuat
+      ) {
+        error = createError(
+          400,
+          `'${detail.ten_vt}' chỉ tồn ${
+            tonKhoResp.ton_kho + doc.details[i].so_luong_xuat
+          } ${detail.ten_dvt} ở ${pxk.ten_kho}`
+        );
+        break;
+      }
+      if (detail._id !== doc.details[i]._id.toString()) {
+        error = next(
           createError(400, `Không được thêm hay xóa hàng hóa đã xuất`)
         );
+        break;
       }
-      if (item.ma_vt !== doc.details[index].ma_vt) {
-        isError = true;
-        return next(createError(400, `Không được chỉnh sửa hàng hóa`));
+      if (detail.ma_vt !== doc.details[i].ma_vt) {
+        error = next(createError(400, `Không được chỉnh sửa hàng hóa`));
+        break;
       }
+
       if (
-        item.so_luong_xuat !== doc.details[index].so_luong_xuat ||
-        item.ma_lo !== doc.details[index].ma_lo
+        detail.so_luong_xuat !== doc.details[i].so_luong_xuat ||
+        detail.ma_lo !== doc.details[i].ma_lo
       ) {
         await soKhoModel.updateOne(
-          { ma_ct: pxk.ma_ct, ma_vt: item.ma_vt },
+          { ma_ct: pxk.ma_ct, ma_vt: detail.ma_vt },
           {
-            sl_xuat: item.so_luong_xuat,
-            so_luong: -item.so_luong_xuat,
-            ma_lo: item.ma_lo,
-            ten_lo: item.ten_lo,
+            sl_xuat: detail.so_luong_xuat,
+            so_luong: -detail.so_luong_xuat,
+            ma_lo: detail.ma_lo,
+            ten_lo: detail.ten_lo,
           }
         );
       }
-      const { ma_vt, ten_vt, ma_dvt, ten_dvt, ...fields } = item;
-      item = { ...item, ...fields };
-    });
+      const { ma_vt, ten_vt, ma_dvt, ten_dvt, ...fields } = detail;
+      detail = { ...detail, ...fields };
+    }
+    if (error) {
+      return next(error);
+    } else {
+      return next();
+    }
   } catch (error) {
     return next(error);
-  } finally {
-    if (!isError) {
-      next();
-    }
   }
 });
 phieuXuatKhoSchema.pre("updateMany", async function (next) {

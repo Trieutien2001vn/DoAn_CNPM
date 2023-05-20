@@ -115,7 +115,7 @@ const phieuNhapKhoSchema = new mongoose.Schema(
 );
 
 const generateUniqueValue = async () => {
-  let maChungTu = generateRandomCode(6, "PNK");
+  let maChungTu = generateRandomCode(6, "pnk");
   const doc = await mongoose
     .model("PhieuNhapKho", phieuNhapKhoSchema)
     .findOne({ ma_ct: maChungTu });
@@ -133,7 +133,6 @@ phieuNhapKhoSchema.pre("save", async function (next) {
     const pnk = this;
     const maChungTu = await generateUniqueValue();
     pnk.ma_ct = maChungTu;
-    pnk.ngay_ct = new Date();
     const details = pnk.details || [];
     // tính tổng tiền nhập dựa trên các sản phẩm nhập
     const tong_tien_nhap =
@@ -191,6 +190,7 @@ phieuNhapKhoSchema.post("save", async function () {
       ten_vt: detail.ten_vt,
       sl_nhap: detail.so_luong_nhap,
       so_luong: detail.so_luong_nhap,
+      gia_von: detail.gia_von,
     };
     await soKhoModel.create(soKho);
   });

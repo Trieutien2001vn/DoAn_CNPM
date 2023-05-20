@@ -1,5 +1,5 @@
+import React, { useEffect, memo } from 'react';
 import { Stack } from '@mui/material';
-import React, { useEffect } from 'react';
 import { useState } from 'react';
 import TableDisplay from '~/components/table/TableDisplay';
 import useApisContext from '~/hooks/hookContext/useApisContext';
@@ -98,4 +98,4 @@ function LoTab({ maVt }) {
   );
 }
 
-export default LoTab;
+export default memo(LoTab);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Grid } from '@mui/material';
 import FileInput from '~/components/input/FileInput';
 
@@ -33,4 +33,4 @@ function ImageTab({ setThumbnails, defaultValues }) {
   );
 }
 
-export default ImageTab;
+export default memo(ImageTab);
