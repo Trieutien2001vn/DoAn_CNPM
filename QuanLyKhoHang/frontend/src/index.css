@@ -1,23 +1,33 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 html {
-    font-family: 'Epilogue', sans-serif;
+  font-family: 'Epilogue', sans-serif;
 }
-.logo {
-    --animate-delay: 5s;
+.hidden-scroll::-webkit-scrollbar {
+  display: none;
 }
-.textfield-darkmode input {
-    color: #808191;
+.custome-scrolly::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
-.textfield-darkmode input::placeholder {
-    color: #4B5264;
+.custome-scrolly::-webkit-scrollbar-track {
+  background-color: #fff;
 }
-
-input[type="date"]::-webkit-calendar-picker-indicator {
-    color: transparent;
-    background: none;
-    z-index: 1;
+.custome-scrolly::-webkit-scrollbar-thumb {
+  background-color: #ededed;
+  border-radius: 10px;
+}
+.round-loading {
+  animation: round-loading 0.5s ease-in-out infinite;
+}
+@keyframes round-loading {
+  from {
+    transform: rotate(0deg);
   }
+  to {
+    transform: rotate(360deg);
+  }
+}

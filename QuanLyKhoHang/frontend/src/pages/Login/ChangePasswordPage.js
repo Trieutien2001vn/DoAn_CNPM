@@ -11,7 +11,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useSelector } from "react-redux";
 import useSnackbarContext from "../../hooks/hookContext/useSnackbarContext";
-import axiosPublic from "../../utils/axiosPublic";
+import { axiosPublic } from '~/utils/httpRequest';
 
 const schema = yup.object({
   new_password: yup.string().required("Please enter new password"),

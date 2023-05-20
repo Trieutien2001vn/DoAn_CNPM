@@ -6,12 +6,15 @@ const SnackbarContext = createContext();
 function SnackbarProvider({ children }) {
   const [messageSnackbar, setMessageSnackbar] = useState("");
   const [typeSnackbar, setTypeSnackbar] = useState("error"); // success, warning, info, error
+
+  const alertSnackbar = (type = 'error', message = 'Error') => {
+    setTypeSnackbar(type)
+    setMessageSnackbar(message)
+  }
+
   return (
     <SnackbarContext.Provider
-      value={{
-        message: [messageSnackbar, setMessageSnackbar],
-        type: [typeSnackbar, setTypeSnackbar],
-      }}
+      value={alertSnackbar}
     >
       <SnackBarBase
         open={!!messageSnackbar}

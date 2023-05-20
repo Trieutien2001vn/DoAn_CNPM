@@ -1,18 +1,18 @@
-import { FormGroup, FormHelperText, FormLabel, TextField } from "@mui/material";
-import React, { useState } from "react";
-import { MdOutlineVisibility, MdOutlineVisibilityOff } from "react-icons/md";
-import { useGlobalTheme } from "../../context/themeContext";
-import PropTypes from "prop-types";
+import { FormGroup, FormHelperText, FormLabel, TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { MdOutlineVisibility, MdOutlineVisibilityOff } from 'react-icons/md';
+import { useGlobalTheme } from '../../context/themeContext';
+import PropTypes from 'prop-types';
 
 function InputForm({
-  label = "Label",
+  label = 'Label',
   isRequired = false,
-  type = "text",
-  id = "inputid",
+  type = 'text',
+  id = 'inputid',
   placeholder,
   register = () => {},
-  name = "",
-  errorMessage = "",
+  name = '',
+  errorMessage = '',
 }) {
   const [showPassword, setShowPassword] = useState(false);
   const [darkMode] = useGlobalTheme();
@@ -21,64 +21,59 @@ function InputForm({
       <FormLabel
         htmlFor={id}
         sx={{
-          width: "fit-content",
-          fontSize: "14px",
+          width: 'fit-content',
+          fontSize: '14px',
           fontWeight: 600,
-          color: darkMode ? "neutral.text3" : "neutral.text2",
-          marginBottom: "10px",
+          color: darkMode ? 'neutral.text3' : 'neutral.text2',
+          marginBottom: '10px',
         }}
       >
         {label} {isRequired && <sup>*</sup>}
       </FormLabel>
       <TextField
         {...register(name)}
-        type={
-          type.toLowerCase() === "password"
-            ? showPassword
-              ? "text"
-              : "password"
-            : type
-        }
+        type={type.toLowerCase() === 'password' ? (showPassword ? 'text' : 'password') : type}
         id={id}
         sx={{
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: "whitish.strockColor",
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: 'whitish.strockColor',
             },
           },
-          "& .MuiOutlinedInput-root:hover": {
-            "& fieldset": {
-              borderColor: darkMode ? "whitish.strockColor" : "",
+          '& .MuiOutlinedInput-root:hover': {
+            '& fieldset': {
+              borderColor: darkMode ? 'whitish.strockColor' : '',
             },
           },
         }}
         InputProps={
-          type.toLowerCase() === "password"
+          type.toLowerCase() === 'password'
             ? {
                 endAdornment: showPassword ? (
                   <MdOutlineVisibility
                     onClick={() => setShowPassword(false)}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                     size={18}
-                    color={darkMode ? "#fff" : "#4B5264"}
+                    color={darkMode ? '#fff' : '#4B5264'}
                   />
                 ) : (
                   <MdOutlineVisibilityOff
                     onClick={() => setShowPassword(true)}
-                    style={{ cursor: "pointer" }}
+                    style={{ cursor: 'pointer' }}
                     size={18}
-                    color={darkMode ? "#fff" : "#4B5264"}
+                    color={darkMode ? '#fff' : '#4B5264'}
                   />
                 ),
+                sx: { color: darkMode ? '#fff' : '' },
               }
-            : {}
+            : { sx: { color: darkMode ? '#fff' : '' } }
         }
-        className={darkMode ? "textfield-darkmode" : ""}
+        className={darkMode ? 'textfield-darkmode' : ''}
         variant="outlined"
-        placeholder={placeholder || ""}
+        placeholder={placeholder || ''}
       />
       {errorMessage && (
-        <FormHelperText sx={{ fontStyle: "italic" }} error>
+        <FormHelperText sx={{ fontStyle: 'italic' }} error>
           {errorMessage}
         </FormHelperText>
       )}

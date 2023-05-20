@@ -9,7 +9,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import useSnackbarContext from "../../hooks/hookContext/useSnackbarContext";
-import axiosPublic from "../../utils/axiosPublic";
+import { axiosPublic } from '~/utils/httpRequest';
 
 const style = {
   position: "absolute",
