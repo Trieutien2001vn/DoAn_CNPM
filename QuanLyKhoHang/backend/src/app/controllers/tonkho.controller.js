@@ -36,6 +36,24 @@ const tonKhoController = {
     ]);
     return tonKho[0];
   },
+  async getTotalInventoryHelper(maVt) {
+    const existed = await soKhoModel.findOne({ ma_vt: maVt });
+    if (!existed) {
+      return res.status(200).json({ ton_kho: 0 });
+    }
+    const tonKho = await soKhoModel.aggregate([
+      { $match: { ma_vt: maVt } },
+      {
+        $group: {
+          _id: "$ma_kho",
+          tong_ton_kho: { $sum: "$so_luong" },
+        },
+      },
+      { $group: { _id: null, ton_kho: { $sum: "$tong_ton_kho" } } },
+      { $project: { _id: 0 } },
+    ]);
+    return tonKho[0];
+  },
   // controller functions
   async getTotalInventory(req, res, next) {
     try {
@@ -44,22 +62,8 @@ const tonKhoController = {
       if (isError) {
         return;
       }
-      const existed = await soKhoModel.findOne({ ma_vt });
-      if (!existed) {
-        return res.status(200).json({ ton_kho: 0 });
-      }
-      const tonKho = await soKhoModel.aggregate([
-        { $match: { ma_vt } },
-        {
-          $group: {
-            _id: "$ma_kho",
-            tong_ton_kho: { $sum: "$so_luong" },
-          },
-        },
-        { $group: { _id: null, ton_kho: { $sum: "$tong_ton_kho" } } },
-        { $project: { _id: 0 } },
-      ]);
-      return res.status(200).json(tonKho[0]);
+      const tonKho = await getTotalInventoryHelper(ma_vt);
+      return res.status(200).json(tonKho);
     } catch (error) {
       next(error);
     }

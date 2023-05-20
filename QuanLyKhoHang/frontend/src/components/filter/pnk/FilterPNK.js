@@ -10,6 +10,7 @@ function FilterPNK({ setCondition }) {
   const [filter, setFilter] = useState({
     pnk: '',
     chungTu: '',
+    vatTu: null,
     kho: null,
     timeFrom: '',
     timeTo: '',
@@ -42,6 +43,13 @@ function FilterPNK({ setCondition }) {
         condition.ngay_ct = { $lte: filter.timeTo };
       }
     }
+    if (filter.vatTu) {
+      condition.details = {
+        $elemMatch: {
+          ma_vt: filter.vatTu.ma_vt,
+        },
+      };
+    }
     setCondition(condition);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
@@ -55,6 +63,18 @@ function FilterPNK({ setCondition }) {
       <FilterSearch
         title="Mã chứng từ"
         onSearch={(value) => setFilter({ ...filter, chungTu: value })}
+      />
+       <FilterSelectApi
+        title="Hàng hóa"
+        apiCode="dmvt"
+        value={
+          filter.vatTu
+            ? { ma_vt: filter.vatTu.ma_vt, ten_vt: filter.vatTu.ten_vt }
+            : null
+        }
+        searchFileds={['ma_vt', 'ten_vt']}
+        getOptionLabel={(option) => option.ten_vt}
+        onSelect={(value) => setFilter({ ...filter, vatTu: value })}
       />
       <FilterSelectApi
         title="Kho"

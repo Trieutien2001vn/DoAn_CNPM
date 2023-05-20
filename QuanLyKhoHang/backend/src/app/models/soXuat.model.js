@@ -1,8 +1,24 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
 
-const tonKhoSchema = new mongoose.Schema(
+const soXuatSchema = new mongoose.Schema(
   {
+    ma_ct: {
+      type: String,
+      required: true,
+    },
+    ma_loai_ct: {
+      type: String,
+      required: true,
+    },
+    ten_loai_ct: {
+      type: String,
+      required: true,
+    },
+    ngay_ct: {
+      type: Date,
+      default: null,
+    },
     ma_kho: {
       type: String,
       required: true,
@@ -10,6 +26,12 @@ const tonKhoSchema = new mongoose.Schema(
     ten_kho: {
       type: String,
       required: true,
+    },
+    ma_lo: {
+      type: String,
+    },
+    ten_lo: {
+      type: String,
     },
     ma_vt: {
       type: String,
@@ -19,17 +41,17 @@ const tonKhoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    ton_thuc_te: {
+    tien_xuat: {
       type: Number,
       default: 0,
     },
-    ton_kha_dung_ban: {
+    chi_phi: {
       type: Number,
       default: 0,
     },
-    ngay_kiem_kho: {
-      type: Date,
-      default: "",
+    loi_nhuan: {
+      type: Number,
+      default: 0,
     },
     createdBy: {
       type: String,
@@ -40,14 +62,14 @@ const tonKhoSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { timestamps: true, collection: "ton_kho" }
+  { timestamps: true, collection: "so_xuat" }
 );
 
-tonKhoSchema.plugin(mongooseDelete, {
+soXuatSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: String,
   overrideMethods: "all",
 });
 
-module.exports = mongoose.model("TonKho", tonKhoSchema);
+module.exports = mongoose.model("SoXuat", soXuatSchema);

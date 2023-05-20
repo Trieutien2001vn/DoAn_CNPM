@@ -1,13 +1,25 @@
-import React from 'react';
-import { Grid } from '@mui/material';
+import React, { useState, memo } from 'react';
+import {
+  Box,
+  Collapse,
+  Grid,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from '@mui/material';
 import TextInput from '~/components/input/TextInput';
 import { Controller } from 'react-hook-form';
 import SelectApiInput from '~/components/input/SelectApiInput';
 import { numeralCustom } from '~/utils/helpers';
 import CheckboxInput from '~/components/input/CheckboxInput';
 import { dsDanhMuc } from '~/utils/data';
+import { BsCaretDown, BsCaretUp } from 'react-icons/bs';
+import DvtVariant from './DvtVariant';
 
-function InfoTab({ control, register, errors, isEdit = false }) {
+function InfoTab({ control, register, errors, isEdit = false, dvts, setDvts }) {
+  const [showDvts, setShowDvts] = useState(true);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
@@ -111,6 +123,14 @@ function InfoTab({ control, register, errors, isEdit = false }) {
         />
       </Grid>
       <Grid item xs={12} md={6}>
+        <TextInput
+          label="Vị trí"
+          placeholder="Chỗ đặt trong kho"
+          name="vi_tri"
+          register={register}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
         <Controller
           control={control}
           name="theo_doi_lo"
@@ -124,8 +144,32 @@ function InfoTab({ control, register, errors, isEdit = false }) {
           )}
         />
       </Grid>
+      <Grid item xs={12}>
+        <Paper sx={{ width: '100%' }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ padding: '5px' }}
+          >
+            <Typography sx={{ fontSize: '13px' }}>Đơn vị tính khác</Typography>
+            <IconButton onClick={() => setShowDvts(!showDvts)}>
+              {showDvts ? (
+                <BsCaretUp fontSize="14px" />
+              ) : (
+                <BsCaretDown fontSize="14px" />
+              )}
+            </IconButton>
+          </Stack>
+          <Collapse in={showDvts}>
+            <Box sx={{ padding: '5px' }}>
+              <DvtVariant dvts={dvts} setDvts={setDvts} />
+            </Box>
+          </Collapse>
+        </Paper>
+      </Grid>
     </Grid>
   );
 }
 
-export default InfoTab;
+export default memo(InfoTab);

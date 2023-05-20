@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { v4 } from 'uuid';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,7 +13,6 @@ import InfoTab from './InfoTab';
 import { useForm } from 'react-hook-form';
 import DescriptionTab from './DescriptionTab';
 import DetailsTab from './DetailsTab';
-import { useState } from 'react';
 
 export default function FormPNK({
   open,
@@ -32,6 +31,10 @@ export default function FormPNK({
       .date()
       .typeError('Vui lòng chọn ngày nhập hàng')
       .required('Vui lòng chọn ngày nhập hàng'),
+    ngay_ct: yup
+      .date()
+      .typeError('Vui lòng chọn ngay chứng từ')
+      .required('Vui lòng chọn ngay chứng từ'),
   });
   const {
     handleSubmit,
@@ -52,17 +55,20 @@ export default function FormPNK({
             ma_ncc: defaultValues?.ma_ncc,
             ten_ncc: defaultValues?.ten_ncc,
           },
+          ngay_ct: moment(defaultValues.ngay_ct).format('YYYY-MM-DD'),
           ngay_nhap_hang: moment(defaultValues.ngay_nhap_hang).format(
             'YYYY-MM-DD'
           ),
         }
       : {
+          ngay_ct: moment().format('YYYY-MM-DD'),
           ngay_nhap_hang: moment().format('YYYY-MM-DD'),
         },
     resolver: yupResolver(schema),
   });
   const { asyncPostData } = useApisContext();
-    const [details, setDetails] = useState(defaultValues?.details || []);
+  const [details, setDetails] = useState(defaultValues?.details || []);
+  const tabRef = useRef();
 
   const generateDataPost = (values) => {
     const { kho, nha_cung_cap, ...data } = values;
@@ -88,6 +94,11 @@ export default function FormPNK({
       }
     });
   };
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      tabRef.current?.handleChange(null, '1');
+    }
+  }, [errors]);
 
   return (
     <ModalBase
@@ -115,6 +126,7 @@ export default function FormPNK({
           { label: 'Chi tiết nhập', value: '2' },
           { label: 'Diễn giải', value: '3' },
         ]}
+        ref={tabRef}
       >
         <TabPanel value="1" sx={{ padding: '10px 0 0 0' }}>
           <InfoTab

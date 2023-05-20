@@ -1,16 +1,16 @@
-import React from "react";
-import { Alert, Snackbar } from "@mui/material";
-import PropTypes from "prop-types";
+import React from 'react';
+import { Alert, Snackbar } from '@mui/material';
+import PropTypes from 'prop-types';
 
 function SnackBarBase(
   {
     open,
     handleClose,
-    type = "error", // success
+    type = 'error', // success
     message,
-    vertical = "top",
-    horizontal = "right",
-    duration = 3000,
+    vertical = 'top',
+    horizontal = 'right',
+    duration = 5000,
   },
   ref
 ) {

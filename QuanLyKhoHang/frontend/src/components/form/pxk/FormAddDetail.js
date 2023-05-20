@@ -1,5 +1,5 @@
-import { Grid } from '@mui/material';
-import React, { useState } from 'react';
+import { Grid, Typography } from '@mui/material';
+import React, { useState, useMemo } from 'react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FiSave } from 'react-icons/fi';
@@ -60,6 +60,7 @@ function FormAddDetail({
                 ma_dvt: defaultValues.ma_dvt,
                 ten_dvt: defaultValues.ten_dvt,
                 theo_doi_lo: !!defaultValues.ma_lo,
+                gia_ban_le: defaultValues.gia_ban_le,
               }
             : null,
           lo: defaultValues.ma_lo
@@ -72,12 +73,90 @@ function FormAddDetail({
   const vatTu = watch('vat_tu');
   const soLuongXuat = watch('so_luong_xuat');
   const giaXuat = watch('gia_xuat');
+  const tyLeChietKhau = watch('ty_le_ck');
+  const tienChietKhau = watch('tien_ck');
+
+  const generateSoLuong = ({
+    dsDvt,
+    soLuong,
+    result = [],
+    dvtCoSo,
+    gia_ban_le = 0,
+  }) => {
+    const dvts = [...dsDvt];
+    if (dvts.length === 0) {
+      if (soLuong > 0) {
+        result.push({
+          so_luong: soLuong,
+          ten_dvt: dvtCoSo,
+          gia_xuat: gia_ban_le,
+        });
+        return result;
+      } else {
+        return result;
+      }
+    }
+    dvts.sort((a, b) => a.sl_quy_doi - b.sl_quy_doi);
+    const currentDvt = dvts.pop();
+    if (soLuong >= currentDvt.sl_quy_doi) {
+      const number = Math.floor(soLuong / currentDvt.sl_quy_doi);
+      result.push({
+        so_luong: number,
+        ten_dvt: currentDvt.ten_dvt,
+        gia_xuat: currentDvt.gia_ban_qd,
+      });
+      const soDu = soLuong % currentDvt.sl_quy_doi;
+      if (soDu > 0) {
+        return generateSoLuong({
+          dsDvt: dvts,
+          soLuong: soDu,
+          result,
+          dvtCoSo,
+          gia_ban_le,
+        });
+      } else {
+        return result;
+      }
+    } else {
+      return generateSoLuong({
+        dsDvt: dvts,
+        soLuong,
+        result,
+        dvtCoSo,
+        gia_ban_le,
+      });
+    }
+  };
+  const soLuongs = useMemo(() => {
+    if (!!vatTu) {
+      return generateSoLuong({
+        dsDvt: vatTu?.ds_dvt || [],
+        soLuong: soLuongXuat || 0,
+        dvtCoSo: vatTu?.ten_dvt,
+        gia_ban_le: vatTu.gia_ban_le || 0,
+      });
+    } else {
+      return [];
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vatTu, soLuongXuat, giaXuat]);
+
+  // console.log({ soLuongQuyDoi });
   useEffect(() => {
     if (vatTu) {
+      // thay doi don vi tinh
       setValue('don_vi_tinh', {
         ma_dvt: vatTu.ma_dvt || '',
         ten_dvt: vatTu.ten_dvt || '',
       });
+      // thay doi gia xuat
+      setValue(
+        'gia_xuat',
+        vatTu.gia_ban_le - (vatTu.gia_ban_le * (tyLeChietKhau || 0)) / 100
+      );
+      // thau doi tien chiet khau
+      setValue('tien_ck', (vatTu.gia_ban_le * (tyLeChietKhau || 0)) / 100);
+      // thay doi theo doi lo
       if (vatTu.theo_doi_lo) {
         setSchema(
           yup.object({
@@ -93,14 +172,28 @@ function FormAddDetail({
       }
     } else {
       setValue('don_vi_tinh', null);
+      setValue('gia_xuat', 0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vatTu]);
+
   useEffect(() => {
-    const tienXuat = (soLuongXuat || 0) * (giaXuat || 0);
+    const tienXuat = (soLuongs || []).reduce((acc, item) => {
+      return (
+        acc +
+        item.so_luong *
+          (item.gia_xuat - (item.gia_xuat * (tyLeChietKhau || 0)) / 100)
+      );
+    }, 0);
     setValue('tien_xuat', tienXuat);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soLuongXuat, giaXuat]);
+  }, [soLuongs, tyLeChietKhau]);
+  useEffect(() => {
+    if (vatTu) {
+      setValue('gia_xuat', vatTu.gia_ban_le - tienChietKhau);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tienChietKhau]);
 
   const handleSave = (values) => {
     return new Promise((resovle) => {
@@ -184,7 +277,9 @@ function FormAddDetail({
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Giá xuất"
+                disabled
+                label="Giá xuất (theo 1 đơn vị tính)"
+                placeholder="Giá xuất (theo 1 đơn vị tính)"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
@@ -213,6 +308,46 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
+            name="ty_le_ck"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                label="Tỷ lệ chiết khấu (%)"
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const value = numeralCustom(e.target.value).value();
+                  onChange(value);
+                  if (vatTu) {
+                    const tienCk = (vatTu.gia_ban_le * value) / 100;
+                    setValue('tien_ck', tienCk);
+                  }
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            name="tien_ck"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                label="Tiền chiết khấu"
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const value = numeralCustom(e.target.value).value();
+                  onChange(value);
+                  if (vatTu) {
+                    const tyLeCk = (value * 100) / vatTu.gia_ban_le;
+                    setValue('ty_le_ck', tyLeCk);
+                  }
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
             name="tien_xuat"
             control={control}
             render={({ field: { value, onChange } }) => (
@@ -226,6 +361,15 @@ function FormAddDetail({
               />
             )}
           />
+          {soLuongs?.length > 0 && (
+            <Typography sx={{ fontSize: '12px', color: 'primary.main' }}>
+              (
+              {soLuongs.reduce((acc, item) => {
+                return `${acc} ${item.so_luong} ${item.ten_dvt}`;
+              }, '')}
+              )
+            </Typography>
+          )}
         </Grid>
         {vatTu?.theo_doi_lo && (
           <Grid item xs={12} md={6}>

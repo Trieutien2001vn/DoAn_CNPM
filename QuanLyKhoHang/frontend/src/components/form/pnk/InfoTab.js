@@ -21,16 +21,6 @@ function InfoTab({ register, control, isEdit, errors }) {
         />
       </Grid>
       <Grid item xs={12} md={6}>
-        <TextInput
-          type="date"
-          label="Ngày nhập hàng"
-          placeholder="Ngày hàng vào kho"
-          name="ngay_nhap_hang"
-          register={register}
-          errorMessage={errors?.ngay_nhap_hang?.message}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
         <Controller
           control={control}
           name="kho"
@@ -50,6 +40,26 @@ function InfoTab({ register, control, isEdit, errors }) {
               errorMessage={errors?.kho?.message}
             />
           )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <TextInput
+          type="date"
+          label="Ngày chứng từ"
+          placeholder="Ngày hiệu lực sổ sách"
+          name="ngay_ct"
+          register={register}
+          errorMessage={errors?.ngay_ct?.message}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <TextInput
+          type="date"
+          label="Ngày nhập hàng"
+          placeholder="Ngày hàng vào kho"
+          name="ngay_nhap_hang"
+          register={register}
+          errorMessage={errors?.ngay_nhap_hang?.message}
         />
       </Grid>
       <Grid item xs={12} md={6}>
