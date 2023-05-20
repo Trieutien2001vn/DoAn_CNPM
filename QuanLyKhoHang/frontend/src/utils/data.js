@@ -18,6 +18,7 @@ import FilterPNK from '~/components/filter/pnk/FilterPNK';
 import FormPXK from '~/components/form/pxk/FormPXK';
 import FilterPXK from '~/components/filter/pxk/FilterPXK';
 import FormPKK from '~/components/form/kiemkho/FormPKK';
+import FilterPKK from '~/components/filter/pkk/FilterPKK';
 
 const dsDanhMuc = {
   dmvt: {
@@ -402,13 +403,19 @@ const dsDanhMuc = {
     title: 'phiếu kiểm kho',
     uniqueKey: 'ma_phieu',
     Form: FormPKK,
-    Filter: FilterPXK,
+    Filter: FilterPKK,
     columns: [
       {
         name: 'Mã phiếu',
         selector: (row) => row.ma_phieu,
         sortable: true,
         minWidth: '100px',
+      },
+      {
+        name: 'Mã chứng từ',
+        selector: (row) => row.ma_ct,
+        sortable: true,
+        minWidth: '150px',
       },
       {
         name: 'Kho',

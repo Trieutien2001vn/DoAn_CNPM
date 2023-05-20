@@ -11,6 +11,15 @@ import TextInput from '../../input/TextInput';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 import { numeralCustom } from '~/utils/helpers';
 import moment from 'moment';
+import SelectApiInput from '~/components/input/SelectApiInput';
+import { dsDanhMuc } from '~/utils/data';
+
+const schema = yup.object({
+  ma_phieu: yup.string().required('Vui lòng nhập mã phiếu kiểm kho'),
+  kho: yup.object().typeError("Vui lòng chọn kho").required("Vui lòng chọn kho"),
+  hanghoa: yup.object().typeError("Vui lòng chọn hàng hóa").required("Vui lòng chọn hàng hóa"),
+
+});
 
 export default function FormPKK({
   open,
@@ -19,9 +28,6 @@ export default function FormPKK({
   defaultValues,
   isEdit = false,
 }) {
-  const schema = yup.object({
-    ma_pkk: yup.string().required('Vui lòng nhập mã phiếu kiểm kho'),
-  });
 
 
   const {
@@ -38,6 +44,14 @@ export default function FormPKK({
     defaultValues: defaultValues ? 
     {
         ...defaultValues,
+        kho: {
+          ma_kho: defaultValues.ma_kho,
+          ten_kho: defaultValues.ten_kho
+        },
+        hanghoa:{
+          ma_vt: defaultValues.ma_vt,
+          ten_vt: defaultValues.ten_vt
+        },
         ngay_ct: moment(defaultValues.ngay_ct).format("YYYY-MM-DD"),
         ngay_kiem_hang: moment(defaultValues.ngay_kiem_hang).format('YYYY-MM-DD')
     }
@@ -62,9 +76,22 @@ export default function FormPKK({
   }, [tonKhoThucTe, tonKhoSoSach]);
   const { asyncPostData } = useApisContext();
 
+  const generateDataPost = values => {
+    const {hanghoa, kho, ...fields} = values
+    const result = {
+      ...fields,
+      ma_vt: hanghoa.ma_vt,
+      ten_vt: hanghoa.ten_vt,
+      ma_kho: kho.ma_kho,
+      ten_kho: kho.ten_kho
+    }
+    return result
+  }
+
   const handleSave = async (values) => {
+    const dataPost = generateDataPost(values)
     const method = isEdit ? 'put' : 'post';
-    await asyncPostData('dmdvt', values, method).then((resp) => {
+    await asyncPostData('dmpkk', dataPost, method).then((resp) => {
       if (!resp.message) {
         handleClose();
         reset();
@@ -78,7 +105,7 @@ export default function FormPKK({
       open={open}
       handleClose={handleClose}
       width="700px"
-      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} đơn vị tính`}
+      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} phiếu kiểm kho`}
       actions={[
         <ButtonBase
           key={v4()}
@@ -102,35 +129,59 @@ export default function FormPKK({
             name="ma_phieu"
             register={register}
             required
-            errorMessage={errors?.ma_pkk?.message}
+            errorMessage={errors?.ma_phieu?.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <TextInput
-            label="Kho"
-            placeholder="Kho Cao Lãnh"
-            name="ten_kho"
-            required
-            register={register}
-            errorMessage={errors?.ten_pkk?.message}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            label="Hàng Hóa"
-            placeholder="Kem"
-            name="ten_vt"
-            required
-            register={register}
-            errorMessage={errors?.ten_pkk?.message}
-          />
-        </Grid>
+        <Controller
+          control={control}
+          name="kho"
+          render={({ field: { onChange, value } }) => (
+            <SelectApiInput
+              disabled={isEdit}
+              label="Kho"
+              required
+              apiCode="dmkho"
+              placeholder="Kho"
+              searchFileds={['ma_kho', 'ten_kho']}
+              getOptionLabel={(option) => option.ten_kho}
+              selectedValue={value}
+              value={value || { ma_kho: '', ten_kho: '' }}
+              onSelect={onChange}
+              FormAdd={dsDanhMuc['dmpkk'].Form}
+              errorMessage={errors?.kho?.message}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="hanghoa"
+          render={({ field: { onChange, value } }) => (
+            <SelectApiInput
+              disabled={isEdit}
+              label="Hàng Hóa"
+              required
+              apiCode="dmvt"
+              placeholder="Kem"
+              searchFileds={['ma_vt', 'ten_vt']}
+              getOptionLabel={(option) => option.ten_vt}
+              selectedValue={value}
+              value={value || { ma_vt: '', ten_vt: '' }}
+              onSelect={onChange}
+              FormAdd={dsDanhMuc['dmvt'].Form}
+              errorMessage={errors?.hanghoa?.message}
+            />
+          )}
+        />
+      </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
             label="Tồn Kho Sổ Sách"
             placeholder="Tồn kho sổ sách"
+            type='number'
             name="ton_kho_so_sach"
-            required
             register={register}
             errorMessage={errors?.ten_pkk?.message}
           />
@@ -139,8 +190,8 @@ export default function FormPKK({
           <TextInput
             label="Tồn Kho Thực Tế"
             placeholder="Tồn kho thực tế"
+            type='number'
             name="ton_kho_thuc_te"
-            required
             register={register}
             errorMessage={errors?.ten_pkk?.message}
           />
@@ -151,8 +202,8 @@ export default function FormPKK({
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
-                required
                 label="Chênh Lệch"
+                type='number'
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());

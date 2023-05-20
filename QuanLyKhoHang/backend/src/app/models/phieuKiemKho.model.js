@@ -37,15 +37,15 @@ const phieuKiemKhoSchema = new mongoose.Schema(
       required: true,
     },
     ton_kho_so_sach: {
-      type: number,
+      type: Number,
       default: 0,
     },
     ton_kho_thuc_te: {
-      type: number,
+      type: Number,
       default: 0,
     },
     chenh_lech: {
-      type: number,
+      type: Number,
       default: 0,
     },
     ngay_ct: {
