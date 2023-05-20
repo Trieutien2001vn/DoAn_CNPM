@@ -50,24 +50,13 @@ const productSchema = new mongoose.Schema(
       type: [String],
       default: null,
     },
-    mo_ta: {
+    vi_tri: {
       type: String,
       default: "",
     },
-    ds_thuoc_tinh: {
-      type: [
-        {
-          ten_thuoc_tinh: {
-            type: String,
-            default: "",
-          },
-          gia_tri: {
-            type: String,
-            default: "",
-          },
-        },
-      ],
-      default: null,
+    mo_ta: {
+      type: String,
+      default: "",
     },
     theo_doi_lo: {
       type: Boolean,
@@ -86,21 +75,15 @@ const productSchema = new mongoose.Schema(
       default: "",
     },
     // vat tu cung loai start
-    ma_vt_cung_loai: {
-      type: String,
-      default: "",
-    },
-    ten_dvt_quy_doi: {
-      type: String,
-      default: "",
-    },
-    so_luong_quy_doi: {
-      type: Number,
-      default: 0,
-    },
-    gia_ban_quy_doi: {
-      type: Number,
-      default: 0,
+    ds_dvt: {
+      type: [
+        {
+          ten_dvt: String,
+          sl_quy_doi: Number,
+          gia_ban_qd: Number,
+        },
+      ],
+      default: [],
     },
     // vat tu cung loai end
     createdBy: {

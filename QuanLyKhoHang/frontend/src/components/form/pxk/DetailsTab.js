@@ -18,7 +18,7 @@ const columns = [
   {
     name: 'Tên hàng',
     selector: (row) => row.ten_vt,
-    width: '200px',
+    width: '170px',
     wrap: true,
   },
   {
@@ -31,6 +31,20 @@ const columns = [
     name: 'Đơn vị tính',
     selector: (row) => row.ten_dvt,
     minWidth: '100px',
+    center: true,
+  },
+  {
+    name: 'Giá bán lẻ',
+    selector: (row) => row.gia_ban_le,
+    width: '150px',
+    center: true,
+    format: (row) => numeralCustom(row.gia_ban_le).format(),
+  },
+  {
+    name: 'Tỷ lệ chiết khấu (%)',
+    selector: (row) => row.ty_le_ck || 0,
+    format: (row) => Math.ceil(row.ty_le_ck || 0),
+    width: '150px',
     center: true,
   },
   {

@@ -1,18 +1,21 @@
-import * as React from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { v4 } from 'uuid';
 import { TabContext, TabList } from '@mui/lab';
 
-function TabsBase({ tabLabels = [{ label: 'Label', value: '1' }], children }, ref) {
-  const [value, setValue] = React.useState('1');
+function TabsBase(
+  { tabLabels = [{ label: 'Label', value: '1' }], children },
+  ref
+) {
+  const [value, setValue] = useState('1');
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  React.useImperativeHandle(ref, () => ({
-    handleChange
-  }))
+  useImperativeHandle(ref, () => ({
+    handleChange,
+  }));
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -40,4 +43,4 @@ function TabsBase({ tabLabels = [{ label: 'Label', value: '1' }], children }, re
     </Box>
   );
 }
-export default React.forwardRef(TabsBase);
+export default forwardRef(TabsBase);

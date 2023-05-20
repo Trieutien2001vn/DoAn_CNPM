@@ -29,8 +29,9 @@ const dsDanhMuc = {
       {
         name: 'Mã',
         selector: (row) => row.ma_vt,
-        minWidth: '100px',
-        sortable: true,
+        width: '150px',
+        sortable: true, 
+        wrap: true
       },
       {
         name: 'Tên',
@@ -51,14 +52,6 @@ const dsDanhMuc = {
         width: '150px',
         center: true,
         sortable: true,
-      },
-      {
-        name: 'Giá vốn',
-        selector: (row) => row.gia_von,
-        width: '100px',
-        center: true,
-        sortable: true,
-        format: (row) => numeralCustom(row.gia_von).format(),
       },
       {
         name: 'Giá bán lẻ',
