@@ -17,7 +17,7 @@ import FilterLo from '~/components/filter/lo/FilterLo';
 import FilterPNK from '~/components/filter/pnk/FilterPNK';
 import FormPXK from '~/components/form/pxk/FormPXK';
 import FilterPXK from '~/components/filter/pxk/FilterPXK';
-import FormPKK from '~/components/form/kiemkho/FormPKK';
+import FormPKK from '~/components/form/pkk/FormPKK';
 import FilterPKK from '~/components/filter/pkk/FilterPKK';
 
 const dsDanhMuc = {
@@ -464,6 +464,21 @@ const dsDanhMuc = {
         center: true,
         format: (row) => formatDateDisplay(row.ngay_kiem_hang),
       },
+      {
+        name: 'Mã Lô',
+        selector: (row) => row.ma_lo,
+        sortable: true,
+        center: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Lô',
+        selector: (row) => row.ten_lo,
+        sortable: true,
+        center: true,
+        minWidth: '100px',
+      },
+      
     ]
   }
 };

@@ -75,6 +75,7 @@ function FormAddDetail({
   const vatTu = watch('vat_tu');
   const soLuongNhap = watch('so_luong_nhap');
   const giaVon = watch('gia_von');
+
   useEffect(() => {
     if (vatTu) {
       setValue('don_vi_tinh', {

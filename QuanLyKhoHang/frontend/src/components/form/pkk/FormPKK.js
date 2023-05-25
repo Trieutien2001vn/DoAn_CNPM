@@ -54,12 +54,16 @@ export default function FormPKK({
         },
         ngay_ct: moment(defaultValues.ngay_ct).format("YYYY-MM-DD"),
         ngay_kiem_hang: moment(defaultValues.ngay_kiem_hang).format('YYYY-MM-DD')
+        ,
+        lo: {
+          ma_lo: defaultValues.ma_lo,
+          ten_lo: defaultValues.ten_lo,
+        }
     }
     :
     {
         ngay_ct: moment().format('YYYY-MM-DD'),
         ngay_kiem_hang: moment().format('YYYY-MM-DD'),
-
     },
 
 
@@ -67,7 +71,7 @@ export default function FormPKK({
   });
   const tonKhoSoSach = watch('ton_kho_so_sach');
   const tonKhoThucTe = watch('ton_kho_thuc_te');
-
+  const vatTu = watch('vat_tu');
 
   useEffect(() => {
     const chenhLech = (tonKhoThucTe || 0) - (tonKhoSoSach || 0);
@@ -157,7 +161,7 @@ export default function FormPKK({
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
-          name="hanghoa"
+          name="vat_tu"
           render={({ field: { onChange, value } }) => (
             <SelectApiInput
               disabled={isEdit}
@@ -171,10 +175,11 @@ export default function FormPKK({
               value={value || { ma_vt: '', ten_vt: '' }}
               onSelect={onChange}
               FormAdd={dsDanhMuc['dmvt'].Form}
-              errorMessage={errors?.hanghoa?.message}
+              errorMessage={errors?.vat_tu?.message}
             />
           )}
         />
+   
       </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
@@ -233,6 +238,29 @@ export default function FormPKK({
             errorMessage={errors?.ngay_kiem_hang?.message}
           />
         </Grid>
+        {vatTu?.theo_doi_lo && (
+          <Grid item xs={12} md={6}>
+            <Controller
+              control={control}
+              name="lo"
+              render={({ field: { value, onChange } }) => (
+                <SelectApiInput
+                  label="Lô hàng"
+                  apiCode="dmlo"
+                  placeholder="Chọn lô hàng hóa"
+                  searchFileds={['ma_lo', 'ten_lo']}
+                  condition={!!vatTu ? { ma_vt: vatTu?.ma_vt } : {}}
+                  getOptionLabel={(option) => option.ten_lo}
+                  selectedValue={value}
+                  value={value || { ma_lo: '', ten_lo: '' }}
+                  onSelect={onChange}
+                  FormAdd={dsDanhMuc.dmlo.Form}
+                  errorMessage={errors?.lo?.message}
+                />
+              )}
+            />
+          </Grid>
+        )}  
       </Grid>
     </ModalBase>
   );
