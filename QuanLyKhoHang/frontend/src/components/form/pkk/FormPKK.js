@@ -17,7 +17,7 @@ import { dsDanhMuc } from '~/utils/data';
 const schema = yup.object({
   ma_phieu: yup.string().required('Vui lòng nhập mã phiếu kiểm kho'),
   kho: yup.object().typeError("Vui lòng chọn kho").required("Vui lòng chọn kho"),
-  hanghoa: yup.object().typeError("Vui lòng chọn hàng hóa").required("Vui lòng chọn hàng hóa"),
+  vat_tu: yup.object().typeError("Vui lòng chọn hàng hóa").required("Vui lòng chọn hàng hóa"),
 
 });
 
@@ -48,7 +48,7 @@ export default function FormPKK({
           ma_kho: defaultValues.ma_kho,
           ten_kho: defaultValues.ten_kho
         },
-        hanghoa:{
+        vat_tu:{
           ma_vt: defaultValues.ma_vt,
           ten_vt: defaultValues.ten_vt
         },
@@ -81,11 +81,11 @@ export default function FormPKK({
   const { asyncPostData } = useApisContext();
 
   const generateDataPost = values => {
-    const {hanghoa, kho, ...fields} = values
+    const {vat_tu, kho, ...fields} = values
     const result = {
       ...fields,
-      ma_vt: hanghoa.ma_vt,
-      ten_vt: hanghoa.ten_vt,
+      ma_vt: vat_tu.ma_vt,
+      ten_vt: vat_tu.ten_vt,
       ma_kho: kho.ma_kho,
       ten_kho: kho.ten_kho
     }
@@ -103,6 +103,7 @@ export default function FormPKK({
       }
     });
   };
+  console.log(errors);
 
   return (
     <ModalBase
@@ -255,7 +256,7 @@ export default function FormPKK({
                   value={value || { ma_lo: '', ten_lo: '' }}
                   onSelect={onChange}
                   FormAdd={dsDanhMuc.dmlo.Form}
-                  errorMessage={errors?.lo?.message}
+                  // errorMessage={errors?.lo?.message}
                 />
               )}
             />

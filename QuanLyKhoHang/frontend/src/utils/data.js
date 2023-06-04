@@ -464,13 +464,7 @@ const dsDanhMuc = {
         center: true,
         format: (row) => formatDateDisplay(row.ngay_kiem_hang),
       },
-      {
-        name: 'Mã Lô',
-        selector: (row) => row.ma_lo,
-        sortable: true,
-        center: true,
-        minWidth: '100px',
-      },
+     
       {
         name: 'Lô',
         selector: (row) => row.ten_lo,
