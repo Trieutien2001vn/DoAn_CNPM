@@ -16,9 +16,14 @@ import { dsDanhMuc } from '~/utils/data';
 
 const schema = yup.object({
   ma_phieu: yup.string().required('Vui lòng nhập mã phiếu kiểm kho'),
-  kho: yup.object().typeError("Vui lòng chọn kho").required("Vui lòng chọn kho"),
-  hanghoa: yup.object().typeError("Vui lòng chọn hàng hóa").required("Vui lòng chọn hàng hóa"),
-
+  kho: yup
+    .object()
+    .typeError('Vui lòng chọn kho')
+    .required('Vui lòng chọn kho'),
+  vatTu: yup
+    .object()
+    .typeError('Vui lòng chọn hàng hóa')
+    .required('Vui lòng chọn hàng hóa'),
 });
 
 export default function FormPKK({
@@ -28,8 +33,7 @@ export default function FormPKK({
   defaultValues,
   isEdit = false,
 }) {
-
-
+  const { asyncPostData } = useApisContext();
   const {
     handleSubmit,
     reset,
@@ -38,62 +42,59 @@ export default function FormPKK({
     control,
     register,
     formState: { errors, isSubmitting },
-  
   } = useForm({
     mode: 'onBlur',
-    defaultValues: defaultValues ? 
-    {
-        ...defaultValues,
-        kho: {
-          ma_kho: defaultValues.ma_kho,
-          ten_kho: defaultValues.ten_kho
-        },
-        hanghoa:{
-          ma_vt: defaultValues.ma_vt,
-          ten_vt: defaultValues.ten_vt
-        },
-        ngay_ct: moment(defaultValues.ngay_ct).format("YYYY-MM-DD"),
-        ngay_kiem_hang: moment(defaultValues.ngay_kiem_hang).format('YYYY-MM-DD')
-        ,
-        lo: {
-          ma_lo: defaultValues.ma_lo,
-          ten_lo: defaultValues.ten_lo,
+    defaultValues: defaultValues
+      ? {
+          ...defaultValues,
+          kho: {
+            ma_kho: defaultValues.ma_kho,
+            ten_kho: defaultValues.ten_kho,
+          },
+          vatTu: {
+            ma_vt: defaultValues.ma_vt,
+            ten_vt: defaultValues.ten_vt,
+            theo_doi_lo: !!defaultValues.ma_lo || false
+          },
+          ngay_ct: moment(defaultValues.ngay_ct).format('YYYY-MM-DD'),
+          ngay_kiem_hang: moment(defaultValues.ngay_kiem_hang).format(
+            'YYYY-MM-DD'
+          ),
+          lo: defaultValues.ma_lo
+            ? {
+                ma_lo: defaultValues.ma_lo,
+                ten_lo: defaultValues.ten_lo,
+              }
+            : null,
         }
-    }
-    :
-    {
-        ngay_ct: moment().format('YYYY-MM-DD'),
-        ngay_kiem_hang: moment().format('YYYY-MM-DD'),
-    },
-
+      : {
+          ngay_ct: moment().format('YYYY-MM-DD'),
+          ngay_kiem_hang: moment().format('YYYY-MM-DD'),
+        },
 
     resolver: yupResolver(schema),
   });
   const tonKhoSoSach = watch('ton_kho_so_sach');
   const tonKhoThucTe = watch('ton_kho_thuc_te');
-  const vatTu = watch('vat_tu');
+  const vatTu = watch('vatTu');
+  const kho = watch('kho');
 
-  useEffect(() => {
-    const chenhLech = (tonKhoThucTe || 0) - (tonKhoSoSach || 0);
-    setValue('chenh_lech', chenhLech);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tonKhoThucTe, tonKhoSoSach]);
-  const { asyncPostData } = useApisContext();
-
-  const generateDataPost = values => {
-    const {hanghoa, kho, ...fields} = values
+  const generateDataPost = (values) => {
+    const { vatTu, kho, lo, ...fields } = values;
     const result = {
       ...fields,
-      ma_vt: hanghoa.ma_vt,
-      ten_vt: hanghoa.ten_vt,
+      ma_vt: vatTu.ma_vt,
+      ten_vt: vatTu.ten_vt,
       ma_kho: kho.ma_kho,
-      ten_kho: kho.ten_kho
-    }
-    return result
-  }
+      ten_kho: kho.ten_kho,
+      ma_lo: lo?.ma_lo || '',
+      ten_lo: lo?.ten_lo || '',
+    };
+    return result;
+  };
 
   const handleSave = async (values) => {
-    const dataPost = generateDataPost(values)
+    const dataPost = generateDataPost(values);
     const method = isEdit ? 'put' : 'post';
     await asyncPostData('dmpkk', dataPost, method).then((resp) => {
       if (!resp.message) {
@@ -103,6 +104,11 @@ export default function FormPKK({
       }
     });
   };
+  useEffect(() => {
+    const chenhLech = (tonKhoThucTe || 0) - (tonKhoSoSach || 0);
+    setValue('chenh_lech', chenhLech);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tonKhoThucTe, tonKhoSoSach]);
 
   return (
     <ModalBase
@@ -137,55 +143,54 @@ export default function FormPKK({
           />
         </Grid>
         <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="kho"
-          render={({ field: { onChange, value } }) => (
-            <SelectApiInput
-              disabled={isEdit}
-              label="Kho"
-              required
-              apiCode="dmkho"
-              placeholder="Kho"
-              searchFileds={['ma_kho', 'ten_kho']}
-              getOptionLabel={(option) => option.ten_kho}
-              selectedValue={value}
-              value={value || { ma_kho: '', ten_kho: '' }}
-              onSelect={onChange}
-              FormAdd={dsDanhMuc['dmpkk'].Form}
-              errorMessage={errors?.kho?.message}
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="vat_tu"
-          render={({ field: { onChange, value } }) => (
-            <SelectApiInput
-              disabled={isEdit}
-              label="Hàng Hóa"
-              required
-              apiCode="dmvt"
-              placeholder="Kem"
-              searchFileds={['ma_vt', 'ten_vt']}
-              getOptionLabel={(option) => option.ten_vt}
-              selectedValue={value}
-              value={value || { ma_vt: '', ten_vt: '' }}
-              onSelect={onChange}
-              FormAdd={dsDanhMuc['dmvt'].Form}
-              errorMessage={errors?.vat_tu?.message}
-            />
-          )}
-        />
-   
-      </Grid>
+          <Controller
+            control={control}
+            name="kho"
+            render={({ field: { onChange, value } }) => (
+              <SelectApiInput
+                disabled={isEdit}
+                label="Kho"
+                required
+                apiCode="dmkho"
+                placeholder="Kho"
+                searchFileds={['ma_kho', 'ten_kho']}
+                getOptionLabel={(option) => option.ten_kho}
+                selectedValue={value}
+                value={value || { ma_kho: '', ten_kho: '' }}
+                onSelect={onChange}
+                FormAdd={dsDanhMuc['dmpkk'].Form}
+                errorMessage={errors?.kho?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="vatTu"
+            render={({ field: { onChange, value } }) => (
+              <SelectApiInput
+                disabled={isEdit}
+                label="Hàng Hóa"
+                required
+                apiCode="dmvt"
+                placeholder="Kem"
+                searchFileds={['ma_vt', 'ten_vt']}
+                getOptionLabel={(option) => option.ten_vt}
+                selectedValue={value}
+                value={value || { ma_vt: '', ten_vt: '' }}
+                onSelect={onChange}
+                FormAdd={dsDanhMuc['dmvt'].Form}
+                errorMessage={errors?.vatTu?.message}
+              />
+            )}
+          />
+        </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
             label="Tồn Kho Sổ Sách"
             placeholder="Tồn kho sổ sách"
-            type='number'
+            type="number"
             name="ton_kho_so_sach"
             register={register}
             errorMessage={errors?.ten_pkk?.message}
@@ -195,7 +200,7 @@ export default function FormPKK({
           <TextInput
             label="Tồn Kho Thực Tế"
             placeholder="Tồn kho thực tế"
-            type='number'
+            type="number"
             name="ton_kho_thuc_te"
             register={register}
             errorMessage={errors?.ten_pkk?.message}
@@ -207,8 +212,9 @@ export default function FormPKK({
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
+                disabled
                 label="Chênh Lệch"
-                type='number'
+                type="number"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
@@ -225,7 +231,7 @@ export default function FormPKK({
             placeholder="Ngày chứng từ"
             name="ngay_ct"
             register={register}
-          errorMessage={errors?.ngay_ct?.message}
+            errorMessage={errors?.ngay_ct?.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -238,7 +244,7 @@ export default function FormPKK({
             errorMessage={errors?.ngay_kiem_hang?.message}
           />
         </Grid>
-        {vatTu?.theo_doi_lo && (
+        {vatTu?.theo_doi_lo && kho && (
           <Grid item xs={12} md={6}>
             <Controller
               control={control}
@@ -249,7 +255,7 @@ export default function FormPKK({
                   apiCode="dmlo"
                   placeholder="Chọn lô hàng hóa"
                   searchFileds={['ma_lo', 'ten_lo']}
-                  condition={!!vatTu ? { ma_vt: vatTu?.ma_vt } : {}}
+                  condition={{ ma_vt: vatTu.ma_vt, ma_kho: kho.ma_kho }}
                   getOptionLabel={(option) => option.ten_lo}
                   selectedValue={value}
                   value={value || { ma_lo: '', ten_lo: '' }}
@@ -260,7 +266,7 @@ export default function FormPKK({
               )}
             />
           </Grid>
-        )}  
+        )}
       </Grid>
     </ModalBase>
   );

@@ -135,6 +135,13 @@ const tkctloColumns = [
     center: true,
   },
   {
+    name: 'Tên kho',
+    selector: (row) => row.ten_kho,
+    sortable: true,
+    wrap: true,
+    center: true,
+  },
+  {
     name: 'Số lượng tồn',
     selector: (row) => row.ton_kho,
     sortable: true,
@@ -142,9 +149,55 @@ const tkctloColumns = [
     right: true,
   },
 ];
+const pkkColumns = [
+  {
+    name: 'Mã phiếu',
+    selector: (row) => row.ma_phieu,
+    sortable: true,
+    wrap: true,
+    left: true,
+  },
+  {
+    name: 'Mã chứng từ',
+    selector: (row) => row.ma_ct,
+    sortable: true,
+    wrap: true,
+    center: true,
+  },
+  {
+    name: 'Kho',
+    selector: (row) => row.ten_kho,
+    sortable: true,
+    wrap: true,
+    center: true,
+  },
+  {
+    name: 'Lô',
+    selector: (row) => row.ten_lo,
+    sortable: true,
+    wrap: true,
+    center: true,
+  },
+  {
+    name: 'Thừa / thiếu',
+    selector: (row) => row.chenh_lech,
+    sortable: true,
+    wrap: true,
+    center: true,
+  },
+  {
+    name: 'Ngày kiểm hàng',
+    selector: (row) => row.ngay_kiem_hang,
+    format: (row) => formatDateDisplay(row.ngay_kiem_hang),
+    minWidth: '150px',
+    sortable: true,
+    wrap: true,
+    right: true,
+  },
+];
 
 function KhoTab({ maVt, theoDoiLo }) {
-  const { callApi } = useApisContext();
+  const { callApi, asyncGetList } = useApisContext();
   const alertSnackbar = useSnackbarContext();
   const [tkcts, setTkcts] = useState(null);
   const [tkctLos, setTkctLos] = useState(null);
@@ -156,6 +209,13 @@ function KhoTab({ maVt, theoDoiLo }) {
     data: [],
   });
   const [pxkOptions, setPxkOptions] = useState({
+    rowsPerpage: 20,
+    count: 0,
+    page: 1,
+    loading: false,
+    data: [],
+  });
+  const [pkkOptions, setPkkOptions] = useState({
     rowsPerpage: 20,
     count: 0,
     page: 1,
@@ -215,6 +275,28 @@ function KhoTab({ maVt, theoDoiLo }) {
       alertSnackbar('error', error?.response?.data?.message);
     }
   };
+  // get pkks
+  const getPkks = async () => {
+    try {
+      setPkkOptions({ ...pkkOptions, loading: true });
+      const resp = await asyncGetList('dmpkk', {
+        page: pkkOptions.page,
+        limit: pkkOptions.rowsPerpage,
+        ma_vt: maVt,
+      });
+      if (resp) {
+        setPkkOptions({
+          ...pkkOptions,
+          data: resp.data,
+          count: resp.count,
+          loading: false,
+        });
+      }
+    } catch (error) {
+      setPkkOptions({ ...pkkOptions, loading: false });
+      alertSnackbar('error', error?.response?.data?.message);
+    }
+  };
   // get tkcts
   const getTkcts = async () => {
     try {
@@ -271,6 +353,10 @@ function KhoTab({ maVt, theoDoiLo }) {
     getPxks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maVt, pxkOptions.page, pxkOptions.rowsPerpage]);
+  useEffect(() => {
+    getPkks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maVt, pkkOptions.page, pkkOptions.rowsPerpage]);
 
   return (
     <Stack sx={{ width: '100%' }} spacing="20px">
@@ -333,6 +419,24 @@ function KhoTab({ maVt, theoDoiLo }) {
           onChangePage={(page) => setPxkOptions({ ...pxkOptions, page })}
           onChangeRowsPerPage={(value) =>
             setPxkOptions({ ...pnkColumns, rowsPerpage: value })
+          }
+        />
+      </Stack>
+      <Stack spacing="10px">
+        <Typography
+          sx={{ fontSize: '13px', fontWeight: 550, color: 'secondary.main' }}
+        >
+          Kiểm kho
+        </Typography>
+        <TableDisplay
+          title="kiểm kho"
+          data={pkkOptions.data}
+          columns={pkkColumns}
+          progressPending={pkkOptions.loading}
+          pagination
+          onChangePage={(page) => setPxkOptions({ ...pkkOptions, page })}
+          onChangeRowsPerPage={(value) =>
+            setPkkOptions({ ...pkkColumns, rowsPerpage: value })
           }
         />
       </Stack>
