@@ -11,7 +11,7 @@ const tonKhoController = {
     try {
       if (!ma_vt) {
         error = true;
-        next(createError(400, "Không xác định được hàng hóa"));
+        next(createError(400, 'Không xác định được hàng hóa'));
       }
       const vatTu = await vatTuModel.findOne({ ma_vt });
       if (!vatTu) {
@@ -31,7 +31,7 @@ const tonKhoController = {
     }
     const tonKho = await soKhoModel.aggregate([
       { $match: { ma_kho, ma_vt } },
-      { $group: { _id: null, ton_kho: { $sum: "$so_luong" } } },
+      { $group: { _id: null, ton_kho: { $sum: '$so_luong' } } },
       { $project: { _id: 0 } },
     ]);
     return tonKho[0];
@@ -45,11 +45,23 @@ const tonKhoController = {
       { $match: { ma_vt: maVt } },
       {
         $group: {
-          _id: "$ma_kho",
-          tong_ton_kho: { $sum: "$so_luong" },
+          _id: '$ma_kho',
+          tong_ton_kho: { $sum: '$so_luong' },
         },
       },
-      { $group: { _id: null, ton_kho: { $sum: "$tong_ton_kho" } } },
+      { $group: { _id: null, ton_kho: { $sum: '$tong_ton_kho' } } },
+      { $project: { _id: 0 } },
+    ]);
+    return tonKho[0];
+  },
+  async getInventoryByConsigmentHelper({ ma_vt, ma_lo }) {
+    const existed = await soKhoModel.findOne({ ma_vt, ma_lo });
+    if (!existed) {
+      return { ton_kho: 0 };
+    }
+    const tonKho = await soKhoModel.aggregate([
+      { $match: { ma_lo, ma_vt } },
+      { $group: { _id: null, ton_kho: { $sum: '$so_luong' } } },
       { $project: { _id: 0 } },
     ]);
     return tonKho[0];
@@ -83,17 +95,17 @@ const tonKhoController = {
         { $match: { ma_vt } },
         {
           $group: {
-            _id: "$ma_kho",
-            ten_kho: { $first: "$ten_kho" },
-            ton_kho: { $sum: "$so_luong" },
+            _id: '$ma_kho',
+            ten_kho: { $first: '$ten_kho' },
+            ton_kho: { $sum: '$so_luong' },
           },
         },
         {
           $project: {
             _id: 0,
-            ma_kho: "$_id",
-            ten_kho: "$ten_kho",
-            ton_kho: "$ton_kho",
+            ma_kho: '$_id',
+            ten_kho: '$ten_kho',
+            ton_kho: '$ton_kho',
           },
         },
       ]);
@@ -106,7 +118,7 @@ const tonKhoController = {
     try {
       const { ma_vt, ma_kho } = req.body;
       if (!ma_kho) {
-        return next(createError(400, "Không xác định được kho"));
+        return next(createError(400, 'Không xác định được kho'));
       }
       const kho = await khoModel.findOne({ ma_kho });
       if (!kho) {
@@ -129,7 +141,7 @@ const tonKhoController = {
     try {
       const { ma_vt, ma_lo } = req.body;
       if (!ma_lo) {
-        return next(createError(400, "Không xác định được lô"));
+        return next(createError(400, 'Không xác định được lô'));
       }
       const lo = await loModel.findOne({ ma_lo });
       if (!lo) {
@@ -139,16 +151,11 @@ const tonKhoController = {
       if (isError) {
         return;
       }
-      const existed = await soKhoModel.findOne({ ma_vt, ma_lo });
-      if (!existed) {
-        return res.status(200).json({ ton_kho: 0 });
-      }
-      const tonKho = await soKhoModel.aggregate([
-        { $match: { ma_lo, ma_vt } },
-        { $group: { _id: null, ton_kho: { $sum: "$so_luong" } } },
-        { $project: { _id: 0 } },
-      ]);
-      return res.status(200).json(tonKho[0]);
+      const tonKho = await tonKhoController.getInventoryByConsigmentHelper({
+        ma_vt,
+        ma_lo,
+      });
+      return res.status(200).json(tonKho);
     } catch (error) {
       return next(error);
     }
@@ -160,7 +167,7 @@ const tonKhoController = {
       if (isError) {
         return;
       }
-      const existed = await soKhoModel.findOne({ ma_vt, ma_lo: { $ne: "" } });
+      const existed = await soKhoModel.findOne({ ma_vt, ma_lo: { $ne: '' } });
       if (!existed) {
         return res.status(200).json([]);
       }
@@ -168,19 +175,19 @@ const tonKhoController = {
         { $match: { ma_vt } },
         {
           $group: {
-            _id: "$ma_lo",
-            ten_lo: { $first: "$ten_lo" },
-            ton_kho: { $sum: "$so_luong" },
-            ten_kho: { $first: "$ten_kho" },
+            _id: '$ma_lo',
+            ten_lo: { $first: '$ten_lo' },
+            ton_kho: { $sum: '$so_luong' },
+            ten_kho: { $first: '$ten_kho' },
           },
         },
         {
           $project: {
             _id: 0,
-            ma_lo: "$_id",
-            ten_lo: "$ten_lo",
-            ton_kho: "$ton_kho",
-            ten_kho: "$ten_kho",
+            ma_lo: '$_id',
+            ten_lo: '$ten_lo',
+            ton_kho: '$ton_kho',
+            ten_kho: '$ten_kho',
           },
         },
       ]);

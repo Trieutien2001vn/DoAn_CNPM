@@ -119,7 +119,20 @@ phieuDieuChuyenSchema.pre('save', async function (next) {
         )
       );
     }
-
+    if (pdc.ma_lo_tu) {
+      const tonTheoLo = await tonKhoController.getInventoryByConsigmentHelper({
+        ma_vt: pdc.ma_vt,
+        ma_lo: pdc.ma_lo_tu,
+      });
+      if (tonTheoLo.ton_kho < pdc.sl_chuyen) {
+        return next(
+          createHttpError(
+            400,
+            `Hàng hóa '${pdc.ten_vt}' chỉ tồn '${tonTheoLo.ton_kho}' ở kho '${pdc.ten_kho_tu}'`
+          )
+        );
+      }
+    }
     const maChungTu = await generateUniqueValue();
     pdc.ma_ct = maChungTu;
     const chungTu = await chungTuModel.findOne({ ma_ct: 'pxdc' });
@@ -162,6 +175,7 @@ phieuDieuChuyenSchema.post('save', async function () {
 });
 phieuDieuChuyenSchema.post('updateMany', async function (next) {
   try {
+    const _update = this.getUpdate();
   } catch (error) {
     return next(error);
   }
