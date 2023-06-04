@@ -20,6 +20,7 @@ import FilterPXK from '~/components/filter/pxk/FilterPXK';
 import FormPKK from '~/components/form/pkk/FormPKK';
 import FilterPKK from '~/components/filter/pkk/FilterPKK';
 import FormPXDC from '~/components/form/pxdc/FormPXDC';
+import FormPXH from '~/components/form/pxh/FormPXH';
 
 const dsDanhMuc = {
   dmvt: {
@@ -538,6 +539,62 @@ const dsDanhMuc = {
         name: 'Ngày nhập kho',
         selector: (row) => row.ngay_nhap_kho,
         format: (row) => formatDateDisplay(row.ngay_nhap_kho),
+        sortable: true,
+        minWidth: '150px',
+        right: true,
+      },
+    ],
+  },
+  dmpxh: {
+    title: 'phiếu xuất hủy',
+    uniqueKey: 'ma_phieu',
+    Form: FormPXH,
+    // Filter: FilterPKK,
+    columns: [
+      {
+        name: 'Mã phiếu',
+        selector: (row) => row.ma_phieu,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Kho',
+        selector: (row) => row.ten_kho,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Hàng hóa',
+        selector: (row) => row.ten_vt,
+        sortable: true,
+        minWidth: '150px',
+      },
+      {
+        name: 'Số lượng',
+        selector: (row) => row.sl_huy,
+        sortable: true,
+        minWidth: '120px',
+        center: true,
+      },
+      {
+        name: 'Giá trị',
+        selector: (row) => row.gia_tri_huy,
+        format: (row) => numeralCustom(row.gia_tri_huy).format(),
+        sortable: true,
+        minWidth: '120px',
+        center: true,
+      },
+      {
+        name: 'Ngày chứng từ',
+        selector: (row) => row.ngay_ct,
+        format: (row) => formatDateDisplay(row.ngay_ct),
+        sortable: true,
+        minWidth: '150px',
+      },
+      {
+        name: 'Ngày hủy hàng',
+        selector: (row) => row.ngay_huy_hang,
+        format: (row) => formatDateDisplay(row.ngay_huy_hang),
         sortable: true,
         minWidth: '150px',
         right: true,

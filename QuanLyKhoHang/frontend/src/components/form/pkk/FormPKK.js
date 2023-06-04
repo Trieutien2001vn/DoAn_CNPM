@@ -158,7 +158,7 @@ export default function FormPKK({
                 selectedValue={value}
                 value={value || { ma_kho: '', ten_kho: '' }}
                 onSelect={onChange}
-                FormAdd={dsDanhMuc['dmpkk'].Form}
+                FormAdd={dsDanhMuc['dmkho'].Form}
                 errorMessage={errors?.kho?.message}
               />
             )}
