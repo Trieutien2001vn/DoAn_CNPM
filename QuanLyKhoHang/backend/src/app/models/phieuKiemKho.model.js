@@ -2,7 +2,10 @@ const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
 const soKhoModel = require("./soKho.model");
 const chungTuModel = require("../models/chungTu.model");
+const loModel = require("../models/lo.model");
+const tonKhoController = require("../controllers/tonkho.controller");
 const { generateRandomCode } = require("../../utils/myUtil");
+const createHttpError = require("http-errors");
 
 const phieuKiemKhoSchema = new mongoose.Schema(
   {
@@ -35,6 +38,14 @@ const phieuKiemKhoSchema = new mongoose.Schema(
     ten_vt: {
       type: String,
       required: true,
+    },
+    ma_lo: {
+      type: String,
+      default: "",
+    },
+    ten_lo: {
+      type: String,
+      default: "",
     },
     ton_kho_so_sach: {
       type: Number,
@@ -83,13 +94,41 @@ const generateUniqueValue = async () => {
 phieuKiemKhoSchema.pre("save", async function (next) {
   try {
     const pkk = this;
-    const maCt = await generateUniqueValue();
-    pkk.ma_ct = maCt;
-    const chungTu = await chungTuModel.findOne({ ma_ct: "pkk" });
-    pkk.ma_loai_ct = chungTu.ma_ct;
-    pkk.ten_loai_ct = chungTu.ten_ct;
-    pkk.chenh_lech = (pkk.ton_kho_thuc_te || 0) - (pkk.ton_kho_so_sach || 0);
-    next();
+    let error;
+    const tonKho = await tonKhoController.getInventoryOnStoreHelper({
+      ma_vt: pkk.ma_vt,
+      ma_kho: pkk.ma_kho,
+    });
+    if (tonKho.ton_kho <= 0) {
+      error = createHttpError(
+        400,
+        `Hàng hóa '${pkk.ten_vt}' không có tồn kho trong kho '${pkk.ten_kho}'`
+      );
+    }
+    if (pkk.ma_lo) {
+      const loExisted = await loModel.findOne({
+        ma_lo: pkk.ma_lo,
+        ma_vt: pkk.ma_vt,
+        ma_kho: pkk.ma_kho,
+      });
+      if (!loExisted) {
+        error = createHttpError(
+          404,
+          `Lô '${pkk.ten_lo}' với hàng hóa '${pkk.ten_vt}' và kho '${pkk.ten_kho}' không tồn tại`
+        );
+      }
+    }
+    if (error) {
+      return next(error);
+    } else {
+      const maCt = await generateUniqueValue();
+      pkk.ma_ct = maCt;
+      const chungTu = await chungTuModel.findOne({ ma_ct: "pkk" });
+      pkk.ma_loai_ct = chungTu.ma_ct;
+      pkk.ten_loai_ct = chungTu.ten_ct;
+      pkk.chenh_lech = (pkk.ton_kho_thuc_te || 0) - (pkk.ton_kho_so_sach || 0);
+      next();
+    }
   } catch (error) {
     next(error);
   }
@@ -111,6 +150,8 @@ phieuKiemKhoSchema.post("save", async function () {
     ma_vt: pkk.ma_vt,
     ten_vt: pkk.ten_vt,
     so_luong: pkk.chenh_lech,
+    ma_lo: pkk.ma_lo,
+    ten_lo: pkk.ten_lo,
   });
 });
 phieuKiemKhoSchema.post("updateMany", async function (next) {
@@ -147,6 +188,33 @@ phieuKiemKhoSchema.pre("deleteMany", async function () {
   } catch (error) {
     return next(error);
   }
+});
+phieuKiemKhoSchema.pre("updateOne", async function () {
+  const {
+    ma_ct,
+    ma_kho,
+    ten_kho,
+    ma_lo,
+    ten_lo,
+    ma_vt,
+    ten_vt,
+    ngay_ct,
+    ton_kho_thuc_te,
+    ton_kho_so_sach,
+  } = this.getUpdate();
+  await soKhoModel.updateOne(
+    { ma_ct },
+    {
+      ma_kho,
+      so_luong: (ton_kho_thuc_te || 0) - (ton_kho_so_sach || 0),
+      ten_kho,
+      ma_lo,
+      ten_lo,
+      ma_vt,
+      ten_vt,
+      ngay_ct,
+    }
+  );
 });
 
 phieuKiemKhoSchema.plugin(mongooseDelete, {

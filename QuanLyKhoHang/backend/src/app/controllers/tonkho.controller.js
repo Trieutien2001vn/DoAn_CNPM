@@ -171,6 +171,7 @@ const tonKhoController = {
             _id: "$ma_lo",
             ten_lo: { $first: "$ten_lo" },
             ton_kho: { $sum: "$so_luong" },
+            ten_kho: { $first: "$ten_kho" },
           },
         },
         {
@@ -179,6 +180,7 @@ const tonKhoController = {
             ma_lo: "$_id",
             ten_lo: "$ten_lo",
             ton_kho: "$ton_kho",
+            ten_kho: "$ten_kho",
           },
         },
       ]);

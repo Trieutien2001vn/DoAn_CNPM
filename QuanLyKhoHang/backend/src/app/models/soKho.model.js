@@ -41,10 +41,6 @@ const soKhoSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    gia_von: {
-      type: Number,
-      default: 0,
-    },
     sl_nhap: {
       type: Number,
       default: 0,
