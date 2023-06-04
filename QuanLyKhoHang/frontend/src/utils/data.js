@@ -19,6 +19,7 @@ import FormPXK from '~/components/form/pxk/FormPXK';
 import FilterPXK from '~/components/filter/pxk/FilterPXK';
 import FormPKK from '~/components/form/pkk/FormPKK';
 import FilterPKK from '~/components/filter/pkk/FilterPKK';
+import FormPXDC from '~/components/form/pxdc/FormPXDC';
 
 const dsDanhMuc = {
   dmvt: {
@@ -31,8 +32,8 @@ const dsDanhMuc = {
         name: 'Mã',
         selector: (row) => row.ma_vt,
         width: '150px',
-        sortable: true, 
-        wrap: true
+        sortable: true,
+        wrap: true,
       },
       {
         name: 'Tên',
@@ -410,43 +411,49 @@ const dsDanhMuc = {
         selector: (row) => row.ma_phieu,
         sortable: true,
         minWidth: '100px',
+        left: true,
       },
       {
         name: 'Mã chứng từ',
         selector: (row) => row.ma_ct,
         sortable: true,
-        minWidth: '150px',
+        minWidth: '120px',
+        center: true,
       },
       {
         name: 'Kho',
         selector: (row) => row.ten_kho,
         sortable: true,
         center: true,
-        minWidth: '100px',
+        minWidth: '150px',
       },
       {
         name: 'Hàng Hóa',
         selector: (row) => row.ten_vt,
-        minWidth: '200px',
+        width: '180px',
+        wrap: true,
         sortable: true,
+        left: true,
       },
       {
         name: 'Tồn Kho Sổ Sách',
         selector: (row) => row.ton_kho_so_sach,
-        minWidth: '200px',
+        minWidth: '150px',
         sortable: true,
+        center: true,
       },
       {
         name: 'Tồn Kho Thực Tế',
         selector: (row) => row.ton_kho_thuc_te,
-        minWidth: '200px',
+        minWidth: '150px',
         sortable: true,
       },
       {
         name: 'Chênh Lệch',
         selector: (row) => row.chenh_lech,
-        minWidth: '200px',
+        minWidth: '120px',
         sortable: true,
+        center: true,
       },
       {
         name: 'Ngày chứng từ',
@@ -469,12 +476,68 @@ const dsDanhMuc = {
         name: 'Lô',
         selector: (row) => row.ten_lo,
         sortable: true,
-        center: true,
+        right: true,
+        minWidth: '150px',
+        wrap: true,
+      },
+    ],
+  },
+  dmpxdc: {
+    title: 'phiếu xuất điều chuyển',
+    uniqueKey: 'ma_phieu',
+    Form: FormPXDC,
+    // Filter: FilterPKK,
+    columns: [
+      {
+        name: 'Mã phiếu',
+        selector: (row) => row.ma_phieu,
+        sortable: true,
         minWidth: '100px',
       },
-      
-    ]
-  }
+      {
+        name: 'Từ kho',
+        selector: (row) => `${row.ten_kho_tu}(${row.ma_kho_tu})`,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Đến kho',
+        selector: (row) => `${row.ten_kho_den}(${row.ma_kho_den})`,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Số lượng',
+        selector: (row) => row.sl_chuyen,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Ngày chứng từ',
+        selector: (row) => row.ngay_ct,
+        format: (row) => formatDateDisplay(row.ngay_ct),
+        sortable: true,
+        minWidth: '150px',
+        center: true,
+      },
+      {
+        name: 'Ngày xuất kho',
+        selector: (row) => row.ngay_xuat_kho,
+        format: (row) => formatDateDisplay(row.ngay_xuat_kho),
+        sortable: true,
+        minWidth: '150px',
+        center: true,
+      },
+      {
+        name: 'Ngày nhập kho',
+        selector: (row) => row.ngay_nhap_kho,
+        format: (row) => formatDateDisplay(row.ngay_nhap_kho),
+        sortable: true,
+        minWidth: '150px',
+        right: true,
+      },
+    ],
+  },
 };
 
 export { dsDanhMuc };
