@@ -20,6 +20,7 @@ import FilterPXK from '~/components/filter/pxk/FilterPXK';
 import FormPKK from '~/components/form/pkk/FormPKK';
 import FilterPKK from '~/components/filter/pkk/FilterPKK';
 import FormPXDC from '~/components/form/pxdc/FormPXDC';
+import FilterPXDC from '~/components/filter/pxdc/FilterPXDC';
 
 const dsDanhMuc = {
   dmvt: {
@@ -486,7 +487,7 @@ const dsDanhMuc = {
     title: 'phiếu xuất điều chuyển',
     uniqueKey: 'ma_phieu',
     Form: FormPXDC,
-    // Filter: FilterPKK,
+    Filter: FilterPXDC,
     columns: [
       {
         name: 'Mã phiếu',

@@ -77,7 +77,6 @@ export default function FormPKK({
   const tonKhoSoSach = watch('ton_kho_so_sach');
   const tonKhoThucTe = watch('ton_kho_thuc_te');
   const vatTu = watch('vatTu');
-  const kho = watch('kho');
 
   const generateDataPost = (values) => {
     const { vatTu, kho, lo, ...fields } = values;
@@ -244,7 +243,7 @@ export default function FormPKK({
             errorMessage={errors?.ngay_kiem_hang?.message}
           />
         </Grid>
-        {vatTu?.theo_doi_lo && kho && (
+        {vatTu?.theo_doi_lo && (
           <Grid item xs={12} md={6}>
             <Controller
               control={control}
@@ -252,16 +251,17 @@ export default function FormPKK({
               render={({ field: { value, onChange } }) => (
                 <SelectApiInput
                   label="Lô hàng"
+                  required
                   apiCode="dmlo"
                   placeholder="Chọn lô hàng hóa"
                   searchFileds={['ma_lo', 'ten_lo']}
-                  condition={{ ma_vt: vatTu.ma_vt, ma_kho: kho.ma_kho }}
+                  condition={!!vatTu ? { ma_vt: vatTu?.ma_vt } : {}}
                   getOptionLabel={(option) => option.ten_lo}
                   selectedValue={value}
                   value={value || { ma_lo: '', ten_lo: '' }}
                   onSelect={onChange}
                   FormAdd={dsDanhMuc.dmlo.Form}
-                  // errorMessage={errors?.lo?.message}
+                  errorMessage={errors?.lo?.message}
                 />
               )}
             />
