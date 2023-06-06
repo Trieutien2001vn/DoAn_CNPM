@@ -79,8 +79,9 @@ function SelectApiInput({
   const handleGetData = async (search, page, oldOptions = []) => {
     try {
       setLoading(true);
-      const selfCondition = { page, limit: 20, $or: [], ...condition };
+      const selfCondition = { page, limit: 20, ...condition };
       if (search) {
+        selfCondition.$or = [];
         searchFileds.forEach((searchFiled) =>
           selfCondition.$or.push({
             [searchFiled]: {
@@ -129,9 +130,10 @@ function SelectApiInput({
   React.useEffect(() => {
     if (search) {
       handleGetData(search, 1, []);
-    } else {
-      setOptions([]);
     }
+    // else {
+    //   setOptions([]);
+    // }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
   React.useEffect(() => {
@@ -194,7 +196,7 @@ function SelectApiInput({
           disabled={disabled}
           key={load}
           isOptionEqualToValue={() => true}
-          open={!!searchText}
+          // open={!!searchText}
           forcePopupIcon={false}
           options={options}
           value={value}
@@ -215,7 +217,7 @@ function SelectApiInput({
               >
                 Không tìm thấy kết quả
               </Typography>
-              {!!FormAdd && (
+              {!!FormAdd && searchText && (
                 <ButtonBase onClick={openFormAdd}>Thêm '{search}'</ButtonBase>
               )}
               <ButtonBase variant="outlined" onClick={() => setOpenDm(true)}>
@@ -234,6 +236,11 @@ function SelectApiInput({
               value={searchText}
               sx={{ '& .MuiInputBase-root': { paddingRight: '5px' } }}
               onChange={(e) => setSearchText(e.target.value)}
+              onFocus={() => {
+                if (options.length === 0) {
+                  handleGetData('', 1, []);
+                }
+              }}
               InputProps={{
                 ...params.InputProps,
                 endAdornment: loading ? (

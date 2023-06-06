@@ -174,6 +174,20 @@ phieuNhapKhoSchema.pre("save", async function (next) {
     return next(error);
   }
 });
+/* 
+Tính giá vốn trung bình
+
+Theo phương pháp tính này, mỗi lần nhập hàng thì giá vốn sẽ được tính lại theo công thức:
+
+MAC = ( A + B ) / C
+
+Với:
+
+MAC: Giá vốn của sản phẩm tính theo bình quân tức thời
+A: Giá trị kho hiện tại trước nhập = Tồn kho trước nhập * giá MAC trước nhập
+B: Giá trị kho nhập mới = Tồn nhập mới * giá nhập kho đã phân bổ chi phí
+C: Tổng tồn = Tồn trước nhập + tồn sau nhập
+*/
 phieuNhapKhoSchema.post("save", async function () {
   const pnk = this;
   pnk.details.forEach(async (detail) => {
@@ -272,7 +286,7 @@ phieuNhapKhoSchema.post("updateMany", async function (next) {
     return next(error);
   }
 });
-phieuNhapKhoSchema.pre("deleteMany", async function () {
+phieuNhapKhoSchema.pre("deleteMany", async function (next) {
   try {
     const pnk = this;
     const filter = pnk.getFilter();
