@@ -197,49 +197,11 @@ phieuXuatKhoSchema.pre("save", async function (next) {
     return next(error);
   }
 });
-// đệ quy tìm lần nhập kho đầu tiên còn tồn kho
-const findFirstImport = async ({
-  maVt,
-  tonKhoObj,
-  maCts = [""],
-  giaVons = [],
-  soLuongXuat = 1,
-}) => {
-  /*
-  Gọi
-  T = tổng tồn kho hiện tại
-  NK = số lượng nhập kho gần nhất
-  HT = T - NK (hiệu số tồn kho)
-  - Nếu HT > 0 (lần nhập kho trước vần còn tồn => phải tìm lần nhập kho trước)
-  + T = HT
-  + NK = số lượng nhập kho lần gần tiếp theo
-  + Tính lại HT
-  - Nếu HT <= 0 (Dừng và lấy giá vốn nhập ở lần nhập hiện tại )
-  */
-  const tonKho =
-    tonKhoObj || (await tonKhoController.getTotalInventoryHelper(maVt));
-  const pnkNearest = await soKhoModel
-    .findOne({ ma_loai_ct: "pnk", ma_vt: maVt, ma_ct: { $nin: maCts } })
-    .sort({ ngay_ct: -1, createdAt: -1 });
-  const HT = (tonKho?.ton_kho || 0) - (pnkNearest?.sl_nhap || 0);
-  if (HT > 0) {
-    return await findFirstImport({
-      maVt,
-      tonKhoObj: { ton_kho: HT },
-      maCts: [...maCts, pnkNearest.ma_ct],
-      giaVons: [...giaVons, pnkNearest.gia_von],
-    });
-  } else {
-    return [{ so_luong: tonKhoObj.ton_kho, gia_von: pnkNearest.gia_von }];
-  }
-};
 
 phieuXuatKhoSchema.post("save", async function (next) {
   try {
     const pxk = this;
     pxk.details.forEach(async (detail) => {
-      // luu vao so kho
-      // const giaVon = await findFirstImport({ maVt: detail.ma_vt });
       const soKho = {
         ma_ct: pxk.ma_ct,
         ma_loai_ct: pxk.ma_loai_ct,
@@ -253,7 +215,6 @@ phieuXuatKhoSchema.post("save", async function (next) {
         ten_vt: detail.ten_vt,
         sl_xuat: detail.so_luong_xuat,
         so_luong: -detail.so_luong_xuat,
-        // gia_von: giaVon,
       };
       await soKhoModel.create(soKho);
       // luu vao so quy

@@ -133,19 +133,23 @@ phieuXuatHuySchema.post('save', async function () {
 phieuXuatHuySchema.post('updateMany', async function () {
   const _update = this.getUpdate();
   const filter = this.getFilter();
-  const pxhs = await mongoose
-    .model('PhieuXuatHuy', phieuXuatHuySchema)
-    .find(filter);
-  const maCts = pxhs.map((item) => item.ma_ct);
-  console.log({ maCts });
   if (_update.$set.deleted) {
+    const pxhs = await this.model.findDeleted(filter);
+    const maCts = pxhs.map((item) => item.ma_ct);
     await soKhoModel.delete({ ma_ct: { $in: maCts } });
   } else {
+    const pxhs = await this.model.find(filter);
+    const maCts = pxhs.map((item) => item.ma_ct);
     await soKhoModel.restore({ ma_ct: { $in: maCts } });
   }
 });
-phieuXuatHuySchema.pre('deleteMany', async function () {
+phieuXuatHuySchema.pre('deleteMany', async function (next) {
   try {
+    const pxh = this;
+    const filter = pxh.getFilter();
+    const pxhs = await this.model.findDeleted(filter).select(['-_id', 'ma_ct']);
+    const maCts = pxhs.map((item) => item.ma_ct);
+    await soKhoModel.deleteMany({ ma_ct: { $in: maCts } });
   } catch (error) {
     return next(error);
   }

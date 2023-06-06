@@ -46,6 +46,10 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    gia_von: {
+      type: Number,
+      default: 0,
+    },
     ds_vt_cung_loai: {
       type: [String],
       default: null,
