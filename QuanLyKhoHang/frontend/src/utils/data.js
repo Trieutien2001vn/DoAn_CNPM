@@ -20,6 +20,7 @@ import FilterPXK from '~/components/filter/pxk/FilterPXK';
 import FormPKK from '~/components/form/pkk/FormPKK';
 import FilterPKK from '~/components/filter/pkk/FilterPKK';
 import FormPXDC from '~/components/form/pxdc/FormPXDC';
+import FilterPXDC from '~/components/filter/pxdc/FilterPXDC';
 import FormPXH from '~/components/form/pxh/FormPXH';
 
 const dsDanhMuc = {
@@ -472,13 +473,7 @@ const dsDanhMuc = {
         center: true,
         format: (row) => formatDateDisplay(row.ngay_kiem_hang),
       },
-      {
-        name: 'Mã Lô',
-        selector: (row) => row.ma_lo,
-        sortable: true,
-        center: true,
-        minWidth: '100px',
-      },
+     
       {
         name: 'Lô',
         selector: (row) => row.ten_lo,
@@ -493,7 +488,7 @@ const dsDanhMuc = {
     title: 'phiếu xuất điều chuyển',
     uniqueKey: 'ma_phieu',
     Form: FormPXDC,
-    // Filter: FilterPKK,
+    Filter: FilterPXDC,
     columns: [
       {
         name: 'Mã phiếu',
