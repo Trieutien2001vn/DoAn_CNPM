@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
 
-const loaiPhieuThuSchema = new mongoose.Schema(
+const phuongThucThanhToanSchema = new mongoose.Schema(
   {
-    ma_loai: {
+    ma_pttt: {
       type: String,
       required: true,
       unique: true,
     },
-    ten_loai: {
+    ten_pttt: {
       type: String,
       required: true,
       unique: true,
@@ -22,18 +22,18 @@ const loaiPhieuThuSchema = new mongoose.Schema(
       default: '',
     },
   },
-  { timestamps: true, collection: 'loai_phieu_thu' }
-);
-loaiPhieuThuSchema.index(
-  { ma_loai: "text", ten_loai: "text" },
-  { default_language: "none" }
+  { timestamps: true, collection: 'pttt' }
 );
 
-loaiPhieuThuSchema.plugin(mongooseDelete, {
+phuongThucThanhToanSchema.index(
+    { ma_pttt: "text", ten_pttt: "text" },
+    { default_language: "none" }
+  );
+phuongThucThanhToanSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: String,
   overrideMethods: 'all',
 });
 
-module.exports = mongoose.model('LoaiPhieuThu', loaiPhieuThuSchema);
+module.exports = mongoose.model('PhuongThucThanhToan', phuongThucThanhToanSchema);

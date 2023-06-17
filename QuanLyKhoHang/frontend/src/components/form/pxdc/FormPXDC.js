@@ -88,6 +88,7 @@ function FormPXDC({
         },
     resolver: yupResolver(schema),
   });
+  console.log(defaultValues);
   const vatTu = watch('vatTu');
   const denKho = watch('denKho');
   const { asyncPostData } = useApisContext();

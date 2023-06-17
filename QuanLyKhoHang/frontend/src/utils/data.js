@@ -22,6 +22,16 @@ import FilterPKK from '~/components/filter/pkk/FilterPKK';
 import FormPXDC from '~/components/form/pxdc/FormPXDC';
 import FilterPXDC from '~/components/filter/pxdc/FilterPXDC';
 import FormPXH from '~/components/form/pxh/FormPXH';
+import FormLPC from '~/components/form/lpc/FormLPC';
+import FormLPT from '~/components/form/lpt/FormLPT';
+import FilterLPC from '~/components/filter/lpc/FilterLPC';
+import FilterLPT from '~/components/filter/lpt/FilterLPT';
+import FormKB from '~/components/form/kb/FormKB';
+import FilterKB from '~/components/filter/kenhBan/FilterKB';
+import FormPTTT from '~/components/form/pttt/FormPTTT';
+import FilterPTTT from '~/components/filter/pttt/FilterPTTT';
+import FormKH from '~/components/form/khachhang/FormKH';
+import FilterKH from '~/components/filter/khachhang/FilterKH';
 import FormPBL from '~/components/form/pbl/FormPBL';
 
 const dsDanhMuc = {
@@ -563,7 +573,7 @@ const dsDanhMuc = {
     title: 'phiếu xuất hủy',
     uniqueKey: 'ma_phieu',
     Form: FormPXH,
-    // Filter: FilterPKK,
+    // Filter: FilterLPT,
     columns: [
       {
         name: 'Mã phiếu',
@@ -618,8 +628,8 @@ const dsDanhMuc = {
   dmlpt: {
     title: 'loại phiếu thu',
     uniqueKey: 'ma_loai',
-    // Form: FormPXH,
-    // Filter: FilterPKK,
+    Form: FormLPT,
+    Filter: FilterLPT,
     columns: [
       {
         name: 'Mã loại',
@@ -630,6 +640,110 @@ const dsDanhMuc = {
       {
         name: 'Tên Loại',
         selector: (row) => row.ten_loai,
+        sortable: true,
+        minWidth: '100px',
+      },
+    ],
+  },
+  dmlpc:{
+    title: 'loại phiếu chi',
+    uniqueKey: 'ma_loai',
+    Form: FormLPC,
+    Filter: FilterLPC,
+    columns: [
+      {
+        name: 'Mã loại',
+        selector: (row) => row.ma_loai,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Tên Loại',
+        selector: (row) => row.ten_loai,
+        sortable: true,
+        minWidth: '100px',
+      },
+    ],
+  },
+  dmkb:{
+    title: 'Kênh bán',
+    uniqueKey: 'ma_kenh',
+    Form: FormKB,
+    Filter: FilterKB,
+    columns: [
+      {
+        name: 'Mã Kênh',
+        selector: (row) => row.ma_kenh,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Tên Kênh',
+        selector: (row) => row.ten_kenh,
+        sortable: true,
+        minWidth: '100px',
+      },
+    ],
+  },
+  dmpttt:{
+    title: 'Phuong thúc thanh toán',
+    uniqueKey: 'ma_pttt',
+    Form: FormPTTT,
+    Filter: FilterPTTT,
+    columns: [
+      {
+        name: 'Mã phuong thuc thanh toan',
+        selector: (row) => row.ma_pttt,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Tên phuong thuc thanh toan',
+        selector: (row) => row.ten_pttt,
+        sortable: true,
+        minWidth: '100px',
+      },
+    ],
+  },
+  dmkh:{
+    title: 'Khách Hàng',
+    uniqueKey: 'sdt',
+    Form: FormKH,
+    Filter: FilterKH,
+    columns: [
+      {
+        name: 'Mã khách hàng',
+        selector: (row) => row.ma_kh,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Tên khách hàng',
+        selector: (row) => row.ten_kh,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Số điện thoại',
+        selector: (row) => row.sdt,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Địa chỉ',
+        selector: (row) => row.dia_chi,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Ngày sinh',
+        selector: (row) => formatDateDisplay(row.ngay_sinh),
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Email',
+        selector: (row) => row.email,
         sortable: true,
         minWidth: '100px',
       },

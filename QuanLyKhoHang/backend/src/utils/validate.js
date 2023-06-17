@@ -175,16 +175,38 @@ const validateCreateLoaiPhieuThu = ({ ma_loai, ten_loai }) => {
   });
   return modelSchema.validate({ ma_loai, ten_loai });
 };
-// phieu ban le
-const validateCreatePhieuBanLe = ({ ma_phieu, ma_kho, ten_kho }) => {
+// loai phieu chi
+const validateCreateLoaiPhieuChi = ({ ma_loai, ten_loai }) => {
   const modelSchema = joi.object({
-    ma_phieu: joi.string().required(),
-    ma_kho: joi.string().required(),
-    ten_kho: joi.string().required(),
+    ma_loai: joi.string().required(),
+    ten_loai: joi.string().required(),
   });
-  return modelSchema.validate({ ma_phieu, ma_kho, ten_kho });
+  return modelSchema.validate({ ma_loai, ten_loai });
 };
-
+// kenh ban
+const validateCreateKenhBan = ({ ma_kenh, ten_kenh }) => {
+  const modelSchema = joi.object({
+    ma_kenh: joi.string().required(),
+    ten_kenh: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_kenh, ten_kenh });
+};
+// phuong thuc thanh toan
+const validateCreatePTTT = ({ ma_pttt, ten_pttt }) => {
+  const modelSchema = joi.object({
+    ma_pttt: joi.string().required(),
+    ten_pttt: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_pttt, ten_pttt });
+};
+const validateCreateKH = ({ ma_kh, ten_kh,sdt }) => {
+  const modelSchema = joi.object({
+    ma_kh: joi.string().required(),
+    ten_kh: joi.string().required(),
+    sdt: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_kh, ten_kh,sdt });
+};
 module.exports = {
   validateCreatePhanQuyen,
   validateNguoiDungDangKy,
@@ -203,5 +225,8 @@ module.exports = {
   validateCreatePhieuXuatHuy,
   validateCreateChungTu,
   validateCreateLoaiPhieuThu,
-  validateCreatePhieuBanLe
+  validateCreateLoaiPhieuChi,
+  validateCreateKenhBan,
+  validateCreatePTTT,
+  validateCreateKH,
 };
