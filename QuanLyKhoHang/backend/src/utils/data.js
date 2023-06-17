@@ -12,6 +12,10 @@ const {
   validateCreatePhieuDieuChuyen,
   validateCreatePhieuXuatHuy,
   validateCreateLoaiPhieuThu,
+  validateCreateLoaiPhieuChi,
+  validateCreateKenhBan,
+  validateCreatePTTT,
+  validateCreateKH,
 } = require('./validate');
 const khoModel = require('../app/models/kho.model');
 const vatTuModel = require('../app/models/vatTu.model');
@@ -26,6 +30,10 @@ const phieuDieuChuyenModel = require('../app/models/phieuDieuChuyen.model');
 const phieuXuatHuyModel = require('../app/models/phieuXuatHuy.model');
 const chungTuModel = require('../app/models/chungTu.model');
 const loaiPhieuThuModel = require('../app/models/loaiPhieuThu.model');
+const loaiPhieuChiModel = require('../app/models/loaiPhieuChi.model');
+const kenhBanModel = require('../app/models/kenhBan.model');
+const phuongThucThanhToanModel = require('../app/models/phuongThucThanhToan.model');
+const khachHangModel = require('../app/models/khachHang.model');
 
 const dsDanhMuc = [
   {
@@ -180,6 +188,34 @@ const dsDanhMuc = [
     model: loaiPhieuThuModel,
     validate: validateCreateLoaiPhieuThu,
     fields: ['ma_loai', 'ten_loai'],
+  },
+  {
+    maDanhMuc: 'dmlpc',
+    uniqueField: 'ma_loai',
+    model: loaiPhieuChiModel,
+    validate: validateCreateLoaiPhieuChi,
+    fields: ['ma_loai', 'ten_loai'],
+  },
+  {
+    maDanhMuc: 'dmkb',
+    uniqueField: 'ma_kenh',
+    model: kenhBanModel,
+    validate: validateCreateKenhBan,
+    fields: ['ma_kenh', 'ten_kenh'],
+  },
+  {
+    maDanhMuc: 'dmpttt',
+    uniqueField: 'ma_pttt',
+    model: phuongThucThanhToanModel,
+    validate: validateCreatePTTT,
+    fields: ['ma_pttt', 'ten_pttt'],
+  },
+  {
+    maDanhMuc: 'dmkh',
+    uniqueField: 'sdt',
+    model: khachHangModel,
+    validate: validateCreateKH,
+    fields: ['ma_kh', 'ten_kh'],
   },
 ];
 module.exports = { dsDanhMuc };

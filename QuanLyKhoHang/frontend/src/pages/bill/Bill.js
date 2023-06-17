@@ -70,7 +70,7 @@ export default function Bill({
       <Box sx={{display:'flex',alignItems:'center'}}>
       <Button sx={{background:"primary.main"}}><AiFillLeftCircle size='20px'/></Button>
         <Paper elevation={3} sx={{height:'40px',display: 'flex', alignItems:'center', justifyContent: 'center', gap: '2px'}}>
-          <Typography sx={{textAlign:'center',fontSize:'14px',p:'5px'}} >Hoa Don 3</Typography>
+          <Typography sx={{textAlign:'center',fontSize:'13px',p:'5px'}} >Hoa Don 3</Typography>
            <TiDelete size='20px'/>
            </Paper>
            <Button sx={{background:"primary.main"}}><AiFillRightCircle size='20px'/></Button>
@@ -81,7 +81,7 @@ export default function Bill({
         <Button sx={{background:"primary.main",mr:'4px'}}><SlReload size='20px'/></Button>
         <Box sx={{display:'flex',alignItems:'center', backgroundColor:"#cbcdd4", height:'40px',borderRadius:"5px",padding:'0 20px'}}>
           <BiMap/>
-          <Typography sx={{textAlign:'center',fontSize:'14px',p:'10px'}} >Kho công ty</Typography>
+          <Typography sx={{textAlign:'center',fontSize:'13px',p:'10px'}} >Kho công ty</Typography>
 
         </Box>
         </Box>
@@ -113,46 +113,16 @@ export default function Bill({
         <AiOutlinePlus style={{position:'absolute',top:'100px',left:"200px"}}/>
         <Box sx={{display:'flex',m:'5px'}}>
           <Paper  sx={{p:'4px 10px',backgroundColor:'#ededed',mr:'10px'}}>
-              <Typography sx={{fontSize:'14px'}}>Tất cả</Typography>
+              <Typography sx={{fontSize:'13px'}}>Tất cả</Typography>
           </Paper>  
         </Box>
     <Box sx={{mt:'10px',width:'100%',height:'40%',display:'flex',gap:'10px',flexWrap:'wrap',overflow:'scroll'}}>
-     <Box sx={{width:'150px',height:'190px',display:'flex',flexDirection:'column'}}>
-     <Box sx={{position:'relative',ml:'5px',width:'100%',height:'100%',backgroundColor:'#cbcdd4',borderRadius:'5px'}} >
-      <AiOutlinePlus style={{position:'absolute',top:'60px',left:'60px'}} size='20px'/>
-      </Box>
+     <Box sx={{width:'150px',height:'190px',display:'flex',flexDirection:'column',ml:'5px'}}>
+    <Avatar sx={{width:'100%',height:'80%',borderRadius:'5px'}}/>
       <Typography sx={{textAlign:'center'}}>10 000</Typography>
-      <Typography>Trà Chanh Ô Long</Typography>
+      <Typography sx={{fontSize:'13px'}}>Trà Chanh Ô Long</Typography>
      </Box>
-     <Box sx={{width:'150px',height:'190px',display:'flex',flexDirection:'column'}}>
-     <Box sx={{position:'relative',ml:'5px',width:'100%',height:'100%',backgroundColor:'#cbcdd4',borderRadius:'5px'}} >
-      <AiOutlinePlus style={{position:'absolute',top:'60px',left:'60px'}} size='20px'/>
-      </Box>
-      <Typography sx={{textAlign:'center'}}>10 000</Typography>
-      <Typography>Trà Chanh Ô Long</Typography>
-     </Box>
-     <Box sx={{width:'150px',height:'190px',display:'flex',flexDirection:'column'}}>
-     <Box sx={{position:'relative',ml:'5px',width:'100%',height:'100%',backgroundColor:'#cbcdd4',borderRadius:'5px'}} >
-      <AiOutlinePlus style={{position:'absolute',top:'60px',left:'60px'}} size='20px'/>
-      </Box>
-      <Typography sx={{textAlign:'center'}}>10 000</Typography>
-      <Typography>Trà Chanh Ô Long</Typography>
-     </Box>
-     <Box sx={{width:'150px',height:'190px',display:'flex',flexDirection:'column'}}>
-     <Box sx={{position:'relative',ml:'5px',width:'100%',height:'100%',backgroundColor:'#cbcdd4',borderRadius:'5px'}} >
-      <AiOutlinePlus style={{position:'absolute',top:'60px',left:'60px'}} size='20px'/>
-      </Box>
-      <Typography sx={{textAlign:'center'}}>10 000</Typography>
-      <Typography>Trà Chanh Ô Long</Typography>
-     </Box>
-     <Box sx={{width:'150px',height:'190px',display:'flex',flexDirection:'column'}}>
-     <Box sx={{position:'relative',ml:'5px',width:'100%',height:'100%',backgroundColor:'#cbcdd4',borderRadius:'5px'}} >
-      <AiOutlinePlus style={{position:'absolute',top:'60px',left:'60px'}} size='20px'/>
-      </Box>
-      <Typography sx={{textAlign:'center'}}>10 000</Typography>
-      <Typography>Trà Chanh Ô Long</Typography>
-     </Box>
-
+    
 
    
     
@@ -162,46 +132,46 @@ export default function Bill({
     </Box>
       </Paper>
     <Box sx={{display:'flex',flexDirection:'column',justifyContent:'space-between',width:"50%",height:'100%'}}>
-    <Paper elevation={3} sx={{display:'flex',justifyContent:'space-between',width:"99,9%",height:'15%',ml:'5px'}} >
-       <Box sx={{display:'flex',justifyContent:'space-between',width:'40%',alignItems:'center',mt:'10px'}}>
-        <Typography>1.</Typography>
+    <Paper elevation={3} sx={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',width:"100%",height:'15%',ml:'5px',p:'10px'}} >
+       <Box sx={{display:'flex',gap:'10px',width:'40%'}}>
+        <Typography sx={{fontSize:'13px'}}>1.</Typography>
         <BsTrash/>
-        <Typography>CP001</Typography>
-        <Typography>CHARMY TRUST 100ml</Typography>
+        <Typography sx={{fontSize:'13px'}}>CP001</Typography>
+        <Typography sx={{fontSize:'13px'}}>CHARMY TRUST 100ml</Typography>
        
        </Box>
-       <Box sx={{display:'flex',alignItems:'center',mt:'10px',mr:'2px'}}>
-        <Typography sx={{fontSize:'14px', backgroundColor:'#cbcdd4',p:'5px',color:'black',borderRadius:'50px'}}>Chai</Typography>
+       <Box sx={{display:'flex',alignItems:'center',mr:'2px'}}>
+        <Typography sx={{fontSize:'12px', backgroundColor:'#cbcdd4',p:'3px',color:'black',borderRadius:'50px'}}>Chai</Typography>
        <BiDotsVerticalRounded/>
        </Box>
       </Paper>
       <Box sx={{display:'flex',justifyContent:'space-between',width:"100%",height:'40%'}}>
-      <Paper elevation={3} sx={{display:'flex',flexDirection:'column',gap:'15px',width:"100%",height:'100%', pl:'5px',ml:'5px'}} >
-      <Box sx={{display:'flex',justifyContent:'space-between',width:"98%",height:'10%',mt:"5px"}}>
+      <Paper elevation={3} sx={{display:'flex',flexDirection:'column',gap:'10px',width:"100%",height:'90%',ml:'5px'}} >
+      <Box sx={{display:'flex',justifyContent:'space-between',width:"98%",height:'10%',mt:"5px",p:'10px'}}>
         <Box sx={{display:'flex',width:"40%",justifyContent:'space-between',alignItems:'center'}}>
-          <Typography>Tiền hàng</Typography>
-          <Typography sx={{fontSize:'14px', backgroundColor:'#cbcdd4',p:'4px',color:'black',borderRadius:'100%'}}>2</Typography>
+          <Typography sx={{fontSize:'13px'}}>Tiền hàng</Typography>
+          <Typography sx={{display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px', backgroundColor:'#cbcdd4',width:"20px",height:'20px',color:'black',borderRadius:'100%'}}>2</Typography>
         </Box>
-        <Typography sx={{fontWeight:'700'}} >2 000 000</Typography> 
+        <Typography sx={{fontWeight:'700', fontSize:'13px'}} >2 000 000</Typography> 
       </Box>
-      <Box sx={{display:'flex',justifyContent:'space-between',width:"98%",height:'10%',mt:"5px"}}>
+      <Box sx={{display:'flex',justifyContent:'space-between',width:"98%",height:'10%',mt:"5px",p:'10px'}}>
         <Box sx={{display:'flex',width:"40%",justifyContent:'space-between',alignItems:'center'}}>
-          <Typography>Chiết khấu sản phẩm</Typography>
-          <Typography sx={{fontSize:'14px', backgroundColor:'#cbcdd4',p:'4px',color:'black',borderRadius:'100%'}}>0</Typography>
+          <Typography sx={{fontSize:'13px'}}>Chiết khấu sản phẩm</Typography>
+          <Typography sx={{display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px', backgroundColor:'#cbcdd4',width:"20px",height:'20px',color:'black',borderRadius:'100%'}}>0</Typography>
         </Box>
-        <Typography sx={{fontWeight:'700'}} >0</Typography> 
+        <Typography sx={{fontWeight:'700',fontSize:'13px'}} >0</Typography> 
       </Box>
-      <Box sx={{display:'flex',justifyContent:'space-between',width:"98%",height:'10%',mt:"5px"}}>
+      <Box sx={{display:'flex',justifyContent:'space-between',width:"98%",height:'10%',mt:"5px",p:'10px'}}>
         <Box sx={{display:'flex',width:"40%",justifyContent:'space-between',alignItems:'center'}}>
-          <Typography>Thanh toán</Typography>
-          <Typography sx={{fontSize:'14px', backgroundColor:'#cbcdd4',p:'4px',color:'black',borderRadius:'100%'}}>2</Typography>
+          <Typography sx={{fontSize:'13px'}}>Thanh toán</Typography>
+          <Typography sx={{display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px', backgroundColor:'#cbcdd4',width:"20px",height:'20px',color:'black',borderRadius:'100%'}}>2</Typography>
         </Box>
-        <Typography sx={{fontWeight:'700'}} >2 000 000</Typography> 
+        <Typography sx={{fontWeight:'700',fontSize:'13px'}} >2 000 000</Typography> 
       </Box>
-      <Typography sx={{borderBottom:'1px solid gray'}}></Typography>
-      <Box sx={{display:'flex',alignItems:'center',gap:'10px'}}>
+      <Typography sx={{borderBottom:'1px dashed #ededed',m:'0 10px'}}></Typography>
+      <Box sx={{display:'flex',alignItems:'center',gap:'10px',p:'10px'}}>
         <BiPencil/>
-        <Typography>Ghi chú đơn hàng</Typography>
+        <Typography sx={{fontSize:'13px'}}>Ghi chú đơn hàng</Typography>
       </Box>
       </Paper>
       
@@ -216,22 +186,22 @@ export default function Bill({
       <Box sx={{display:'flex', gap:'10px'}}>
    <Button sx={{display:'flex',border:'2px solid transparent'}}>
     <TiFlash size='20px' color='black'/>
-    <Typography sx={{textAlign:'center',textTransform:"none",fontSize:'14px',p:'2px'}} >Bán nhanh</Typography>
+    <Typography sx={{textAlign:'center',textTransform:"none",fontSize:'13px',p:'2px'}} >Bán nhanh</Typography>
 
     </Button>
     <ButtonBase sx={{display:'flex',border:'2px solid transparent',backgroundColor:'primary.main'}}>
     <AiOutlineFieldTime size='20px' color='white'/>
-    <Typography sx={{textAlign:'center',textTransform:"none",fontSize:'14px',p:'2px'}} color='white' >Bán nhanh</Typography>
+    <Typography sx={{textAlign:'center',textTransform:"none",fontSize:'13px',p:'2px'}} color='white' >Bán thuòng</Typography>
 
     </ButtonBase>
    </Box>
    <Box sx={{display:'flex', gap:'10px'}}>
    <ButtonBase sx={{display:'flex',border:'2px solid transparent',backgroundColor:'primary.main',padding:'0 40px'}}>
-    <Typography sx={{textAlign:'center',fontSize:'14px',p:'5px',letterSpacing:'2px'}} color='white' >Thanh toán</Typography>
+    <Typography sx={{textAlign:'center',fontSize:'13px',p:'5px',letterSpacing:'2px'}} color='white' >Thanh toán</Typography>
 
     </ButtonBase>
     <Button sx={{display:'flex',border:'2px solid transparent',padding:'0 40px'}}>
-    <Typography sx={{textAlign:'center',fontSize:'14px',p:'2px',letterSpacing:'2px'}} color="primary.main" >0522391726</Typography>
+    <Typography sx={{textAlign:'center',fontSize:'13px',p:'2px',letterSpacing:'2px'}} color="primary.main" >0522391726</Typography>
 
     </Button>
    </Box>
