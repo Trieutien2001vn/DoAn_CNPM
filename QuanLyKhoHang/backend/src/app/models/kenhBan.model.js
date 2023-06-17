@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
 
-const loaiPhieuThuSchema = new mongoose.Schema(
+const kenhBanSchema = new mongoose.Schema(
   {
-    ma_loai: {
+    ma_kenh: {
       type: String,
       required: true,
       unique: true,
     },
-    ten_loai: {
+    ten_kenh: {
       type: String,
       required: true,
       unique: true,
@@ -22,18 +22,18 @@ const loaiPhieuThuSchema = new mongoose.Schema(
       default: '',
     },
   },
-  { timestamps: true, collection: 'loai_phieu_thu' }
-);
-loaiPhieuThuSchema.index(
-  { ma_loai: "text", ten_loai: "text" },
-  { default_language: "none" }
+  { timestamps: true, collection: 'kenh_ban' }
 );
 
-loaiPhieuThuSchema.plugin(mongooseDelete, {
+kenhBanSchema.index(
+    { ma_kenh: "text", ten_kenh: "text" },
+    { default_language: "none" }
+  );
+kenhBanSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: String,
   overrideMethods: 'all',
 });
 
-module.exports = mongoose.model('LoaiPhieuThu', loaiPhieuThuSchema);
+module.exports = mongoose.model('KenhBan', kenhBanSchema);
