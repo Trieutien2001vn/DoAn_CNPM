@@ -236,7 +236,6 @@ phieuNhapKhoSchema.post('save', async function () {
   pnk.details.forEach(async (detail) => {
     const tonKho = await tonKhoController.getTotalInventoryHelper(detail.ma_vt);
     const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
-    vatTu.gia_von_cu = vatTu?.gia_von || 0;
     // tinh gia von trung binh
     const MAC = caculateGiaVon({
       tonKho: tonKho?.ton_kho || 0,
@@ -244,8 +243,10 @@ phieuNhapKhoSchema.post('save', async function () {
       nhapKho: detail.so_luong_nhap,
       giaVon: detail.gia_von,
     });
-    vatTu.gia_von = MAC;
-    await vatTu.save();
+    await vatTuModel.updateOne({ma_vt: detail.ma_vt}, {
+      gia_von_cu: vatTu?.gia_von || 0,
+      gia_von: MAC
+    })
     // luu vao so kho
     await soKhoModel.create({
       ma_ct: pnk.ma_ct,

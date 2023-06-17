@@ -175,6 +175,15 @@ const validateCreateLoaiPhieuThu = ({ ma_loai, ten_loai }) => {
   });
   return modelSchema.validate({ ma_loai, ten_loai });
 };
+// phieu ban le
+const validateCreatePhieuBanLe = ({ ma_phieu, ma_kho, ten_kho }) => {
+  const modelSchema = joi.object({
+    ma_phieu: joi.string().required(),
+    ma_kho: joi.string().required(),
+    ten_kho: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_phieu, ma_kho, ten_kho });
+};
 
 module.exports = {
   validateCreatePhanQuyen,
@@ -194,4 +203,5 @@ module.exports = {
   validateCreatePhieuXuatHuy,
   validateCreateChungTu,
   validateCreateLoaiPhieuThu,
+  validateCreatePhieuBanLe
 };

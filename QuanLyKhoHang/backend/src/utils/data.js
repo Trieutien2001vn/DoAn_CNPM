@@ -12,6 +12,7 @@ const {
   validateCreatePhieuDieuChuyen,
   validateCreatePhieuXuatHuy,
   validateCreateLoaiPhieuThu,
+  validateCreatePhieuBanLe,
 } = require('./validate');
 const khoModel = require('../app/models/kho.model');
 const vatTuModel = require('../app/models/vatTu.model');
@@ -26,6 +27,7 @@ const phieuDieuChuyenModel = require('../app/models/phieuDieuChuyen.model');
 const phieuXuatHuyModel = require('../app/models/phieuXuatHuy.model');
 const chungTuModel = require('../app/models/chungTu.model');
 const loaiPhieuThuModel = require('../app/models/loaiPhieuThu.model');
+const phieuBanLeModel = require('../app/models/phieuBanLe.model');
 
 const dsDanhMuc = [
   {
@@ -180,6 +182,13 @@ const dsDanhMuc = [
     model: loaiPhieuThuModel,
     validate: validateCreateLoaiPhieuThu,
     fields: ['ma_loai', 'ten_loai'],
+  },
+  {
+    maDanhMuc: 'dmpbl',
+    uniqueField: 'ma_phieu',
+    model: phieuBanLeModel,
+    validate: validateCreatePhieuBanLe,
+    fields: ['ma_phieu'],
   },
 ];
 module.exports = { dsDanhMuc };

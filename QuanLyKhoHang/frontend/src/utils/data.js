@@ -22,6 +22,7 @@ import FilterPKK from '~/components/filter/pkk/FilterPKK';
 import FormPXDC from '~/components/form/pxdc/FormPXDC';
 import FilterPXDC from '~/components/filter/pxdc/FilterPXDC';
 import FormPXH from '~/components/form/pxh/FormPXH';
+import FormPBL from '~/components/form/pbl/FormPBL';
 
 const dsDanhMuc = {
   dmvt: {
@@ -130,7 +131,7 @@ const dsDanhMuc = {
         name: 'Mã',
         selector: (row) => row.ma_kho,
         sortable: true,
-        width: '100px',
+        width: '120px',
       },
       {
         name: 'Tên',
@@ -144,14 +145,14 @@ const dsDanhMuc = {
         name: 'Địa chỉ',
         selector: (row) => row.dia_chi,
         sortable: true,
-        width: '250px',
+        width: '200x',
         wrap: true,
       },
       {
         name: 'Điện thoại',
         selector: (row) => row.dien_thoai,
         sortable: true,
-        minWidth: '170px',
+        minWidth: '150px',
         center: true,
       },
       {
@@ -160,6 +161,7 @@ const dsDanhMuc = {
         sortable: true,
         minWidth: '200px',
         center: true,
+        right: true,
       },
     ],
   },
@@ -355,7 +357,7 @@ const dsDanhMuc = {
         sortable: true,
         width: '200px',
         wrap: true,
-        right: true
+        right: true,
       },
     ],
   },
@@ -414,7 +416,7 @@ const dsDanhMuc = {
         sortable: true,
         width: '200px',
         wrap: true,
-        right: true
+        right: true,
       },
     ],
   },
@@ -630,6 +632,80 @@ const dsDanhMuc = {
         selector: (row) => row.ten_loai,
         sortable: true,
         minWidth: '100px',
+      },
+    ],
+  },
+  dmpbl: {
+    title: 'phiếu bán lẻ',
+    uniqueKey: 'ma_phieu',
+    Form: FormPBL,
+    // Filter: FilterPKK,
+    columns: [
+      {
+        name: 'Mã phiếu',
+        selector: (row) => row.ma_phieu,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Kho',
+        selector: (row) => row.ten_kho,
+        sortable: true,
+        minWidth: '120px',
+        wrap: true,
+      },
+      {
+        name: 'Ngày chứng từ',
+        selector: (row) => row.ngay_ct,
+        format: (row) => formatDateDisplay(row.ngay_ct),
+        sortable: true,
+        width: '120px',
+      },
+      {
+        name: 'Tổng tiền',
+        selector: (row) => row.tong_tien,
+        format: (row) => numeralCustom(row.tong_tien).format(),
+        sortable: true,
+        center: true,
+        width: '120px',
+      },
+      {
+        name: 'Ngày lập phiếu',
+        selector: (row) => row.ngay_lap_phieu,
+        format: (row) => formatDateDisplay(row.ngay_lap_phieu),
+        sortable: true,
+        width: '120px',
+      },
+      {
+        name: 'Nhân viên',
+        selector: (row) => row.ten_nv,
+        sortable: true,
+        width: '120px',
+        wrap: true,
+        center: true,
+      },
+      {
+        name: 'Khách hàng',
+        selector: (row) => row.ten_kh,
+        sortable: true,
+        center: true,
+        wrap: true,
+        width: '120px',
+      },
+      {
+        name: 'Kênh bán',
+        selector: (row) => row.ten_kenh,
+        sortable: true,
+        width: '120px',
+        center: true,
+        wrap: true,
+      },
+      {
+        name: 'Phương thức thanh toán',
+        selector: (row) => row.ten_kenh,
+        sortable: true,
+        width: '170px',
+        right: true,
       },
     ],
   },

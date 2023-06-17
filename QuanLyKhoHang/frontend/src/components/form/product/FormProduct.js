@@ -11,6 +11,7 @@ import { FiSave } from 'react-icons/fi';
 import { Skeleton, TabPanel } from '@mui/lab';
 import InfoTab from './InfoTab';
 import { useEffect } from 'react';
+import DinhMucTonTab from './DinhMucTonTab';
 const DescriptionTab = lazy(() => import('./DescriptionTab'));
 const ImageTab = lazy(() => import('./ImageTab'));
 const LoTab = lazy(() => import('./LoTab'));
@@ -161,13 +162,14 @@ function FormProduct({
       <TabsBase
         tabLabels={[
           { label: 'Thông tin', value: '1' },
-          { label: 'Mô tả', value: '2' },
-          { label: 'Hình ảnh', value: '3' },
+          { label: 'Định mức tồn', value: '2' },
+          { label: 'Mô tả', value: '3' },
+          { label: 'Hình ảnh', value: '4' },
           {
             label: isEdit && defaultValues?.theo_doi_lo ? 'Lô hàng' : '',
-            value: '4',
+            value: '5',
           },
-          { label: defaultValues?.ma_vt ? 'Thẻ kho' : '', value: '5' },
+          { label: defaultValues?.ma_vt ? 'Thẻ kho' : '', value: '6' },
         ]}
         ref={tabRef}
       >
@@ -179,6 +181,7 @@ function FormProduct({
             isEdit={isEdit}
             dvts={dvts}
             setDvts={setDvts}
+            tonKhoBanDau={tonKhoBanDau}
             setTonKhoBanDau={setTonKhoBanDau}
           />
         </TabPanel>
@@ -186,10 +189,17 @@ function FormProduct({
           <Suspense
             fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
           >
-            <DescriptionTab register={register} />
+            <DinhMucTonTab register={register} />
           </Suspense>
         </TabPanel>
         <TabPanel value="3" sx={{ padding: '10px 0 0 0' }}>
+          <Suspense
+            fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
+          >
+            <DescriptionTab register={register} />
+          </Suspense>
+        </TabPanel>
+        <TabPanel value="4" sx={{ padding: '10px 0 0 0' }}>
           <Suspense
             fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
           >
@@ -199,7 +209,7 @@ function FormProduct({
             />
           </Suspense>
         </TabPanel>
-        <TabPanel value="4" sx={{ padding: '10px 0 0 0' }}>
+        <TabPanel value="5" sx={{ padding: '10px 0 0 0' }}>
           <Suspense
             fallback={<Skeleton variant="rounded" width="100%" height="40px" />}
           >
@@ -209,7 +219,7 @@ function FormProduct({
           </Suspense>
         </TabPanel>
         {defaultValues?.ma_vt && (
-          <TabPanel value="5" sx={{ padding: '10px 0 0 0' }}>
+          <TabPanel value="6" sx={{ padding: '10px 0 0 0' }}>
             <Suspense
               fallback={
                 <Skeleton variant="rounded" width="100%" height="40px" />

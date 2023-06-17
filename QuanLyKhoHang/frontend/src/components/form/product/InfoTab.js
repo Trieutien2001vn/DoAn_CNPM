@@ -25,6 +25,7 @@ function InfoTab({
   isEdit = false,
   dvts,
   setDvts,
+  tonKhoBanDau,
   setTonKhoBanDau,
 }) {
   const [showDvts, setShowDvts] = useState(true);
@@ -194,11 +195,13 @@ function InfoTab({
           </Collapse>
         </Paper>
       </Grid>
-      {!isEdit && (
-        <Grid item xs={12}>
-          <FirstStore setTonKhoBanDau={setTonKhoBanDau} />
-        </Grid>
-      )}
+      <Grid item xs={12}>
+        <FirstStore
+          isEdit={isEdit}
+          tonKhoBanDau={tonKhoBanDau}
+          setTonKhoBanDau={setTonKhoBanDau}
+        />
+      </Grid>
     </Grid>
   );
 }

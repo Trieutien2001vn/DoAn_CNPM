@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
+const soKhoModel = require('./soKho.model');
 
 const productSchema = new mongoose.Schema(
   {
@@ -56,19 +57,21 @@ const productSchema = new mongoose.Schema(
     },
     ton_toi_thieu: {
       type: Number,
-      default: 0
+      default: 0,
     },
     ton_toi_da: {
       type: Number,
-      default: 0
+      default: 0,
     },
     ton_kho_ban_dau: {
-      type: [{
-        ma_kho: String,
-        ten_kho: String,
-        ton_kho: Number
-      }],
-      default: null
+      type: [
+        {
+          ma_kho: String,
+          ten_kho: String,
+          ton_kho: Number,
+        },
+      ],
+      default: null,
     },
     ds_vt_cung_loai: {
       type: [String],
@@ -122,10 +125,21 @@ const productSchema = new mongoose.Schema(
   { timestamps: true, collection: 'vat_tu' }
 );
 
-productSchema.post('save', async function() {
-  const vatTu = this
-  
-})
+productSchema.post('save', function () {
+  const vatTu = this;
+  if (vatTu.ton_kho_ban_dau.length > 0) {
+    vatTu.ton_kho_ban_dau.map(async (item) => {
+      await soKhoModel.create({
+        ma_kho: item.ma_kho,
+        ten_kho: item.ten_kho,
+        ma_vt: vatTu.ma_vt,
+        ten_vt: vatTu.ten_vt,
+        sl_nhap: item.ton_kho,
+        so_luong: item.ton_kho,
+      });
+    });
+  }
+});
 
 productSchema.index(
   { ma_vt: "text", ten_vt: "text" },
