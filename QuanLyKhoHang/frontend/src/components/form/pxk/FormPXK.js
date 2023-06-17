@@ -31,6 +31,10 @@ export default function FormPXK({
       .date()
       .typeError('Vui lòng chọn ngày xuất hàng')
       .required('Vui lòng chọn ngày xuất hàng'),
+    ngay_ct: yup
+      .date()
+      .typeError('Vui lòng chọn ngày chứng từ')
+      .required('Vui lòng chọn ngày chứng từ'),
   });
   const {
     handleSubmit,
@@ -50,9 +54,11 @@ export default function FormPXK({
           ngay_xuat_hang: moment(defaultValues.ngay_xuat_hang).format(
             'YYYY-MM-DD'
           ),
+          ngay_ct: moment(defaultValues.ngay_ct).format('YYYY-MM-DD'),
         }
       : {
           ngay_xuat_hang: moment().format('YYYY-MM-DD'),
+          ngay_ct: moment().format('YYYY-MM-DD'),
         },
     resolver: yupResolver(schema),
   });

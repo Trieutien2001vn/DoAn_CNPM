@@ -39,7 +39,7 @@ const tonKhoController = {
   async getTotalInventoryHelper(maVt) {
     const existed = await soKhoModel.findOne({ ma_vt: maVt });
     if (!existed) {
-      return res.status(200).json({ ton_kho: 0 });
+      return { ton_kho: 0 };
     }
     const tonKho = await soKhoModel.aggregate([
       { $match: { ma_vt: maVt } },

@@ -3,17 +3,25 @@ import { Box, Container } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import styled from 'styled-components';
 import ButtonOption from '~/components/button/ButtonOption';
-import { HiOutlineViewGridAdd, HiOutlineUsers } from 'react-icons/hi';
-import { BsBoxSeam, BsGrid3X3 } from 'react-icons/bs';
-import { BiTransferAlt } from 'react-icons/bi';
-import { RiStore3Line } from 'react-icons/ri';
-import { MdOutlineSell } from 'react-icons/md';
 import {
-  AiOutlineUsergroupAdd,
-  AiOutlineDollarCircle,
-  AiOutlinePieChart,
-} from 'react-icons/ai';
+  HiOutlineViewGridAdd,
+  HiOutlineInbox,
+  HiOutlineDocumentText,
+} from 'react-icons/hi';
+import { HiOutlineDocumentPlus, HiOutlineDocumentMinus } from 'react-icons/hi2';
+import {
+  BsBoxSeam,
+  BsGrid3X3,
+  BsBuilding,
+  BsBoxArrowUp,
+  BsBoxArrowInDown,
+  BsCashCoin,
+} from 'react-icons/bs';
+import { BiTransferAlt } from 'react-icons/bi';
+import { CgCloseR } from 'react-icons/cg';
+import { AiOutlineDollarCircle, AiOutlinePieChart } from 'react-icons/ai';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { TiDocumentText } from 'react-icons/ti';
 
 function MenuBar() {
   const theme = useTheme();
@@ -38,23 +46,30 @@ function MenuBar() {
             primary
             startIcon={<BsBoxSeam fontSize="16px" />}
             menuColor={theme.palette.primary.second}
-            active={['/list/dmvt'].includes(location.pathname)}
+            active={['/list/dmvt', '/list/dmlo', '/list/dmncc'].includes(
+              location.pathname
+            )}
             popupOptions={[
               {
-                text: 'Danh mục',
+                text: 'Danh sách hàng hóa',
                 startIcon: <BsGrid3X3 fontSize="14px" />,
                 primary: true,
                 onClick: () => navigate('/list/dmvt'),
+                active: location.pathname.indexOf('dmvt') >= 0,
               },
               {
-                text: 'Thiết lập giá',
-                startIcon: <MdOutlineSell fontSize="14px" />,
+                text: 'Lô hàng hóa',
+                startIcon: <HiOutlineInbox fontSize="14px" />,
                 primary: true,
+                onClick: () => navigate('/list/dmlo'),
+                active: location.pathname.indexOf('dmlo') >= 0,
               },
               {
-                text: 'Kiểm kho',
-                startIcon: <RiStore3Line fontSize="14px" />,
+                text: 'Nhà cung cấp',
+                startIcon: <BsBuilding fontSize="14px" />,
                 primary: true,
+                onClick: () => navigate('/list/dmncc'),
+                active: location.pathname.indexOf('dmncc') >= 0,
               },
             ]}
           >
@@ -63,28 +78,103 @@ function MenuBar() {
           <ButtonOption
             style={{ borderRadius: '4px' }}
             primary
-            startIcon={<BiTransferAlt fontSize="16px" />}
+            startIcon={<AiOutlineDollarCircle fontSize="16px" />}
+            menuColor={theme.palette.primary.second}
+            active={[
+              '/list/dmpnk',
+              '/list/dmpxk',
+              '/list/dmpkk',
+              '/list/dmpxdc',
+              '/list/dmpxh',
+            ].includes(location.pathname)}
+            popupOptions={[
+              {
+                text: 'Nhập kho',
+                startIcon: <BsBoxArrowInDown fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpnk'),
+                active: location.pathname.indexOf('dmpnk') >= 0,
+              },
+              {
+                text: 'Xuất kho',
+                startIcon: <BsBoxArrowUp fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpxk'),
+                active: location.pathname.indexOf('dmpxk') >= 0,
+              },
+              {
+                text: 'Kiểm kho',
+                startIcon: <HiOutlineDocumentText fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpkk'),
+                active: location.pathname.indexOf('dmpkk') >= 0,
+              },
+              {
+                text: 'Điều chuyển',
+                startIcon: <BiTransferAlt fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpxdc'),
+                active: location.pathname.indexOf('dmpxdc') >= 0,
+              },
+              {
+                text: 'Xuất hủy',
+                startIcon: <CgCloseR fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpxh'),
+                active: location.pathname.indexOf('dmpxh') >= 0,
+              },
+            ]}
           >
             Giao dịch
           </ButtonOption>
           <ButtonOption
             style={{ borderRadius: '4px' }}
             primary
-            startIcon={<AiOutlineUsergroupAdd fontSize="16px" />}
-          >
-            Đối tác
-          </ButtonOption>
-          <ButtonOption
-            style={{ borderRadius: '4px' }}
-            primary
-            startIcon={<HiOutlineUsers fontSize="16px" />}
-          >
-            Nhân viên
-          </ButtonOption>
-          <ButtonOption
-            style={{ borderRadius: '4px' }}
-            primary
             startIcon={<AiOutlineDollarCircle fontSize="16px" />}
+            menuColor={theme.palette.primary.second}
+            active={[
+              '/list/dmptt',
+              '/list/dmpct',
+              '/list/dmlpt',
+              '/list/dmlpc',
+            ].includes(location.pathname)}
+            popupOptions={[
+              {
+                text: 'Phiếu thu',
+                startIcon: <HiOutlineDocumentPlus fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmptt'),
+                active: location.pathname.indexOf('dmptt') >= 0,
+              },
+              {
+                text: 'Loại phiếu thu',
+                startIcon: <TiDocumentText fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmlpt'),
+                active: location.pathname.indexOf('dmlpt') >= 0,
+              },
+              {
+                text: 'Phiếu chi',
+                startIcon: <HiOutlineDocumentMinus fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpct'),
+                active: location.pathname.indexOf('dmpct') >= 0,
+              },
+              {
+                text: 'Loại phiếu chi',
+                startIcon: <TiDocumentText fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmlpc'),
+                active: location.pathname.indexOf('dmlpc') >= 0,
+              },
+              {
+                text: 'Sổ quỹ',
+                startIcon: <BsCashCoin fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/soquy'),
+                active: location.pathname.indexOf('soquy') >= 0,
+              },
+            ]}
           >
             Sổ quỹ
           </ButtonOption>

@@ -2,9 +2,13 @@ const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
 const soKhoModel = require("../models/soKho.model");
 const chungTuModel = require("./chungTu.model");
-const loModel = require("./lo.model");
-const createError = require("http-errors");
-const { generateRandomCode } = require("../../utils/myUtil");
+const trangThaiModel = require('../models/trangThai.model');
+const loModel = require('./lo.model');
+const tonKhoController = require('../controllers/tonkho.controller');
+const createError = require('http-errors');
+const { generateRandomCode, getQuyByMonth } = require('../../utils/myUtil');
+const vatTuModel = require('./vatTu.model');
+const soCaiModel = require("./soCai.model");
 
 const phieuNhapKhoSchema = new mongoose.Schema(
   {
@@ -20,20 +24,20 @@ const phieuNhapKhoSchema = new mongoose.Schema(
     ma_kho: {
       type: String,
       required: true,
-      default: "",
+      default: '',
     },
     ten_kho: {
       type: String,
       required: true,
-      default: "",
+      default: '',
     },
     ma_loai_ct: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_loai_ct: {
       type: String,
-      default: "",
+      default: '',
     },
     ngay_ct: {
       type: Date,
@@ -45,11 +49,11 @@ const phieuNhapKhoSchema = new mongoose.Schema(
     },
     ma_ncc: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_ncc: {
       type: String,
-      default: "",
+      default: '',
     },
     tong_tien_nhap: {
       type: Number,
@@ -57,7 +61,15 @@ const phieuNhapKhoSchema = new mongoose.Schema(
     },
     dien_giai: {
       type: String,
-      default: "",
+      default: '',
+    },
+    ma_trang_thai: {
+      type: Number,
+      default: 1,
+    },
+    ten_trang_thai: {
+      type: String,
+      default: '',
     },
     details: {
       type: [
@@ -68,27 +80,35 @@ const phieuNhapKhoSchema = new mongoose.Schema(
           },
           ma_dvt: {
             type: String,
-            default: "",
+            default: '',
           },
           ten_dvt: {
             type: String,
-            default: "",
+            default: '',
           },
           ma_lo: {
             type: String,
-            default: "",
+            default: '',
           },
           ten_lo: {
             type: String,
-            default: "",
+            default: '',
           },
           ma_vt: {
             type: String,
-            default: "",
+            default: '',
           },
           ten_vt: {
             type: String,
-            default: "",
+            default: '',
+          },
+          ma_nvt: {
+            type: String,
+            default: '',
+          },
+          ten_nvt: {
+            type: String,
+            default: '',
           },
           so_luong_nhap: {
             type: Number,
@@ -104,20 +124,20 @@ const phieuNhapKhoSchema = new mongoose.Schema(
     },
     createdBy: {
       type: String,
-      default: "",
+      default: '',
     },
     updatedBy: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-  { timestamps: true, collection: "phieu_nhap_kho" }
+  { timestamps: true, collection: 'phieu_nhap_kho' }
 );
 
 const generateUniqueValue = async () => {
-  let maChungTu = generateRandomCode(6, "pnk");
+  let maChungTu = generateRandomCode(6, 'pnk');
   const doc = await mongoose
-    .model("PhieuNhapKho", phieuNhapKhoSchema)
+    .model('PhieuNhapKho', phieuNhapKhoSchema)
     .findOne({ ma_ct: maChungTu });
   if (doc) {
     return await generateUniqueValue();
@@ -127,7 +147,7 @@ const generateUniqueValue = async () => {
 };
 
 // Middleware tinh tong tien nhap kho
-phieuNhapKhoSchema.pre("save", async function (next) {
+phieuNhapKhoSchema.pre('save', async function (next) {
   try {
     let error;
     const pnk = this;
@@ -141,8 +161,11 @@ phieuNhapKhoSchema.pre("save", async function (next) {
         return sum + detail.tien_nhap;
       }, 0);
     pnk.tong_tien_nhap = tong_tien_nhap;
+    const trangThai = await trangThaiModel.findOne({ ma_trang_thai: 1 });
+    pnk.ma_trang_thai = trangThai?.ma_trang_thai || 1;
+    pnk.ten_trang_thai = trangThai?.ten_trang_thai || '';
     // lưu tồn kho cho các sản phẩm
-    const chungTu = await chungTuModel.findOne({ ma_ct: "pnk" });
+    const chungTu = await chungTuModel.findOne({ ma_ct: 'pnk' });
     if (!chungTu) {
       return next(createError(404, `Chứng từ 'pnk' không tồn tại`));
     }
@@ -150,6 +173,11 @@ phieuNhapKhoSchema.pre("save", async function (next) {
     pnk.ten_loai_ct = chungTu.ten_ct;
     for (let i = 0; i < details.length; i++) {
       const detail = details[i];
+      const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
+      if (!vatTu) {
+        error = createError(`Hàng hóa '${detail.ten_vt}' không tồn tại.`);
+        break;
+      }
       if (detail.ma_lo) {
         const loValidate = await loModel.findOne({
           ma_vt: detail.ma_vt,
@@ -164,6 +192,8 @@ phieuNhapKhoSchema.pre("save", async function (next) {
           break;
         }
       }
+      detail.ma_nvt = vatTu.ma_nvt;
+      detail.ten_nvt = vatTu.ten_nvt;
     }
     if (error) {
       return next(error);
@@ -187,15 +217,40 @@ MAC: Giá vốn của sản phẩm tính theo bình quân tức thời
 A: Giá trị kho hiện tại trước nhập = Tồn kho trước nhập * giá MAC trước nhập
 B: Giá trị kho nhập mới = Tồn nhập mới * giá nhập kho đã phân bổ chi phí
 C: Tổng tồn = Tồn trước nhập + tồn sau nhập
+
+MAC = ton_kho * mac + nhap_kho * gia von / ton_kho + nhap_kho
 */
-phieuNhapKhoSchema.post("save", async function () {
+const caculateGiaVon = ({ tonKho = 0, MAC = 0, nhapKho = 0, giaVon = 0 }) => {
+  const newMAC = (tonKho * MAC + nhapKho * giaVon) / (tonKho + nhapKho);
+  return Math.round(newMAC);
+};
+phieuNhapKhoSchema.post('save', async function () {
   const pnk = this;
+  const ngay = pnk.ngay_ct.getDate();
+  const thang = pnk.ngay_ct.getMonth() + 1;
+  const nam = pnk.ngay_ct.getFullYear();
+  const quy = getQuyByMonth(thang);
+  const gio = pnk.ngay_ct.getHours();
+  const phut = pnk.ngay_ct.getMinutes();
+  const giay = pnk.ngay_ct.getSeconds();
   pnk.details.forEach(async (detail) => {
-    const soKho = {
+    const tonKho = await tonKhoController.getTotalInventoryHelper(detail.ma_vt);
+    const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
+    vatTu.gia_von_cu = vatTu?.gia_von || 0;
+    // tinh gia von trung binh
+    const MAC = caculateGiaVon({
+      tonKho: tonKho?.ton_kho || 0,
+      MAC: vatTu.gia_von || 0,
+      nhapKho: detail.so_luong_nhap,
+      giaVon: detail.gia_von,
+    });
+    vatTu.gia_von = MAC;
+    await vatTu.save();
+    // luu vao so kho
+    await soKhoModel.create({
       ma_ct: pnk.ma_ct,
       ma_loai_ct: pnk.ma_loai_ct,
       ten_loai_ct: pnk.ten_loai_ct,
-      ngay_ct: pnk.ngay_ct,
       ma_kho: pnk.ma_kho,
       ten_kho: pnk.ten_kho,
       ma_lo: detail.ma_lo,
@@ -204,97 +259,69 @@ phieuNhapKhoSchema.post("save", async function () {
       ten_vt: detail.ten_vt,
       sl_nhap: detail.so_luong_nhap,
       so_luong: detail.so_luong_nhap,
-      gia_von: detail.gia_von,
-    };
-    await soKhoModel.create(soKho);
+      ma_ncc: pnk.ma_ncc,
+      ma_ncc: pnk.ten_ncc,
+      ngay_ct: pnk.ngay_ct,
+      nam,
+      thang,
+      ngay,
+      quy,
+      gio,
+      phut,
+      giay,
+    });
+    // luu vao so cai
+    await soCaiModel.create({
+      ma_ct: pnk.ma_ct,
+      ma_loai_ct: pnk.ma_loai_ct,
+      ten_loai_ct: pnk.ten_loai_ct,
+      ma_kho: pnk.ma_kho,
+      ten_kho: pnk.ten_kho,
+      ngay_ct: pnk.ngay_ct,
+      nam,
+      thang,
+      ngay,
+      quy,
+      gio,
+      phut,
+      giay,
+      ma_vt: detail.ma_vt,
+      ten_vt: detail.ten_vt,
+      ma_nvt: detail.ma_nvt,
+      ten_nvt: detail.ten_nvt,
+      ma_nv: '',
+      ten_nv: '',
+      ma_ncc: pnk.ma_ncc,
+      ten_ncc: pnk.ten_ncc,
+      sl_nhap: detail.so_luong_nhap,
+      tien_hang: detail.tien_nhap,
+      tong_tien: detail.tien_nhap,
+    })
   });
 });
-phieuNhapKhoSchema.pre("updateOne", async function (next) {
-  // không cập nhật kho
-  // không cập nhật hàng hóa
-  let isError = false;
+phieuNhapKhoSchema.pre('updateOne', async function (next) {
   try {
-    const pnk = this._update;
-    const { ma_kho, ma_ct } = pnk;
-    const doc = await mongoose
-      .model("PhieuNhapKho", phieuNhapKhoSchema)
-      .findOne({ ma_ct });
-    if (!doc) {
-      return next(createError(404, `Mã chứng từ '${ma_ct}' không tồn tại`));
-    }
-    if (doc.ma_kho !== ma_kho) {
-      return next(createError(400, `Không được đổi kho`));
-    }
-    if (pnk.details.length !== doc.details.length) {
-      return next(createError(400, `Không được thêm hay xóa hàng hóa đã nhập`));
-    }
-    pnk.details.forEach(async (item, index) => {
-      if (item._id !== doc.details[index]._id.toString()) {
-        isError = true;
-        return next(
-          createError(400, `Không được thêm hay xóa hàng hóa đã nhập`)
-        );
-      }
-      if (item.ma_vt !== doc.details[index].ma_vt) {
-        isError = true;
-        return next(createError(400, `Không được chỉnh sửa hàng hóa`));
-      }
-      if (
-        item.so_luong_nhap !== doc.details[index].so_luong_nhap ||
-        item.ma_lo !== doc.details[index].ma_lo
-      ) {
-        await soKhoModel.updateOne(
-          { ma_ct: pnk.ma_ct, ma_vt: item.ma_vt },
-          {
-            sl_nhap: item.so_luong_nhap,
-            so_luong: item.so_luong_nhap,
-            ma_lo: item.ma_lo,
-            ten_lo: item.ten_lo,
-          }
-        );
-      }
-      const { ma_vt, ten_vt, ma_dvt, ten_dvt, ...fields } = item;
-      item = { ...item, ...fields };
-    });
+    return next(
+      createError(400, 'Không thể chỉnh sửa, phiếu nhập kho đã lưu vào sổ')
+    );
   } catch (error) {
-    return next(error);
-  } finally {
-    if (!isError) {
-      next();
-    }
+    next(error);
   }
 });
-phieuNhapKhoSchema.post("updateMany", async function (next) {
+phieuNhapKhoSchema.pre('updateMany', function (next) {
   try {
-    const pnk = this;
-    const _update = pnk.getUpdate();
-    const filter = pnk.getFilter();
-    if (_update.$set.deleted) {
-      const phieuNhapKhos = await this.model
-        .findDeleted(filter)
-        .select(["-_id", "ma_ct"]);
-      const maCts = phieuNhapKhos.map((item) => item.ma_ct);
-      await soKhoModel.delete({ ma_ct: { $in: maCts } });
-    } else {
-      const phieuNhapKhos = await this.model
-        .find(filter)
-        .select(["-_id", "ma_ct"]);
-      const maCts = phieuNhapKhos.map((item) => item.ma_ct);
-      await soKhoModel.restore({ ma_ct: { $in: maCts } });
-    }
+    return next(
+      createError(400, 'Không thể xóa, phiếu nhập kho đã lưu vào sổ')
+    );
   } catch (error) {
-    return next(error);
+    next(error);
   }
 });
-phieuNhapKhoSchema.pre("deleteMany", async function (next) {
+phieuNhapKhoSchema.pre('deleteMany', async function (next) {
   try {
-    const pnk = this;
-    const filter = pnk.getFilter();
-    const phieuNhapKhos = await this.model
-      .findDeleted(filter)
-      .select(["-_id", "ma_ct"]);
-    const maCts = phieuNhapKhos.map((item) => item.ma_ct);
-    await soKhoModel.deleteMany({ ma_ct: { $in: maCts } });
+    return next(
+      createError(400, 'Không thể xóa, phiếu nhập kho đã lưu vào sổ')
+    );
   } catch (error) {
     return next(error);
   }

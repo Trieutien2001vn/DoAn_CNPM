@@ -349,6 +349,14 @@ const dsDanhMuc = {
         minWidth: '150px',
         format: (row) => numeralCustom(row.tong_tien_nhap).format(),
       },
+      {
+        name: 'Diễn giải',
+        selector: (row) => row.dien_giai,
+        sortable: true,
+        width: '200px',
+        wrap: true,
+        right: true
+      },
     ],
   },
   dmpxk: {
@@ -367,7 +375,7 @@ const dsDanhMuc = {
         name: 'Mã chứng từ',
         selector: (row) => row.ma_ct,
         sortable: true,
-        minWidth: '100px',
+        minWidth: '120px',
       },
       {
         name: 'Kho',
@@ -382,7 +390,7 @@ const dsDanhMuc = {
         sortable: true,
         center: true,
         format: (row) => formatDateDisplay(row.ngay_ct),
-        minWidth: '100px',
+        minWidth: '150px',
       },
       {
         name: 'Ngày xuất hàng',
@@ -390,15 +398,23 @@ const dsDanhMuc = {
         sortable: true,
         center: true,
         format: (row) => formatDateDisplay(row.ngay_xuat_hang),
-        minWidth: '100px',
+        minWidth: '150px',
       },
       {
         name: 'Tổng tiền xuất',
         selector: (row) => row.tong_tien_xuat,
         sortable: true,
         center: true,
-        minWidth: '100px',
+        minWidth: '150px',
         format: (row) => numeralCustom(row.tong_tien_xuat).format(),
+      },
+      {
+        name: 'Diễn giải',
+        selector: (row) => row.dien_giai,
+        sortable: true,
+        width: '200px',
+        wrap: true,
+        right: true
       },
     ],
   },
@@ -473,7 +489,7 @@ const dsDanhMuc = {
         center: true,
         format: (row) => formatDateDisplay(row.ngay_kiem_hang),
       },
-     
+
       {
         name: 'Lô',
         selector: (row) => row.ten_lo,
@@ -500,19 +516,20 @@ const dsDanhMuc = {
         name: 'Từ kho',
         selector: (row) => `${row.ten_kho_tu}(${row.ma_kho_tu})`,
         sortable: true,
-        minWidth: '100px',
+        minWidth: '150px',
       },
       {
         name: 'Đến kho',
         selector: (row) => `${row.ten_kho_den}(${row.ma_kho_den})`,
         sortable: true,
-        minWidth: '100px',
+        minWidth: '150px',
       },
       {
         name: 'Số lượng',
         selector: (row) => row.sl_chuyen,
         sortable: true,
         minWidth: '100px',
+        center: true,
       },
       {
         name: 'Ngày chứng từ',
@@ -593,6 +610,26 @@ const dsDanhMuc = {
         sortable: true,
         minWidth: '150px',
         right: true,
+      },
+    ],
+  },
+  dmlpt: {
+    title: 'loại phiếu thu',
+    uniqueKey: 'ma_loai',
+    // Form: FormPXH,
+    // Filter: FilterPKK,
+    columns: [
+      {
+        name: 'Mã loại',
+        selector: (row) => row.ma_loai,
+        sortable: true,
+        minWidth: '100px',
+      },
+      {
+        name: 'Tên Loại',
+        selector: (row) => row.ten_loai,
+        sortable: true,
+        minWidth: '100px',
       },
     ],
   },

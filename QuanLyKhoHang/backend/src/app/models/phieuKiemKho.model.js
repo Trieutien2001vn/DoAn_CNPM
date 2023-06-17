@@ -154,7 +154,16 @@ phieuKiemKhoSchema.post("save", async function () {
     ten_lo: pkk.ten_lo,
   });
 });
-phieuKiemKhoSchema.post("updateMany", async function (next) {
+phieuKiemKhoSchema.pre('updateMany', function () {
+  try {
+    return next(
+      createHttpError(400, 'Không thể xóa, phiếu nhập kho đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+phieuKiemKhoSchema.post('updateMany', async function (next) {
   try {
     const pkk = this;
     const _update = pkk.getUpdate();
@@ -162,13 +171,13 @@ phieuKiemKhoSchema.post("updateMany", async function (next) {
     if (_update.$set.deleted) {
       const phieuKiemKhos = await this.model
         .findDeleted(filter)
-        .select(["-_id", "ma_ct"]);
+        .select(['-_id', 'ma_ct']);
       const maCts = phieuKiemKhos.map((item) => item.ma_ct);
       await soKhoModel.delete({ ma_ct: { $in: maCts } });
     } else {
       const phieuKiemKhos = await this.model
         .find(filter)
-        .select(["-_id", "ma_ct"]);
+        .select(['-_id', 'ma_ct']);
       const maCts = phieuKiemKhos.map((item) => item.ma_ct);
       await soKhoModel.restore({ ma_ct: { $in: maCts } });
     }
@@ -176,45 +185,23 @@ phieuKiemKhoSchema.post("updateMany", async function (next) {
     return next(error);
   }
 });
-phieuKiemKhoSchema.pre("deleteMany", async function () {
+phieuKiemKhoSchema.pre('deleteMany', async function () {
   try {
-    const pkk = this;
-    const filter = pkk.getFilter();
-    const phieuKiemKhos = await this.model
-      .findDeleted(filter)
-      .select(["-_id", "ma_ct"]);
-    const maCts = phieuKiemKhos.map((item) => item.ma_ct);
-    await soKhoModel.deleteMany({ ma_ct: { $in: maCts } });
+    return next(
+      createHttpError(400, 'Không thể xóa, phiếu nhập kho đã lưu vào sổ')
+    );
   } catch (error) {
     return next(error);
   }
 });
-phieuKiemKhoSchema.pre("updateOne", async function () {
-  const {
-    ma_ct,
-    ma_kho,
-    ten_kho,
-    ma_lo,
-    ten_lo,
-    ma_vt,
-    ten_vt,
-    ngay_ct,
-    ton_kho_thuc_te,
-    ton_kho_so_sach,
-  } = this.getUpdate();
-  await soKhoModel.updateOne(
-    { ma_ct },
-    {
-      ma_kho,
-      so_luong: (ton_kho_thuc_te || 0) - (ton_kho_so_sach || 0),
-      ten_kho,
-      ma_lo,
-      ten_lo,
-      ma_vt,
-      ten_vt,
-      ngay_ct,
-    }
-  );
+phieuKiemKhoSchema.pre('updateOne', async function (next) {
+  try {
+    return next(
+      createHttpError(400, 'Không thể xóa, phiếu kiểm kho đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
 });
 
 phieuKiemKhoSchema.plugin(mongooseDelete, {
