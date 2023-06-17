@@ -62,6 +62,12 @@ function ListBase({
     getListData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paginationOption.limit, paginationOption.page, condition, load]);
+  useEffect(() => {
+    setCondition({});
+    setPaginationOption({ limit: 20, page: 1, totalRows: 0 });
+    setLoad(load + 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maDanhMuc]);
 
   return (
     <>

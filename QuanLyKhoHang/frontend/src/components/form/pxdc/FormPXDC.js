@@ -15,12 +15,12 @@ import useApisContext from '~/hooks/hookContext/useApisContext';
 
 const schemaBase = {
   ma_phieu: yup.string().required('Vui lòng nhập mã phiếu'),
-sl_chuyen:yup.string().required('Vui lòng nhập số lượng chuyển'),
-tuKho: yup
+sl_chuyen:yup.number().required('Vui lòng nhập số lượng chuyển'),
+tukho: yup
 .object()
 .typeError('Vui lòng chọn kho')
 .required('Vui lòng chọn kho'),
-denKho: yup
+denkho: yup
 .object()
 .typeError('Vui lòng chọn kho')
 .required('Vui lòng chọn kho'),
@@ -38,8 +38,6 @@ function FormPXDC({
   isEdit = false,
 }) {
   const [schema, setSchema] = useState(() => yup.object(schemaBase));
-  
-
   const {
     register,
     handleSubmit,
@@ -49,21 +47,25 @@ function FormPXDC({
     formState: { isSubmitting, errors },
   } = useForm({
     mode: 'onBlur',
-    defaultValues: defaultValues
+    defaultValues: !!defaultValues
       ? {
           ...defaultValues,
-          tukho: {
-            ma_kho: defaultValues?.ma_kho_tu,
-            ten_kho: defaultValues?.ten_kho_tu,
-          },
-          denkho: {
-            ma_kho: defaultValues?.ma_kho_den,
-            ten_kho: defaultValues?.ten_kho_den,
-          },
+          tukho: defaultValues.ma_kho_tu
+            ? {
+                ma_kho: defaultValues?.ma_kho_tu,
+                ten_kho: defaultValues?.ten_kho_tu,
+              }
+            : null,
+          denkho: defaultValues.ma_kho_den
+            ? {
+                ma_kho: defaultValues?.ma_kho_den,
+                ten_kho: defaultValues?.ten_kho_den,
+              }
+            : null,
           vatTu: {
             ma_vt: defaultValues.ma_vt,
             ten_vt: defaultValues.ten_vt,
-            theo_doi_lo: !!defaultValues.ma_lo || false
+            theo_doi_lo: !!defaultValues.ma_lo || false,
           },
           ngay_ct: moment(defaultValues.ngay_ct).format('YYYY-MM-DD'),
           ngay_xuat_kho: moment(defaultValues.ngay_xuat_kho).format(
@@ -90,25 +92,23 @@ function FormPXDC({
   const denKho = watch('denKho');
   const { asyncPostData } = useApisContext();
   const generateDataPost = (values) => {
-    const { vatTu, tuKho, denKho,tuLo,denLo, ...fields } = values;
-    console.log(values);
+    const { vatTu, tukho, denkho, tuLo, denLo, ...fields } = values;
     const result = {
       ...fields,
       ma_vt: vatTu.ma_vt,
       ten_vt: vatTu.ten_vt,
-      ma_kho_tu: tuKho?.ma_kho,
-      ten_kho_tu: tuKho?.ten_kho,
-      ma_kho_den: denKho?.ma_kho,
-      ten_kho_den: denKho?.ten_kho,
+      ma_kho_tu: tukho?.ma_kho,
+      ten_kho_tu: tukho?.ten_kho,
+      ma_kho_den: denkho?.ma_kho,
+      ten_kho_den: denkho?.ten_kho,
       ma_lo_tu: tuLo?.ma_lo || '',
-      ten_lo_tu: tuLo?.ten_lo|| '',
+      ten_lo_tu: tuLo?.ten_lo || '',
       ma_lo_den: denLo?.ma_lo || '',
-      ten_lo_den: denLo?.ten_lo|| '',
+      ten_lo_den: denLo?.ten_lo || '',
     };
     return result;
   };
-  
-  
+
   // handle submit
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
@@ -121,6 +121,7 @@ function FormPXDC({
       }
     });
   };
+
   return (
     <ModalBase
       open={open}
@@ -153,50 +154,6 @@ function FormPXDC({
             errorMessage={errors?.ma_phieu?.message}
           />
         </Grid>
-       
-        
-        <Grid item xs={12} md={6}>
-          <Controller
-            control={control}
-            name="tuKho"
-            render={({ field: { onChange, value } }) => (
-              <SelectApiInput
-                label="Từ Kho"
-                required
-                apiCode="dmkho"
-                placeholder=""
-                searchFileds={['ma_kho', 'ten_kho']}
-                getOptionLabel={(option) => option.ten_kho}
-                selectedValue={value}
-                value={value || { ma_kho: defaultValues.ma_kho_tu, ten_kho:defaultValues.ten_kho_tu }}
-                onSelect={onChange}
-                FormAdd={dsDanhMuc['dmkho'].Form}
-                errorMessage={errors?.tuKho?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
-            control={control}
-            name="denKho"
-            render={({ field: { onChange, value } }) => (
-              <SelectApiInput  
-                label="Đến Kho"
-                required
-                apiCode="dmkho"
-                placeholder=""
-                searchFileds={['ma_kho', 'ten_kho']}
-                getOptionLabel={(option) => option.ten_kho}
-                selectedValue={value}
-                value={value || { ma_kho: defaultValues.ma_kho_den, ten_kho: defaultValues.ten_kho_den}}
-                onSelect={onChange}
-                FormAdd={dsDanhMuc['dmkho'].Form}
-                errorMessage={errors?.denKho?.message}
-              />
-            )}
-          />
-        </Grid>
         <Grid item xs={12} md={6}>
           <Controller
             control={control}
@@ -220,9 +177,52 @@ function FormPXDC({
           />
         </Grid>
         <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="tukho"
+            render={({ field: { onChange, value } }) => (
+              <SelectApiInput
+                label="Từ Kho"
+                required
+                apiCode="dmkho"
+                placeholder="Nơi xuất hàng hóa"
+                searchFileds={['ma_kho', 'ten_kho']}
+                getOptionLabel={(option) => option.ten_kho}
+                selectedValue={value}
+                value={value || { ma_kho: '', ten_kho: '' }}
+                onSelect={onChange}
+                FormAdd={dsDanhMuc['dmkho'].Form}
+                errorMessage={errors?.tukho?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="denkho"
+            render={({ field: { onChange, value } }) => (
+              <SelectApiInput
+                label="Đến Kho"
+                required
+                apiCode="dmkho"
+                placeholder="Nơi hàng hóa đến"
+                searchFileds={['ma_kho', 'ten_kho']}
+                getOptionLabel={(option) => option.ten_kho}
+                selectedValue={value}
+                value={value || { ma_kho: '', ten_kho: '' }}
+                onSelect={onChange}
+                FormAdd={dsDanhMuc['dmkho'].Form}
+                errorMessage={errors?.denkho?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
           <TextInput
+            type='number'
             label="Số Lượng Chuyển"
-            placeholder=""
+            placeholder="Số lượng chuyển"
             name="sl_chuyen"
             register={register}
             required
@@ -239,7 +239,7 @@ function FormPXDC({
             errorMessage={errors?.ngay_ct?.message}
           />
         </Grid>
-        
+
         <Grid item xs={12} md={6}>
           <TextInput
             label="Ngày Nhập Kho"
@@ -262,54 +262,54 @@ function FormPXDC({
         </Grid>
         {vatTu?.theo_doi_lo && (
           <>
-           <Grid item xs={12} md={6}>
-            <Controller
-              control={control}
-              name="tuLo"
-              render={({ field: { value, onChange } }) => (
-                <SelectApiInput
-                  label="Từ Lô"
-                  required
-                  apiCode="dmlo"
-                  placeholder="Chọn lô hàng hóa"
-                  searchFileds={['ma_lo', 'ten_lo']}
-                  condition={!!vatTu ? { ma_vt: vatTu?.ma_vt } : {}}
-                  getOptionLabel={(option) => option.ten_lo}
-                  selectedValue={value}
-                  value={value || { ma_lo: '', ten_lo: '' }}
-                  onSelect={onChange}
-                  FormAdd={dsDanhMuc.dmlo.Form}
-            
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Controller
-              control={control}
-              name="denLo"
-              render={({ field: { value, onChange } }) => (
-                <SelectApiInput
-                  label="Đến Lô"
-                  required
-                  apiCode="dmlo"
-                  placeholder="Chọn lô hàng hóa"
-                  searchFileds={['ma_lo', 'ten_lo']}
-                  condition={!!vatTu ? { ma_vt: vatTu?.ma_vt, ma_kho:denKho.ma_kho} : {}}
-                  getOptionLabel={(option) => option.ten_lo}
-                  selectedValue={value}
-                  value={value || { ma_lo: '', ten_lo: '' }}
-                  onSelect={onChange}
-                  FormAdd={dsDanhMuc.dmlo.Form}
-                
-                />
-              )}
-            />
-          </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                control={control}
+                name="tuLo"
+                render={({ field: { value, onChange } }) => (
+                  <SelectApiInput
+                    label="Từ Lô"
+                    required
+                    apiCode="dmlo"
+                    placeholder="Chọn lô hàng hóa"
+                    searchFileds={['ma_lo', 'ten_lo']}
+                    condition={!!vatTu ? { ma_vt: vatTu?.ma_vt } : {}}
+                    getOptionLabel={(option) => option.ten_lo}
+                    selectedValue={value}
+                    value={value || { ma_lo: '', ten_lo: '' }}
+                    onSelect={onChange}
+                    FormAdd={dsDanhMuc.dmlo.Form}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Controller
+                control={control}
+                name="denLo"
+                render={({ field: { value, onChange } }) => (
+                  <SelectApiInput
+                    label="Đến Lô"
+                    required
+                    apiCode="dmlo"
+                    placeholder="Chọn lô hàng hóa"
+                    searchFileds={['ma_lo', 'ten_lo']}
+                    condition={
+                      !!vatTu
+                        ? { ma_vt: vatTu?.ma_vt, ma_kho: denKho.ma_kho }
+                        : {}
+                    }
+                    getOptionLabel={(option) => option.ten_lo}
+                    selectedValue={value}
+                    value={value || { ma_lo: '', ten_lo: '' }}
+                    onSelect={onChange}
+                    FormAdd={dsDanhMuc.dmlo.Form}
+                  />
+                )}
+              />
+            </Grid>
           </>
-         
         )}
-      
       </Grid>
     </ModalBase>
   );

@@ -127,7 +127,7 @@ const validateCreatePhieuDieuChuyen = ({
   ten_kho_den,
   ma_vt,
   ten_vt,
-  sl_chuyen
+  sl_chuyen,
 }) => {
   const modelSchema = joi.object({
     ma_phieu: joi.string().required(),
@@ -137,7 +137,7 @@ const validateCreatePhieuDieuChuyen = ({
     ten_kho_den: joi.string().required(),
     ma_vt: joi.string().required(),
     ten_vt: joi.string().required(),
-    sl_chuyen: joi.string().required()
+    sl_chuyen: joi.number().required(),
   });
   return modelSchema.validate({
     ma_phieu,
@@ -147,7 +147,8 @@ const validateCreatePhieuDieuChuyen = ({
     ten_kho_den,
     ma_vt,
     ten_vt,
-    sl_chuyen });
+    sl_chuyen,
+  });
 };
 // phieu xuat huy
 const validateCreatePhieuXuatHuy = ({ ma_phieu, ma_kho, ten_vt }) => {
@@ -165,6 +166,14 @@ const validateCreateChungTu = ({ ma_ct, ten_ct }) => {
     ten_ct: joi.string().required(),
   });
   return modelSchema.validate({ ma_ct, ten_ct });
+};
+// loai phieu thu
+const validateCreateLoaiPhieuThu = ({ ma_loai, ten_loai }) => {
+  const modelSchema = joi.object({
+    ma_loai: joi.string().required(),
+    ten_loai: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_loai, ten_loai });
 };
 
 module.exports = {
@@ -184,4 +193,5 @@ module.exports = {
   validateCreatePhieuDieuChuyen,
   validateCreatePhieuXuatHuy,
   validateCreateChungTu,
+  validateCreateLoaiPhieuThu,
 };

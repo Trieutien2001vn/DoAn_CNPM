@@ -7,22 +7,24 @@ const danhMucRoute = require("./danhmuc.route");
 const tonKhoRoute = require("./tonKho.route");
 const nhapkhoRoute = require("./nhapkho.route");
 const xuatkhoRoute = require("./xuatkho.route");
-const createError = require("http-errors");
+const reportRoute = require('./baocao.route');
+const createError = require('http-errors');
 
 const initApiRoute = (app) => {
-  app.use("/api/v1/phanQuyen", phanQuyenRoute);
-  app.use("/api/v1/xacThuc", xacThucRoute);
-  app.use("/api/v1/nguoiDung", nguoiDungRoute);
-  app.use("/api/v1/upload", uploadRoute);
-  app.use("/api/v1/file", fileRoute);
-  app.use("/api/v1/danhmuc", danhMucRoute);
-  app.use("/api/v1/tonkho", tonKhoRoute);
-  app.use("/api/v1/nhapkho", nhapkhoRoute);
-  app.use("/api/v1/xuatkho", xuatkhoRoute);
+  app.use('/api/v1/phanQuyen', phanQuyenRoute);
+  app.use('/api/v1/xacThuc', xacThucRoute);
+  app.use('/api/v1/nguoiDung', nguoiDungRoute);
+  app.use('/api/v1/upload', uploadRoute);
+  app.use('/api/v1/file', fileRoute);
+  app.use('/api/v1/danhmuc', danhMucRoute);
+  app.use('/api/v1/tonkho', tonKhoRoute);
+  app.use('/api/v1/nhapkho', nhapkhoRoute);
+  app.use('/api/v1/xuatkho', xuatkhoRoute);
+  app.use('/api/v1/baocao', reportRoute);
 
   // handle error
   app.use((req, res, next) => {
-    const error = createError.NotFound("Route is not exist");
+    const error = createError.NotFound('Route is not exist');
     next(error);
   });
   app.use((err, req, res, next) => {

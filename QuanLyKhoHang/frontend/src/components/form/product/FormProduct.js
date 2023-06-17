@@ -34,6 +34,9 @@ function FormProduct({
     hinh_anh3: null,
   });
   const [dvts, setDvts] = useState(defaultValues?.ds_dvt || []);
+  const [tonKhoBanDau, setTonKhoBanDau] = useState(
+    defaultValues?.ton_kho_ban_dau || []
+  );
   const { asyncPostData, uploadFile } = useApisContext();
   const {
     register,
@@ -66,7 +69,7 @@ function FormProduct({
         },
     resolver: yupResolver(schema),
   });
-  const tabRef = useRef()
+  const tabRef = useRef();
 
   const uploadThumbnail = async (values) => {
     let count = 0;
@@ -100,6 +103,7 @@ function FormProduct({
     result.ma_dvt = don_vi_tinh?.ma_dvt || '';
     result.ten_dvt = don_vi_tinh?.ten_dvt || '';
     result.ds_dvt = dvts;
+    result.ton_kho_ban_dau = tonKhoBanDau;
     return result;
   };
 
@@ -129,10 +133,10 @@ function FormProduct({
       });
   };
   useEffect(() => {
-    if(Object.keys(errors).length > 0) {
-      tabRef.current.handleChange(null, '1')
+    if (Object.keys(errors).length > 0) {
+      tabRef.current.handleChange(null, '1');
     }
-  }, [errors])
+  }, [errors]);
 
   return (
     <ModalBase
@@ -175,6 +179,7 @@ function FormProduct({
             isEdit={isEdit}
             dvts={dvts}
             setDvts={setDvts}
+            setTonKhoBanDau={setTonKhoBanDau}
           />
         </TabPanel>
         <TabPanel value="2" sx={{ padding: '10px 0 0 0' }}>

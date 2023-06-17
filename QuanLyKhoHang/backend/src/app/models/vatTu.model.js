@@ -16,31 +16,31 @@ const productSchema = new mongoose.Schema(
     },
     barcode: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_tat: {
       type: String,
-      default: "",
+      default: '',
     },
     ma_nvt: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_nvt: {
       type: String,
-      default: "",
+      default: '',
     },
     ma_dvt: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_dvt: {
       type: String,
-      default: "",
+      default: '',
     },
     xuat_xu: {
       type: String,
-      default: "",
+      default: '',
     },
     gia_ban_le: {
       type: Number,
@@ -50,17 +50,37 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    gia_von_cu: {
+      type: Number,
+      default: 0,
+    },
+    ton_toi_thieu: {
+      type: Number,
+      default: 0
+    },
+    ton_toi_da: {
+      type: Number,
+      default: 0
+    },
+    ton_kho_ban_dau: {
+      type: [{
+        ma_kho: String,
+        ten_kho: String,
+        ton_kho: Number
+      }],
+      default: null
+    },
     ds_vt_cung_loai: {
       type: [String],
       default: null,
     },
     vi_tri: {
       type: String,
-      default: "",
+      default: '',
     },
     mo_ta: {
       type: String,
-      default: "",
+      default: '',
     },
     theo_doi_lo: {
       type: Boolean,
@@ -68,15 +88,15 @@ const productSchema = new mongoose.Schema(
     },
     hinh_anh1: {
       type: String,
-      default: "",
+      default: '',
     },
     hinh_anh2: {
       type: String,
-      default: "",
+      default: '',
     },
     hinh_anh3: {
       type: String,
-      default: "",
+      default: '',
     },
     // vat tu cung loai start
     ds_dvt: {
@@ -92,15 +112,20 @@ const productSchema = new mongoose.Schema(
     // vat tu cung loai end
     createdBy: {
       type: String,
-      default: "",
+      default: '',
     },
     updatedBy: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-  { timestamps: true, collection: "vat_tu" }
+  { timestamps: true, collection: 'vat_tu' }
 );
+
+productSchema.post('save', async function() {
+  const vatTu = this
+  
+})
 
 productSchema.index(
   { ma_vt: "text", ten_vt: "text" },

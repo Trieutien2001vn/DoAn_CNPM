@@ -130,6 +130,15 @@ phieuXuatHuySchema.post('save', async function () {
     so_luong: -pxh.sl_huy,
   });
 });
+phieuXuatHuySchema.pre('updateMany', function () {
+  try {
+    return next(
+      createHttpError(400, 'Không thể xóa, phiếu xuất hủy đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
+});
 phieuXuatHuySchema.post('updateMany', async function () {
   const _update = this.getUpdate();
   const filter = this.getFilter();
@@ -156,23 +165,30 @@ phieuXuatHuySchema.pre('deleteMany', async function (next) {
 });
 phieuXuatHuySchema.pre('updateOne', async function (next) {
   try {
-    const pxh = this.getUpdate();
-    const tonKho = await tonKhoController.getInventoryOnStoreHelper({
-      ma_vt: pxh.ma_vt,
-      ma_kho: pxh.ma_kho,
-    });
-    if (tonKho.ton_kho < pxh.sl_huy) {
-      return next(
-        createHttpError(
-          400,
-          `Hàng hóa '${pxh.ten_vt}' chỉ tồn '${tonKho.ton_kho}' ở kho '${pxh.ten_kho}'`
-        )
-      );
-    }
-    return next();
+    return next(
+      createHttpError(400, 'Không thể xóa, phiếu xuất hủy đã lưu vào sổ')
+    );
   } catch (error) {
     next(error);
   }
+  // try {
+  //   const pxh = this.getUpdate();
+  //   const tonKho = await tonKhoController.getInventoryOnStoreHelper({
+  //     ma_vt: pxh.ma_vt,
+  //     ma_kho: pxh.ma_kho,
+  //   });
+  //   if (tonKho.ton_kho < pxh.sl_huy) {
+  //     return next(
+  //       createHttpError(
+  //         400,
+  //         `Hàng hóa '${pxh.ten_vt}' chỉ tồn '${tonKho.ton_kho}' ở kho '${pxh.ten_kho}'`
+  //       )
+  //     );
+  //   }
+  //   return next();
+  // } catch (error) {
+  //   next(error);
+  // }
 });
 phieuXuatHuySchema.post('updateOne', async function () {
   const pxh = this.getUpdate().$set;
@@ -187,6 +203,15 @@ phieuXuatHuySchema.post('updateOne', async function () {
   soKho.sl_xuat = pxh.sl_huy;
   soKho.so_luong = -pxh.sl_huy;
   await soKho.save();
+});
+phieuXuatHuySchema.pre('deleteMany', function () {
+  try {
+    return next(
+      createHttpError(400, 'Không thể xóa, phiếu xuất hủy đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
 });
 
 phieuXuatHuySchema.plugin(mongooseDelete, {

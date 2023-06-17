@@ -4,8 +4,9 @@ const soKhoModel = require("./soKho.model");
 const chungTuModel = require("./chungTu.model");
 const loModel = require("./lo.model");
 const createError = require("http-errors");
-const { generateRandomCode } = require("../../utils/myUtil");
+const { generateRandomCode, getQuyByMonth } = require("../../utils/myUtil");
 const tonKhoController = require("../controllers/tonkho.controller");
+const vatTuModel = require("./vatTu.model");
 
 const phieuXuatKhoSchema = new mongoose.Schema(
   {
@@ -21,20 +22,20 @@ const phieuXuatKhoSchema = new mongoose.Schema(
     ma_kho: {
       type: String,
       required: true,
-      default: "",
+      default: '',
     },
     ten_kho: {
       type: String,
       required: true,
-      default: "",
+      default: '',
     },
     ma_loai_ct: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_loai_ct: {
       type: String,
-      default: "",
+      default: '',
     },
     ngay_ct: {
       type: Date,
@@ -50,7 +51,7 @@ const phieuXuatKhoSchema = new mongoose.Schema(
     },
     dien_giai: {
       type: String,
-      default: "",
+      default: '',
     },
     details: {
       type: [
@@ -71,29 +72,49 @@ const phieuXuatKhoSchema = new mongoose.Schema(
             type: Number,
             default: 0,
           },
+          gia_von: {
+            type: Number,
+            default: 0,
+          },
           ma_dvt: {
             type: String,
-            default: "",
+            default: '',
           },
           ten_dvt: {
             type: String,
-            default: "",
+            default: '',
           },
           ma_lo: {
             type: String,
-            default: "",
+            default: '',
           },
           ten_lo: {
             type: String,
-            default: "",
+            default: '',
           },
           ma_vt: {
             type: String,
-            default: "",
+            default: '',
           },
           ten_vt: {
             type: String,
-            default: "",
+            default: '',
+          },
+          ma_nvt: {
+            type: String,
+            default: '',
+          },
+          ten_nvt: {
+            type: String,
+            default: '',
+          },
+          ma_nv: {
+            type: String,
+            default: '',
+          },
+          ten_nv: {
+            type: String,
+            default: '',
           },
           so_luong_xuat: {
             type: Number,
@@ -109,18 +130,18 @@ const phieuXuatKhoSchema = new mongoose.Schema(
     },
     createdBy: {
       type: String,
-      default: "",
+      default: '',
     },
     updatedBy: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-  { timestamps: true, collection: "phieu_xuat_kho" }
+  { timestamps: true, collection: 'phieu_xuat_kho' }
 );
 
 const generateUniqueValue = async (model) => {
-  let maChungTu = generateRandomCode(6, "pxk");
+  let maChungTu = generateRandomCode(6, 'pxk');
   const doc = await model.findOne({ ma_ct: maChungTu });
   if (doc) {
     return await generateUniqueValue();
@@ -130,20 +151,14 @@ const generateUniqueValue = async (model) => {
 };
 
 // Middleware tinh tong tien nhap kho
-phieuXuatKhoSchema.pre("save", async function (next) {
+phieuXuatKhoSchema.pre('save', async function (next) {
   try {
     let error;
     const pxk = this;
     const maChungTu = await generateUniqueValue(
-      mongoose.model("PhieuXuatKho", phieuXuatKhoSchema)
+      mongoose.model('PhieuXuatKho', phieuXuatKhoSchema)
     );
     pxk.ma_ct = maChungTu;
-    const date = new Date();
-    date.setHours(0);
-    date.setMinutes(0);
-    date.setSeconds(0);
-    date.setMilliseconds(0);
-    pxk.ngay_ct = date;
     const details = pxk.details || [];
     // tính tổng tiền nhập dựa trên các sản phẩm nhập
     const tong_tien_xuat =
@@ -153,7 +168,7 @@ phieuXuatKhoSchema.pre("save", async function (next) {
       }, 0);
     pxk.tong_tien_xuat = tong_tien_xuat;
     // lưu tồn kho cho các sản phẩm
-    const chungTu = await chungTuModel.findOne({ ma_ct: "pxk" });
+    const chungTu = await chungTuModel.findOne({ ma_ct: 'pxk' });
     if (!chungTu) {
       return next(createError(404, `Chứng từ 'pxk' không tồn tại`));
     }
@@ -162,6 +177,11 @@ phieuXuatKhoSchema.pre("save", async function (next) {
 
     for (let i = 0; i < details.length; i++) {
       const detail = details[i];
+      const vatTu = await vatTuModel.findOne({ma_vt: detail.ma_vt})
+      if(!vatTu) {
+        error = createError(`Hàng hóa '${detail.ten_vt}' không tồn tại.`)
+        break
+      }
       const tonKhoResp = await tonKhoController.getInventoryOnStoreHelper({
         ma_vt: detail.ma_vt,
         ma_kho: pxk.ma_kho,
@@ -187,6 +207,9 @@ phieuXuatKhoSchema.pre("save", async function (next) {
           break;
         }
       }
+      detail.ma_nvt = vatTu.ma_nvt
+      detail.ten_nvt = vatTu.ten_nvt
+      detail.gia_von = vatTu.gia_von
     }
     if (error) {
       return next(error);
@@ -198,23 +221,50 @@ phieuXuatKhoSchema.pre("save", async function (next) {
   }
 });
 
-phieuXuatKhoSchema.post("save", async function (next) {
+phieuXuatKhoSchema.post('save', async function (next) {
   try {
     const pxk = this;
+    const ngay = pxk.ngay_ct.getDate();
+    const thang = pxk.ngay_ct.getMonth() + 1;
+    const nam = pxk.ngay_ct.getFullYear();
+    const quy = getQuyByMonth(thang);
+    const gio = pxk.ngay_ct.getHours();
+    const phut = pxk.ngay_ct.getMinutes();
+    const giay = pxk.ngay_ct.getSeconds();
     pxk.details.forEach(async (detail) => {
+      const tong_tien = detail.tien_xuat - detail.tien_ck
+      const chi_phi = detail.gia_von * detail.so_luong_xuat
       const soKho = {
         ma_ct: pxk.ma_ct,
         ma_loai_ct: pxk.ma_loai_ct,
         ten_loai_ct: pxk.ten_loai_ct,
-        ngay_ct: pxk.ngay_ct,
         ma_kho: pxk.ma_kho,
         ten_kho: pxk.ten_kho,
         ma_lo: detail.ma_lo,
         ten_lo: detail.ten_lo,
         ma_vt: detail.ma_vt,
         ten_vt: detail.ten_vt,
+        ma_nvt: detail.ma_nvt,
+        ten_nvt: detail.ten_nvt,
+        ma_nv: detail.ma_nv,
+        ten_nv: detail.ten_nv,
         sl_xuat: detail.so_luong_xuat,
         so_luong: -detail.so_luong_xuat,
+        ma_ncc: pxk.ma_ncc,
+        ma_ncc: pxk.ten_ncc,
+        ngay_ct: pxk.ngay_ct,
+        nam,
+        thang,
+        ngay,
+        quy,
+        gio,
+        phut,
+        giay,
+        tien_hang: detail.tien_xuat,
+        tien_ck: detail.tien_ck,
+        tong_tien,
+        chi_phi,
+        loi_nhuan: tong_tien - chi_phi
       };
       await soKhoModel.create(soKho);
       // luu vao so quy
@@ -224,109 +274,32 @@ phieuXuatKhoSchema.post("save", async function (next) {
   }
 });
 
-phieuXuatKhoSchema.pre("updateOne", async function (next) {
+phieuXuatKhoSchema.pre('updateOne', async function (next) {
   // không cập nhật kho
   // không cập nhật hàng hóa
   let error;
   try {
-    const pxk = this._update;
-    const { ma_kho, ma_ct } = pxk;
-    const doc = await this.model.findOne({ ma_ct });
-    if (!doc) {
-      return next(createError(404, `Mã chứng từ '${ma_ct}' không tồn tại`));
-    }
-    if (doc.ma_kho !== ma_kho) {
-      return next(createError(400, `Không được đổi kho`));
-    }
-    if (pxk.details.length !== doc.details.length) {
-      return next(createError(400, `Không được thêm hay xóa hàng hóa đã xuất`));
-    }
-    for (let i = 0; i < pxk.details.length; i++) {
-      let detail = pxk.details[i];
-      const tonKhoResp = await tonKhoController.getInventoryOnStoreHelper({
-        ma_vt: detail.ma_vt,
-        ma_kho: pxk.ma_kho,
-      });
-      if (
-        (tonKhoResp?.ton_kho || 0) + doc.details[i].so_luong_xuat <
-        detail.so_luong_xuat
-      ) {
-        error = createError(
-          400,
-          `'${detail.ten_vt}' chỉ tồn ${
-            tonKhoResp.ton_kho + doc.details[i].so_luong_xuat
-          } ${detail.ten_dvt} ở ${pxk.ten_kho}`
-        );
-        break;
-      }
-      if (detail._id !== doc.details[i]._id.toString()) {
-        error = next(
-          createError(400, `Không được thêm hay xóa hàng hóa đã xuất`)
-        );
-        break;
-      }
-      if (detail.ma_vt !== doc.details[i].ma_vt) {
-        error = next(createError(400, `Không được chỉnh sửa hàng hóa`));
-        break;
-      }
-
-      if (
-        detail.so_luong_xuat !== doc.details[i].so_luong_xuat ||
-        detail.ma_lo !== doc.details[i].ma_lo
-      ) {
-        await soKhoModel.updateOne(
-          { ma_ct: pxk.ma_ct, ma_vt: detail.ma_vt },
-          {
-            sl_xuat: detail.so_luong_xuat,
-            so_luong: -detail.so_luong_xuat,
-            ma_lo: detail.ma_lo,
-            ten_lo: detail.ten_lo,
-          }
-        );
-      }
-      const { ma_vt, ten_vt, ma_dvt, ten_dvt, ...fields } = detail;
-      detail = { ...detail, ...fields };
-    }
-    if (error) {
-      return next(error);
-    } else {
-      return next();
-    }
+    return next(
+      createError(400, 'Không thể chỉnh sửa, phiếu xuất kho đã lưu vào sổ')
+    );
   } catch (error) {
     return next(error);
   }
 });
-phieuXuatKhoSchema.pre("updateMany", async function (next) {
+phieuXuatKhoSchema.pre('updateMany', async function (next) {
   try {
-    const pxk = this;
-    const _update = pxk._update;
-    const filter = pxk.getFilter();
-    if (_update.deleted) {
-      const phieuXuatKhos = await this.model
-        .find(filter)
-        .select(["-_id", "ma_ct"]);
-      const maCts = phieuXuatKhos.map((item) => item.ma_ct);
-      await soKhoModel.delete({ ma_ct: { $in: maCts } });
-    } else {
-      const phieuXuatKhos = await this.model
-        .findDeleted(filter)
-        .select(["-_id", "ma_ct"]);
-      const maCts = phieuXuatKhos.map((item) => item.ma_ct);
-      await soKhoModel.restore({ ma_ct: { $in: maCts } });
-    }
+    return next(
+      createError(400, 'Không thể xóa, phiếu xuất kho đã lưu vào sổ')
+    );
   } catch (error) {
     return next(error);
   }
 });
-phieuXuatKhoSchema.pre("deleteMany", async function () {
+phieuXuatKhoSchema.pre('deleteMany', async function (next) {
   try {
-    const pxk = this;
-    const filter = pxk.getFilter();
-    const phieuXuatKhos = await this.model
-      .findDeleted(filter)
-      .select(["-_id", "ma_ct"]);
-    const maCts = phieuXuatKhos.map((item) => item.ma_ct);
-    await soKhoModel.deleteMany({ ma_ct: { $in: maCts } });
+    return next(
+      createError(400, 'Không thể xóa, phiếu xuất kho đã lưu vào sổ')
+    );
   } catch (error) {
     return next(error);
   }

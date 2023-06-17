@@ -26,25 +26,49 @@ const generateRefreshToken = (user) => {
     { expiresIn: "30d" }
   );
 };
-function generateRandomCode(length = 6, prefix = "") {
+function generateRandomCode(length = 6, prefix = '') {
   const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let code = "";
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let code = '';
   for (let i = 0; i < length; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return `${prefix}_${code}`;
+  return `${prefix}${prefix ? '_' : ''}${code}`;
+}
+async function generateUniqueValueUtil({ maDm, model }) {
+  let maChungTu = generateRandomCode(6, maDm);
+  const doc = await model.findOne({ ma_ct: maChungTu });
+  if (doc) {
+    return await generateUniqueValue();
+  } else {
+    return maChungTu;
+  }
+}
+// get quy by month
+function getQuyByMonth(month) {
+  if (month < 1 || month > 12) {
+    return;
+  }
+  if (month >= 1 && month <= 3) {
+    return 1;
+  } else if (month > 3 && month <= 6) {
+    return 2;
+  } else if (month > 6 && month <= 9) {
+    return 3;
+  } else {
+    return 4;
+  }
 }
 
 // SET STORAGE
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     if (!file) {
-      return cb(createError(404, "Không nhận được file"));
+      return cb(createError(404, 'Không nhận được file'));
     }
     const folederSave = req.query.folder;
     if (!folederSave) {
-      const err = createError(400, "Không xác định foler lưu");
+      const err = createError(400, 'Không xác định foler lưu');
       return cb(err);
     }
     fs.access(`src/public/uploads/${folederSave}`, (error) => {
@@ -55,7 +79,7 @@ const storage = multer.diskStorage({
     cb(null, `src/public/uploads/${folederSave}`);
   },
   filename: function (req, file, cb) {
-    const nameToSave = v4() + "_" + file.originalname;
+    const nameToSave = v4() + '_' + file.originalname;
     file.nameToSave = nameToSave;
     cb(null, nameToSave);
   },
@@ -83,6 +107,8 @@ module.exports = {
   generateAccessToken,
   generateRefreshToken,
   generateRandomCode,
+  generateUniqueValueUtil,
+  getQuyByMonth,
   upload,
   deleteFile,
 };

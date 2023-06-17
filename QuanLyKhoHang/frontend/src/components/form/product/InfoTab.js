@@ -16,8 +16,17 @@ import CheckboxInput from '~/components/input/CheckboxInput';
 import { dsDanhMuc } from '~/utils/data';
 import { BsCaretDown, BsCaretUp } from 'react-icons/bs';
 import DvtVariant from './DvtVariant';
+import FirstStore from './FirstStore';
 
-function InfoTab({ control, register, errors, isEdit = false, dvts, setDvts }) {
+function InfoTab({
+  control,
+  register,
+  errors,
+  isEdit = false,
+  dvts,
+  setDvts,
+  setTonKhoBanDau,
+}) {
   const [showDvts, setShowDvts] = useState(true);
 
   return (
@@ -115,6 +124,23 @@ function InfoTab({ control, register, errors, isEdit = false, dvts, setDvts }) {
         />
       </Grid>
       <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="gia_von"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label="Giá vốn"
+              placeholder="Giá vốn trung bình"
+              value={numeralCustom(value).format()}
+              onChange={(e) => {
+                const number = e.target.value;
+                onChange(numeralCustom(number).value());
+              }}
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
         <TextInput
           label="Xuất xứ"
           placeholder="VD: Việt Nam"
@@ -168,6 +194,11 @@ function InfoTab({ control, register, errors, isEdit = false, dvts, setDvts }) {
           </Collapse>
         </Paper>
       </Grid>
+      {!isEdit && (
+        <Grid item xs={12}>
+          <FirstStore setTonKhoBanDau={setTonKhoBanDau} />
+        </Grid>
+      )}
     </Grid>
   );
 }

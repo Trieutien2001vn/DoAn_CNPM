@@ -4,10 +4,6 @@ const mongooseDelete = require("mongoose-delete");
 
 const nguoiDungSchema = new mongoose.Schema(
   {
-    ma_nguoi_dung: {
-      type: String,
-      required: true,
-    },
     ten_nguoi_dung: {
       type: String,
       required: true,
