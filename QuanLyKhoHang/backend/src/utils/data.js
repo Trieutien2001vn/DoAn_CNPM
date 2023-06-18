@@ -16,6 +16,7 @@ const {
   validateCreateKenhBan,
   validateCreatePTTT,
   validateCreateKH,
+  validateCreateTTPBL,
 } = require('./validate');
 const khoModel = require('../app/models/kho.model');
 const vatTuModel = require('../app/models/vatTu.model');
@@ -34,6 +35,7 @@ const loaiPhieuChiModel = require('../app/models/loaiPhieuChi.model');
 const kenhBanModel = require('../app/models/kenhBan.model');
 const phuongThucThanhToanModel = require('../app/models/phuongThucThanhToan.model');
 const khachHangModel = require('../app/models/khachHang.model');
+const trangThaiPhieuBanLeModel = require('../app/models/trangThaiPhieuBanLe.model');
 
 const dsDanhMuc = [
   {
