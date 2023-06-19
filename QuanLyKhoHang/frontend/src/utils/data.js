@@ -32,6 +32,7 @@ import FormPTTT from '~/components/form/pttt/FormPTTT';
 import FilterPTTT from '~/components/filter/pttt/FilterPTTT';
 import FormKH from '~/components/form/khachhang/FormKH';
 import FilterKH from '~/components/filter/khachhang/FilterKH';
+import FormTTPBL from '~/components/form/trangthaipbl/FormTTPBL';
 import FormPBL from '~/components/form/pbl/FormPBL';
 
 const dsDanhMuc = {

@@ -28,7 +28,6 @@ const phieuXuatKhoModel = require('../app/models/phieuXuatKho.model');
 const phieuKiemKhoModel = require('../app/models/phieuKiemKho.model');
 const phieuDieuChuyenModel = require('../app/models/phieuDieuChuyen.model');
 const phieuXuatHuyModel = require('../app/models/phieuXuatHuy.model');
-const chungTuModel = require('../app/models/chungTu.model');
 const loaiPhieuThuModel = require('../app/models/loaiPhieuThu.model');
 const loaiPhieuChiModel = require('../app/models/loaiPhieuChi.model');
 const kenhBanModel = require('../app/models/kenhBan.model');

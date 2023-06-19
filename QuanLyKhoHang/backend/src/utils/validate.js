@@ -215,6 +215,13 @@ const validateCreatePBH= ({ ngay_ct, ngay_lap_phieu }) => {
   });
   return modelSchema.validate({ ngay_ct, ngay_lap_phieu});
 };
+const validateCreateTTPBL = ({ ma_trang_thai,ten_trang_thai}) => {
+  const modelSchema = joi.object({
+    ma_trang_thai: joi.number().required(),
+    ten_trang_thai: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_trang_thai, ten_trang_thai});
+};
 module.exports = {
   validateCreatePhanQuyen,
   validateNguoiDungDangKy,
@@ -237,5 +244,6 @@ module.exports = {
   validateCreateKenhBan,
   validateCreatePTTT,
   validateCreateKH,
+  validateCreateTTPBL,
   validateCreatePBH
 };
