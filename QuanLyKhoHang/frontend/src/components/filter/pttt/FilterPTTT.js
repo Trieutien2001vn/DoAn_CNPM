@@ -38,11 +38,9 @@ function FilterPTTT({ setCondition }) {
   return (
     <Stack sx={{ width: '100%' }} spacing="10px">
       <FilterSearch
-        title="Mã, tên phuong thuc thanh toan"
+        title="Mã, tên phương thức"
         onSearch={(value) => setFilter({ ...filter, pttt: value })}
       />
-
-     
     </Stack>
   );
 }

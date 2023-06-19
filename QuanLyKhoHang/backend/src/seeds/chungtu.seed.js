@@ -8,20 +8,20 @@ const generateChungTu = async () => {
       ten_ct: 'Phiếu nhập kho',
       dien_giai: 'Mỗi lần nhập kho sẽ tạo ra một phiếu nhập kho',
     },
-    {
-      ma_ct: 'pxk',
-      ten_ct: 'Phiếu xuất kho',
-      dien_giai: 'Mỗi lần xuất kho cần tạo một phiếu xuất kho',
-    },
+    // {
+    //   ma_ct: 'pxk',
+    //   ten_ct: 'Phiếu xuất kho',
+    //   dien_giai: 'Mỗi lần xuất kho cần tạo một phiếu xuất kho',
+    // },
     {
       ma_ct: 'pkk',
       ten_ct: 'Phiếu kiểm kho',
       dien_giai: 'Khi kiểm kho sẽ tạo một phiếu kiểm kho',
     },
     {
-      ma_ct: 'pbl',
-      ten_ct: 'Phiếu bán lẻ',
-      dien_giai: 'Khi lưu hóa đơn sẽ tạo ra một phiếu bán lẻ',
+      ma_ct: 'pbh',
+      ten_ct: 'Phiếu bán hàng',
+      dien_giai: 'Ghi nhận thông tin bán hàng',
     },
     {
       ma_ct: 'pxdc',

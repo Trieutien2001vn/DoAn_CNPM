@@ -6,7 +6,6 @@ const {
   validateCreateLo,
   validateCreateNhaCungCap,
   validateCreatePhieuNhapKho,
-  validateCreateChungTu,
   validateCreatePhieuXuatKho,
   validateCreatePhieuKiemKho,
   validateCreatePhieuDieuChuyen,
@@ -16,7 +15,7 @@ const {
   validateCreateKenhBan,
   validateCreatePTTT,
   validateCreateKH,
-  validateCreatePhieuBanLe,
+  validateCreatePBH,
 } = require('./validate');
 const khoModel = require('../app/models/kho.model');
 const vatTuModel = require('../app/models/vatTu.model');
@@ -31,6 +30,11 @@ const phieuDieuChuyenModel = require('../app/models/phieuDieuChuyen.model');
 const phieuXuatHuyModel = require('../app/models/phieuXuatHuy.model');
 const chungTuModel = require('../app/models/chungTu.model');
 const loaiPhieuThuModel = require('../app/models/loaiPhieuThu.model');
+const loaiPhieuChiModel = require('../app/models/loaiPhieuChi.model');
+const kenhBanModel = require('../app/models/kenhBan.model');
+const phuongThucThanhToanModel = require('../app/models/phuongThucThanhToan.model');
+const khachHangModel = require('../app/models/khachHang.model');
+const phieuBanHangModel = require('../app/models/phieuBanHang.model');
 
 const dsDanhMuc = [
   {
@@ -173,18 +177,46 @@ const dsDanhMuc = [
     fields: ['ma_phieu', 'ma_kho', 'ten_kho', 'ma_vt', 'ten_vt'],
   },
   {
-    maDanhMuc: 'dmct',
-    uniqueField: 'ma_ct',
-    model: chungTuModel,
-    validate: validateCreateChungTu,
-    fields: ['ma_ct', 'ten_ct', 'dien_giai'],
-  },
-  {
     maDanhMuc: 'dmlpt',
     uniqueField: 'ma_loai',
     model: loaiPhieuThuModel,
     validate: validateCreateLoaiPhieuThu,
     fields: ['ma_loai', 'ten_loai'],
+  },
+  {
+    maDanhMuc: 'dmlpc',
+    uniqueField: 'ma_loai',
+    model: loaiPhieuChiModel,
+    validate: validateCreateLoaiPhieuChi,
+    fields: ['ma_loai', 'ten_loai'],
+  },
+  {
+    maDanhMuc: 'dmkb',
+    uniqueField: 'ma_kenh',
+    model: kenhBanModel,
+    validate: validateCreateKenhBan,
+    fields: ['ma_kenh', 'ten_kenh'],
+  },
+  {
+    maDanhMuc: 'dmpttt',
+    uniqueField: 'ma_pttt',
+    model: phuongThucThanhToanModel,
+    validate: validateCreatePTTT,
+    fields: ['ma_pttt', 'ten_pttt'],
+  },
+  {
+    maDanhMuc: 'dmkh',
+    uniqueField: 'sdt',
+    model: khachHangModel,
+    validate: validateCreateKH,
+    fields: ['ma_kh', 'ten_kh'],
+  },
+  {
+    maDanhMuc: 'dmpbh',
+    uniqueField: 'ma_phieu',
+    model: phieuBanHangModel,
+    validate: validateCreatePBH,
+    fields: ['ma_phieu', 'ma_ct', 'ma_loai_ct', 'ten_loai_ct'],
   },
 ];
 module.exports = { dsDanhMuc };

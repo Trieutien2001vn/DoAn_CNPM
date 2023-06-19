@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Grid } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { FiSave } from 'react-icons/fi';
 import { v4 } from 'uuid';
 import ButtonBase from '~/components/button/ButtonBase';
@@ -11,12 +11,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 
-const schemaBase = {
-  ma_kh: yup.string().required('Vui lòng nhập mã khách hàng'),
-  ten_kh:yup.string().required('Vui lòng nhập tên khách hàng'),
-  sdt:yup.string().required('Vui lòng nhập tên khách hàng'),
-
-};
+const schema = yup.object({
+  ten_kh: yup.string().required('Vui lòng nhập tên khách hàng'),
+  sdt: yup.string().required('Vui lòng nhập tên khách hàng'),
+});
 
 function FormKH({
   open,
@@ -25,7 +23,6 @@ function FormKH({
   defaultValues,
   isEdit = false,
 }) {
-  const [schema, setSchema] = useState(() => yup.object(schemaBase));
   const {
     register,
     handleSubmit,
@@ -33,20 +30,20 @@ function FormKH({
     formState: { isSubmitting, errors },
   } = useForm({
     mode: 'onBlur',
-    defaultValues: defaultValues ?{
-        ...defaultValues,
-        ngay_sinh: moment(defaultValues.ngay_sinh).format('YYYY-MM-DD'),
-    }: null
-,
+    defaultValues: defaultValues
+      ? {
+          ...defaultValues,
+          ngay_sinh: moment(defaultValues.ngay_sinh).format('YYYY-MM-DD'),
+        }
+      : null,
     resolver: yupResolver(schema),
   });
   const { asyncPostData } = useApisContext();
- 
 
   // handle submit
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
-    await asyncPostData('dmkh',values, method).then((resp) => {
+    await asyncPostData('dmkh', values, method).then((resp) => {
       if (!resp.message) {
         handleClose();
         reset();
@@ -80,11 +77,9 @@ function FormKH({
           <TextInput
             disabled={isEdit}
             label="Mã Khách Hàng"
-            placeholder="VD: KH0001"
+            placeholder="Mã tự động"
             name="ma_kh"
             register={register}
-            required
-            errorMessage={errors?.ma_kh?.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
@@ -118,7 +113,7 @@ function FormKH({
         </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
-          type='date'
+            type="date"
             label="Ngày Sinh"
             name="ngay_sinh"
             register={register}
@@ -132,8 +127,6 @@ function FormKH({
             register={register}
           />
         </Grid>
-       
-        
       </Grid>
     </ModalBase>
   );

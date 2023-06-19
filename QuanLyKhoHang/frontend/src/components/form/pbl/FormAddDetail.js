@@ -1,5 +1,5 @@
-import { Grid, Typography } from '@mui/material';
-import React, { useState, useMemo } from 'react';
+import { Grid } from '@mui/material';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { FiSave } from 'react-icons/fi';
@@ -22,14 +22,6 @@ const baseSchema = {
     .object()
     .typeError('Hàng hóa chưa có đơn vị tính')
     .required('Hàng hóa chưa có đơn vị tính'),
-  gia_xuat: yup
-    .number()
-    .typeError('Giá xuất phải là số')
-    .required('Vui lòng nhập giá xuất'),
-  so_luong_xuat: yup
-    .number()
-    .typeError('Số lượng phải là số')
-    .required('Vui lòng nhập số lượng'),
 };
 
 function FormAddDetail({
@@ -67,133 +59,18 @@ function FormAddDetail({
             ? { ma_lo: defaultValues.ma_lo, ten_lo: defaultValues.ten_lo }
             : null,
         }
-      : {},
+      : {
+          sl_xuat: 1,
+        },
   });
 
   const vatTu = watch('vat_tu');
-  const soLuongXuat = watch('so_luong_xuat');
-  const giaXuat = watch('gia_xuat');
-  const tyLeChietKhau = watch('ty_le_ck');
-  const tienChietKhau = watch('tien_ck');
-
-  const generateSoLuong = ({
-    dsDvt,
-    soLuong,
-    result = [],
-    dvtCoSo,
-    gia_ban_le = 0,
-  }) => {
-    const dvts = [...dsDvt];
-    if (dvts.length === 0) {
-      if (soLuong > 0) {
-        result.push({
-          so_luong: soLuong,
-          ten_dvt: dvtCoSo,
-          gia_xuat: gia_ban_le,
-        });
-        return result;
-      } else {
-        return result;
-      }
-    }
-    dvts.sort((a, b) => a.sl_quy_doi - b.sl_quy_doi);
-    const currentDvt = dvts.pop();
-    if (soLuong >= currentDvt.sl_quy_doi) {
-      const number = Math.floor(soLuong / currentDvt.sl_quy_doi);
-      result.push({
-        so_luong: number,
-        ten_dvt: currentDvt.ten_dvt,
-        gia_xuat: currentDvt.gia_ban_qd,
-      });
-      const soDu = soLuong % currentDvt.sl_quy_doi;
-      if (soDu > 0) {
-        return generateSoLuong({
-          dsDvt: dvts,
-          soLuong: soDu,
-          result,
-          dvtCoSo,
-          gia_ban_le,
-        });
-      } else {
-        return result;
-      }
-    } else {
-      return generateSoLuong({
-        dsDvt: dvts,
-        soLuong,
-        result,
-        dvtCoSo,
-        gia_ban_le,
-      });
-    }
-  };
-  const soLuongs = useMemo(() => {
-    if (!!vatTu) {
-      return generateSoLuong({
-        dsDvt: vatTu?.ds_dvt || [],
-        soLuong: soLuongXuat || 0,
-        dvtCoSo: vatTu?.ten_dvt,
-        gia_ban_le: vatTu.gia_ban_le || 0,
-      });
-    } else {
-      return [];
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vatTu, soLuongXuat, giaXuat]);
-
-  // console.log({ soLuongQuyDoi });
-  useEffect(() => {
-    if (vatTu) {
-      // thay doi don vi tinh
-      setValue('don_vi_tinh', {
-        ma_dvt: vatTu.ma_dvt || '',
-        ten_dvt: vatTu.ten_dvt || '',
-      });
-      // thay doi gia xuat
-      setValue(
-        'gia_xuat',
-        vatTu.gia_ban_le - (vatTu.gia_ban_le * (tyLeChietKhau || 0)) / 100
-      );
-      // thau doi tien chiet khau
-      setValue('tien_ck', (vatTu.gia_ban_le * (tyLeChietKhau || 0)) / 100);
-      // thay doi theo doi lo
-      if (vatTu.theo_doi_lo) {
-        setSchema(
-          yup.object({
-            ...baseSchema,
-            lo: yup
-              .object()
-              .typeError('Chọn lô hàng hóa')
-              .required('Chọn lô hàng hóa'),
-          })
-        );
-      } else {
-        setSchema(yup.object(baseSchema));
-      }
-    } else {
-      setValue('don_vi_tinh', null);
-      setValue('gia_xuat', 0);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vatTu]);
-
-  useEffect(() => {
-    const tienXuat = (soLuongs || []).reduce((acc, item) => {
-      return (
-        acc +
-        item.so_luong *
-          (item.gia_xuat - (item.gia_xuat * (tyLeChietKhau || 0)) / 100)
-      );
-    }, 0);
-    setValue('tien_xuat', tienXuat);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soLuongs, tyLeChietKhau]);
-  useEffect(() => {
-    if (vatTu) {
-      setValue('gia_xuat', vatTu.gia_ban_le - tienChietKhau);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tienChietKhau]);
+  const soLuongXuat = watch('sl_xuat');
+  const tienHang = watch('tien_hang');
+  const tyLeCk = watch('ty_le_ck');
+  const tienCk = watch('tien_ck');
+  const tienCkPhanBo = watch('tien_ck_phan_bo');
+  const tongTienCk = watch('tong_tien_ck');
 
   const handleSave = (values) => {
     return new Promise((resovle) => {
@@ -204,6 +81,53 @@ function FormAddDetail({
       }, 200);
     });
   };
+
+  useEffect(() => {
+    setValue('ty_le_ck', 0);
+    setValue('tien_ck', 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tienHang]);
+  useEffect(() => {
+    const tienCkNew = (tienHang * tyLeCk) / 100;
+    setValue('tien_ck', tienCkNew);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tyLeCk]);
+  useEffect(() => {
+    const tyLeCkNew = Number((tienCk * 100) / tienHang);
+    setValue('ty_le_ck', tyLeCkNew);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tienCk]);
+  useEffect(() => {
+    const tongTienCk = (tienCk || 0) + (tienCkPhanBo || 0);
+    setValue('tong_tien_ck', tongTienCk);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tienCkPhanBo, tienCk]);
+  useEffect(() => {
+    const tongTienNew = (tienHang || 0) - (tongTienCk || 0);
+    setValue('tong_tien', tongTienNew);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tongTienCk, tienHang]);
+  useEffect(() => {
+    if (!!vatTu) {
+      setValue('tien_hang', vatTu.gia_ban_le * soLuongXuat);
+      setValue('gia_ban_le', vatTu.gia_ban_le);
+      setValue('don_vi_tinh', { ma_dvt: vatTu.ma_dvt, ten_dvt: vatTu.ten_dvt });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vatTu, soLuongXuat]);
+  useEffect(() => {
+    if (vatTu?.theo_doi_lo) {
+      setSchema(
+        yup.object({
+          ...baseSchema,
+          lo: yup
+            .object()
+            .typeError('Vui lòng chọ lô')
+            .required('Vui lòng chọn lô'),
+        })
+      );
+    }
+  }, [vatTu]);
 
   return (
     <ModalBase
@@ -272,36 +196,70 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="gia_xuat"
+            name="gia_ban_le"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
                 disabled
-                label="Giá xuất (theo 1 đơn vị tính)"
-                placeholder="Giá xuất (theo 1 đơn vị tính)"
+                label="Giá bán lẻ (theo 1 đơn vị tính cơ sở)"
+                placeholder="Giá bán lẻ"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
                 }}
-                errorMessage={errors?.gia_xuat?.message}
+                errorMessage={errors?.gia_ban_le?.message}
               />
             )}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="so_luong_xuat"
+            name="sl_xuat"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Số lượng xuất"
+                label="Số lượng"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
                 }}
-                errorMessage={errors?.so_luong_xuat?.message}
+                errorMessage={errors?.sl_xuat?.message}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            name="tien_hang"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                disabled
+                required
+                label="Tiền hàng"
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  onChange(numeralCustom(e.target.value).value());
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            name="tien_ck_phan_bo"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                disabled
+                label="Tiền chiết khấu phân bổ"
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const value = numeralCustom(e.target.value).value();
+                  onChange(value);
+                }}
               />
             )}
           />
@@ -317,10 +275,6 @@ function FormAddDetail({
                 onChange={(e) => {
                   const value = numeralCustom(e.target.value).value();
                   onChange(value);
-                  if (vatTu) {
-                    const tienCk = (vatTu.gia_ban_le * value) / 100;
-                    setValue('tien_ck', tienCk);
-                  }
                 }}
               />
             )}
@@ -337,10 +291,6 @@ function FormAddDetail({
                 onChange={(e) => {
                   const value = numeralCustom(e.target.value).value();
                   onChange(value);
-                  if (vatTu) {
-                    const tyLeCk = (value * 100) / vatTu.gia_ban_le;
-                    setValue('ty_le_ck', tyLeCk);
-                  }
                 }}
               />
             )}
@@ -348,12 +298,29 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="tien_xuat"
+            name="tong_tien_ck"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                label="Tổng tiền chiết khấu"
+                disabled
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const value = numeralCustom(e.target.value).value();
+                  onChange(value);
+                }}
+              />
+            )}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Controller
+            name="tong_tien"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Tiền xuất"
+                label="Tổng tiền"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
@@ -361,15 +328,6 @@ function FormAddDetail({
               />
             )}
           />
-          {soLuongs?.length > 0 && (
-            <Typography sx={{ fontSize: '12px', color: 'primary.main' }}>
-              (
-              {soLuongs.reduce((acc, item) => {
-                return `${acc} ${item.so_luong} ${item.ten_dvt}`;
-              }, '')}
-              )
-            </Typography>
-          )}
         </Grid>
         {vatTu?.theo_doi_lo && (
           <Grid item xs={12} md={6}>

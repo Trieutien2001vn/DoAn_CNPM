@@ -22,12 +22,6 @@ const columns = [
     wrap: true,
   },
   {
-    name: 'Số lượng',
-    selector: (row) => row.so_luong_xuat,
-    width: '100px',
-    center: true,
-  },
-  {
     name: 'Đơn vị tính',
     selector: (row) => row.ten_dvt,
     minWidth: '100px',
@@ -41,18 +35,17 @@ const columns = [
     format: (row) => numeralCustom(row.gia_ban_le).format(),
   },
   {
-    name: 'Tỷ lệ chiết khấu (%)',
-    selector: (row) => row.ty_le_ck || 0,
-    format: (row) => Math.ceil(row.ty_le_ck || 0),
-    width: '150px',
-    center: true,
-  },
-  {
     name: 'Giá xuất',
     selector: (row) => row.gia_xuat,
     width: '150px',
     center: true,
     format: (row) => numeralCustom(row.gia_xuat).format(),
+  },
+  {
+    name: 'Số lượng',
+    selector: (row) => row.so_luong_xuat,
+    width: '100px',
+    center: true,
   },
   {
     name: 'Tiền xuất',
@@ -158,7 +151,7 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
           data={details}
           columns={columns}
           onRowClicked={handleRowClicked}
-          handleDelete={handleDeleteDetail}
+          handleDelete={isEditMaster ? undefined : handleDeleteDetail}
           uniqueKey="ma_vt"
         />
       </Stack>

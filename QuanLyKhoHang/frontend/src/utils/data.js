@@ -394,7 +394,8 @@ const dsDanhMuc = {
         selector: (row) => row.ten_kho,
         sortable: true,
         center: true,
-        minWidth: '100px',
+        minWidth: '120px',
+        wrap: true,
       },
       {
         name: 'Ngày chứng từ',
@@ -645,7 +646,7 @@ const dsDanhMuc = {
       },
     ],
   },
-  dmlpc:{
+  dmlpc: {
     title: 'loại phiếu chi',
     uniqueKey: 'ma_loai',
     Form: FormLPC,
@@ -665,7 +666,7 @@ const dsDanhMuc = {
       },
     ],
   },
-  dmkb:{
+  dmkb: {
     title: 'Kênh bán',
     uniqueKey: 'ma_kenh',
     Form: FormKB,
@@ -685,8 +686,8 @@ const dsDanhMuc = {
       },
     ],
   },
-  dmpttt:{
-    title: 'Phuong thúc thanh toán',
+  dmpttt: {
+    title: 'phương thức thanh toán',
     uniqueKey: 'ma_pttt',
     Form: FormPTTT,
     Filter: FilterPTTT,
@@ -705,7 +706,7 @@ const dsDanhMuc = {
       },
     ],
   },
-  dmkh:{
+  dmkh: {
     title: 'Khách Hàng',
     uniqueKey: 'sdt',
     Form: FormKH,
@@ -773,7 +774,15 @@ const dsDanhMuc = {
         selector: (row) => row.ngay_ct,
         format: (row) => formatDateDisplay(row.ngay_ct),
         sortable: true,
-        width: '120px',
+        width: '140px',
+      },
+      {
+        name: 'Ngày lập phiếu',
+        selector: (row) => row.ngay_lap_phieu,
+        format: (row) => formatDateDisplay(row.ngay_lap_phieu),
+        sortable: true,
+        width: '140px',
+        center: true
       },
       {
         name: 'Tổng tiền',
@@ -783,13 +792,7 @@ const dsDanhMuc = {
         center: true,
         width: '120px',
       },
-      {
-        name: 'Ngày lập phiếu',
-        selector: (row) => row.ngay_lap_phieu,
-        format: (row) => formatDateDisplay(row.ngay_lap_phieu),
-        sortable: true,
-        width: '120px',
-      },
+      
       {
         name: 'Nhân viên',
         selector: (row) => row.ten_nv,
@@ -816,9 +819,9 @@ const dsDanhMuc = {
       },
       {
         name: 'Phương thức thanh toán',
-        selector: (row) => row.ten_kenh,
+        selector: (row) => row.ten_pttt,
         sortable: true,
-        width: '170px',
+        width: '180px',
         right: true,
       },
     ],

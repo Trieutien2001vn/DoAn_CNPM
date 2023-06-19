@@ -11,7 +11,6 @@ import TabsBase from '~/components/tabs/TabsBase';
 import { TabPanel } from '@mui/lab';
 import InfoTab from './InfoTab';
 import { useForm } from 'react-hook-form';
-import DescriptionTab from './DescriptionTab';
 import DetailsTab from './DetailsTab';
 
 export default function FormPBL({
@@ -22,15 +21,14 @@ export default function FormPBL({
   isEdit = false,
 }) {
   const schema = yup.object({
-    ma_phieu: yup.string().required('Vui lòng nhập mã phiếu'),
     kho: yup
       .object()
       .typeError('Vui lòng chọn kho')
       .required('Vui lòng chọn kho'),
     ngay_lap_phieu: yup
       .date()
-      .typeError('Vui lòng chọn ngày xuất hàng')
-      .required('Vui lòng chọn ngày xuất hàng'),
+      .typeError('Vui lòng ngày lập phiếu')
+      .required('Vui lòng ngày lập phiếu'),
     ngay_ct: yup
       .date()
       .typeError('Vui lòng chọn ngày chứng từ')
@@ -51,13 +49,29 @@ export default function FormPBL({
             ma_kho: defaultValues?.ma_kho,
             ten_kho: defaultValues?.ten_kho,
           },
-          ngay_xuat_hang: moment(defaultValues.ngay_xuat_hang).format(
+          nhan_vien: {
+            ma_nv: defaultValues?.ma_nv,
+            ten_nv: defaultValues?.ten_nv,
+          },
+          khach_hang: {
+            ma_kh: defaultValues?.ma_kh,
+            ten_kh: defaultValues?.ten_kh,
+          },
+          kenh_ban: {
+            ma_kenh: defaultValues?.ma_kenh,
+            ten_kenh: defaultValues?.ten_kenh,
+          },
+          pttt: {
+            ma_pttt: defaultValues?.ma_pttt,
+            ten_pttt: defaultValues?.ten_pttt,
+          },
+          ngay_lap_phieu: moment(defaultValues.ngay_lap_phieu).format(
             'YYYY-MM-DD'
           ),
           ngay_ct: moment(defaultValues.ngay_ct).format('YYYY-MM-DD'),
         }
       : {
-          ngay_xuat_hang: moment().format('YYYY-MM-DD'),
+          ngay_lap_phieu: moment().format('YYYY-MM-DD'),
           ngay_ct: moment().format('YYYY-MM-DD'),
         },
     resolver: yupResolver(schema),
@@ -67,11 +81,19 @@ export default function FormPBL({
   const tabRef = useRef();
 
   const generateDataPost = (values) => {
-    const { kho, ...data } = values;
+    const { kho, nhan_vien, khach_hang, kenh_ban, pttt, ...data } = values;
     const result = {
       ...data,
       ma_kho: kho?.ma_kho || '',
       ten_kho: kho?.ten_kho || '',
+      ma_nv: nhan_vien?.ma_nv || '',
+      ten_nv: nhan_vien?.ten_nv || '',
+      ma_kh: khach_hang?.ma_kh || '',
+      ten_kh: khach_hang?.ten_kh || '',
+      ma_kenh: kenh_ban?.ma_kenh || '',
+      ten_kenh: kenh_ban?.ten_kenh || '',
+      ma_pttt: pttt?.ma_pttt || '',
+      ten_pttt: pttt?.ten_pttt || '',
       details,
     };
     return result;
@@ -135,9 +157,6 @@ export default function FormPBL({
             setDetails={setDetails}
             isEditMaster={isEdit}
           />
-        </TabPanel>
-        <TabPanel value="3" sx={{ padding: '10px 0 0 0' }}>
-          <DescriptionTab register={register} />
         </TabPanel>
       </TabsBase>
     </ModalBase>

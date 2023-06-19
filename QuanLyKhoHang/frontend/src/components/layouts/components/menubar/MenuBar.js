@@ -22,6 +22,9 @@ import { CgCloseR } from 'react-icons/cg';
 import { AiOutlineDollarCircle, AiOutlinePieChart } from 'react-icons/ai';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TiDocumentText } from 'react-icons/ti';
+import { RiUser2Line } from 'react-icons/ri';
+import { TbFileInvoice } from 'react-icons/tb';
+import { VscTelescope } from 'react-icons/vsc';
 
 function MenuBar() {
   const theme = useTheme();
@@ -46,9 +49,7 @@ function MenuBar() {
             primary
             startIcon={<BsBoxSeam fontSize="16px" />}
             menuColor={theme.palette.primary.second}
-            active={['/list/dmvt', '/list/dmlo', '/list/dmncc'].includes(
-              location.pathname
-            )}
+            active={['/list/dmvt', '/list/dmlo', '/list/dmpbl', '/list/dmkb'].includes(location.pathname)}
             popupOptions={[
               {
                 text: 'Danh sách hàng hóa',
@@ -65,11 +66,18 @@ function MenuBar() {
                 active: location.pathname.indexOf('dmlo') >= 0,
               },
               {
-                text: 'Nhà cung cấp',
-                startIcon: <BsBuilding fontSize="14px" />,
+                text: 'Phiếu bán lẻ',
+                startIcon: <TbFileInvoice fontSize="14px" />,
                 primary: true,
-                onClick: () => navigate('/list/dmncc'),
-                active: location.pathname.indexOf('dmncc') >= 0,
+                onClick: () => navigate('/list/dmpbl'),
+                active: location.pathname.indexOf('dmpbl') >= 0,
+              },
+              {
+                text: 'Kênh bán hàng',
+                startIcon: <VscTelescope fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmkb'),
+                active: location.pathname.indexOf('dmkb') >= 0,
               },
             ]}
           >
@@ -86,6 +94,7 @@ function MenuBar() {
               '/list/dmpkk',
               '/list/dmpxdc',
               '/list/dmpxh',
+              '/list/dmpttt',
             ].includes(location.pathname)}
             popupOptions={[
               {
@@ -122,6 +131,13 @@ function MenuBar() {
                 primary: true,
                 onClick: () => navigate('/list/dmpxh'),
                 active: location.pathname.indexOf('dmpxh') >= 0,
+              },
+              {
+                text: 'Phương thức thanh toán',
+                startIcon: <BsBuilding fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmpttt'),
+                active: location.pathname.indexOf('dmpttt') >= 0,
               },
             ]}
           >
@@ -177,6 +193,31 @@ function MenuBar() {
             ]}
           >
             Sổ quỹ
+          </ButtonOption>
+          <ButtonOption
+            style={{ borderRadius: '4px' }}
+            primary
+            startIcon={<AiOutlineDollarCircle fontSize="16px" />}
+            menuColor={theme.palette.primary.second}
+            active={['/list/dmkh', '/list/dmncc'].includes(location.pathname)}
+            popupOptions={[
+              {
+                text: 'Khách hàng',
+                startIcon: <RiUser2Line fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmkh'),
+                active: location.pathname.indexOf('dmkh') >= 0,
+              },
+              {
+                text: 'Nhà cung cấp',
+                startIcon: <BsBuilding fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/list/dmncc'),
+                active: location.pathname.indexOf('dmncc') >= 0,
+              },
+            ]}
+          >
+            Đối tác
           </ButtonOption>
           <ButtonOption
             style={{ borderRadius: '4px' }}

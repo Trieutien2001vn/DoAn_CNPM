@@ -73,8 +73,7 @@ function FormAddDetail({
   const vatTu = watch('vat_tu');
   const soLuongXuat = watch('so_luong_xuat');
   const giaXuat = watch('gia_xuat');
-  const tyLeChietKhau = watch('ty_le_ck');
-  const tienChietKhau = watch('tien_ck');
+
 
   const generateSoLuong = ({
     dsDvt,
@@ -149,13 +148,6 @@ function FormAddDetail({
         ma_dvt: vatTu.ma_dvt || '',
         ten_dvt: vatTu.ten_dvt || '',
       });
-      // thay doi gia xuat
-      setValue(
-        'gia_xuat',
-        vatTu.gia_ban_le - (vatTu.gia_ban_le * (tyLeChietKhau || 0)) / 100
-      );
-      // thau doi tien chiet khau
-      setValue('tien_ck', (vatTu.gia_ban_le * (tyLeChietKhau || 0)) / 100);
       // thay doi theo doi lo
       if (vatTu.theo_doi_lo) {
         setSchema(
@@ -176,24 +168,11 @@ function FormAddDetail({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vatTu]);
-
   useEffect(() => {
-    const tienXuat = (soLuongs || []).reduce((acc, item) => {
-      return (
-        acc +
-        item.so_luong *
-          (item.gia_xuat - (item.gia_xuat * (tyLeChietKhau || 0)) / 100)
-      );
-    }, 0);
-    setValue('tien_xuat', tienXuat);
+    const tongTienNew = (giaXuat || 0) * (soLuongXuat || 0);
+    setValue('tien_xuat', tongTienNew);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [soLuongs, tyLeChietKhau]);
-  useEffect(() => {
-    if (vatTu) {
-      setValue('gia_xuat', vatTu.gia_ban_le - tienChietKhau);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tienChietKhau]);
+  }, [giaXuat, soLuongXuat]);
 
   const handleSave = (values) => {
     return new Promise((resovle) => {
@@ -277,7 +256,6 @@ function FormAddDetail({
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                disabled
                 label="Giá xuất (theo 1 đơn vị tính)"
                 placeholder="Giá xuất (theo 1 đơn vị tính)"
                 value={numeralCustom(value).format()}
@@ -302,46 +280,6 @@ function FormAddDetail({
                   onChange(numeralCustom(e.target.value).value());
                 }}
                 errorMessage={errors?.so_luong_xuat?.message}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="ty_le_ck"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextInput
-                label="Tỷ lệ chiết khấu (%)"
-                value={numeralCustom(value).format()}
-                onChange={(e) => {
-                  const value = numeralCustom(e.target.value).value();
-                  onChange(value);
-                  if (vatTu) {
-                    const tienCk = (vatTu.gia_ban_le * value) / 100;
-                    setValue('tien_ck', tienCk);
-                  }
-                }}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="tien_ck"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextInput
-                label="Tiền chiết khấu"
-                value={numeralCustom(value).format()}
-                onChange={(e) => {
-                  const value = numeralCustom(e.target.value).value();
-                  onChange(value);
-                  if (vatTu) {
-                    const tyLeCk = (value * 100) / vatTu.gia_ban_le;
-                    setValue('ty_le_ck', tyLeCk);
-                  }
-                }}
               />
             )}
           />

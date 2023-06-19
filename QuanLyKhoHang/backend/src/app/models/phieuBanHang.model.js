@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
+const { generateUniqueValueUtil } = require('../../utils/myUtil');
+const chungTuModel = require('./chungTu.model');
+const vatTuModel = require('./vatTu.model');
+const createHttpError = require('http-errors');
 
-const phieuBanLeSchema = new mongoose.Schema(
+const phieuBanHangSchema = new mongoose.Schema(
   {
     ma_phieu: {
       type: String,
-      required: true,
       unique: true,
     },
     ma_ct: {
       type: String,
-      required: true,
+      default: '',
     },
     ma_loai_ct: {
       type: String,
@@ -20,11 +23,11 @@ const phieuBanLeSchema = new mongoose.Schema(
     },
     ma_kho: {
       type: String,
-      required: true
+      required: true,
     },
     ten_kho: {
       type: String,
-      required: true
+      required: true,
     },
     ngay_ct: {
       type: Date,
@@ -98,6 +101,10 @@ const phieuBanLeSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    ghi_chu: {
+      type: String,
+      default: '',
+    },
     details: {
       type: [
         {
@@ -114,6 +121,14 @@ const phieuBanLeSchema = new mongoose.Schema(
             default: '',
           },
           ten_nvt: {
+            type: String,
+            default: '',
+          },
+          ma_lo: {
+            type: String,
+            default: '',
+          },
+          ten_lo: {
             type: String,
             default: '',
           },
@@ -153,6 +168,10 @@ const phieuBanLeSchema = new mongoose.Schema(
             type: Number,
             default: 0,
           },
+          ghi_chu: {
+            type: String,
+            default: '',
+          },
         },
       ],
       default: [],
@@ -166,14 +185,70 @@ const phieuBanLeSchema = new mongoose.Schema(
       default: '',
     },
   },
-  { timestamps: true, collection: 'pbl' }
+  { timestamps: true, collection: 'phieu_ban_hang' }
 );
 
-phieuBanLeSchema.plugin(mongooseDelete, {
+phieuBanHangSchema.pre('save', async function (next) {
+  try {
+    const pbh = this;
+    if (!pbh.ma_phieu) {
+      const maPhieu = await generateUniqueValueUtil({
+        maDm: 'pbh',
+        model: mongoose.model('PhieuBanHang', phieuBanHangSchema),
+        compareKey: 'ma_phieu',
+      });
+      pbh.ma_phieu = maPhieu;
+    }
+    const maChungTu = await generateUniqueValueUtil({
+      maDm: 'pbh',
+      model: mongoose.model('PhieuBanHang', phieuBanHangSchema),
+      compareKey: 'ma_ct',
+    });
+    pbh.ma_ct = maChungTu;
+    const chungTu = await chungTuModel.findOne({ ma_ct: 'pbh' });
+    pbh.ma_loai_ct = chungTu.ma_ct;
+    pbh.ten_loai_ct = chungTu.ten_ct;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+phieuBanHangSchema.post('save', async function () {
+ 
+});
+phieuBanHangSchema.pre('updateOne', function (next) {
+  try {
+    return next(
+      createHttpError(400, 'Không thể chỉnh sửa, phiếu bán lẻ đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+phieuBanHangSchema.pre('updateMany', function (next) {
+  try {
+    return next(
+      createHttpError(400, 'Không thể chỉnh xóa, phiếu bán lẻ đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+phieuBanHangSchema.pre('deleteMany', function (next) {
+  try {
+    return next(
+      createHttpError(400, 'Không thể chỉnh xóa, phiếu bán lẻ đã lưu vào sổ')
+    );
+  } catch (error) {
+    next(error);
+  }
+});
+
+phieuBanHangSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: String,
   overrideMethods: 'all',
 });
 
-module.exports = mongoose.model('PhieuBanLe', phieuBanLeSchema);
+module.exports = mongoose.model('PhieuBanHang', phieuBanHangSchema);

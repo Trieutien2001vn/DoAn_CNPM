@@ -199,13 +199,21 @@ const validateCreatePTTT = ({ ma_pttt, ten_pttt }) => {
   });
   return modelSchema.validate({ ma_pttt, ten_pttt });
 };
-const validateCreateKH = ({ ma_kh, ten_kh,sdt }) => {
+// khach hang
+const validateCreateKH = ({ ten_kh,sdt }) => {
   const modelSchema = joi.object({
-    ma_kh: joi.string().required(),
     ten_kh: joi.string().required(),
     sdt: joi.string().required(),
   });
-  return modelSchema.validate({ ma_kh, ten_kh,sdt });
+  return modelSchema.validate({ ten_kh,sdt });
+};
+// phieu ban le
+const validateCreatePBH= ({ ngay_ct, ngay_lap_phieu }) => {
+  const modelSchema = joi.object({
+    ngay_ct: joi.date().required(),
+    ngay_lap_phieu: joi.date().required(),
+  });
+  return modelSchema.validate({ ngay_ct, ngay_lap_phieu});
 };
 module.exports = {
   validateCreatePhanQuyen,
@@ -229,4 +237,5 @@ module.exports = {
   validateCreateKenhBan,
   validateCreatePTTT,
   validateCreateKH,
+  validateCreatePBH
 };

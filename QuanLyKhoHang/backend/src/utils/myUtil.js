@@ -35,13 +35,13 @@ function generateRandomCode(length = 6, prefix = '') {
   }
   return `${prefix}${prefix ? '_' : ''}${code}`;
 }
-async function generateUniqueValueUtil({ maDm, model }) {
-  let maChungTu = generateRandomCode(6, maDm);
-  const doc = await model.findOne({ ma_ct: maChungTu });
+async function generateUniqueValueUtil({ maDm, model, compareKey='ma_ct' }) {
+  let uniqueValue = generateRandomCode(6, maDm);
+  const doc = await model.findOne({ [compareKey]: uniqueValue });
   if (doc) {
     return await generateUniqueValue();
   } else {
-    return maChungTu;
+    return uniqueValue;
   }
 }
 // get quy by month
