@@ -6,19 +6,17 @@ import { v4 } from 'uuid';
 import ButtonBase from '~/components/button/ButtonBase';
 import TextInput from '~/components/input/TextInput';
 import ModalBase from '~/components/modal/ModalBase';
-import moment from 'moment';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 
 const schemaBase = {
-  ma_kh: yup.string().required('Vui lòng nhập mã khách hàng'),
-  ten_kh:yup.string().required('Vui lòng nhập tên khách hàng'),
-  sdt:yup.string().required('Vui lòng nhập tên khách hàng'),
+  ma_nhom_nguoi_nop: yup.string().required('Vui lòng nhập mã nhóm người nộp'),
+  ten_nhom_nguoi_nop:yup.string().required('Vui lòng nhập tên nhóm người nộp'),
 
 };
 
-function FormKH({
+function FormNNN({
   open,
   handleClose,
   setLoad = () => {},
@@ -33,22 +31,16 @@ function FormKH({
     formState: { isSubmitting, errors },
   } = useForm({
     mode: 'onBlur',
-    defaultValues: defaultValues ?{
-        ...defaultValues,
-        ngay_sinh: moment(defaultValues.ngay_sinh).format('YYYY-MM-DD'),
-    }: {
-      ngay_sinh: moment().format('YYYY-MM-DD'),
-    }
-,
+    defaultValues: defaultValues,
     resolver: yupResolver(schema),
   });
   const { asyncPostData } = useApisContext();
- 
+
 
   // handle submit
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
-    await asyncPostData('dmkh',values, method).then((resp) => {
+    await asyncPostData('dmnnn',values, method).then((resp) => {
       if (!resp.message) {
         handleClose();
         reset();
@@ -62,7 +54,7 @@ function FormKH({
       open={open}
       handleClose={handleClose}
       width="700px"
-      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} Khách hàng`}
+      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} Nhóm người nộp`}
       actions={[
         <ButtonBase
           key={v4()}
@@ -81,57 +73,22 @@ function FormKH({
         <Grid item xs={12} md={6}>
           <TextInput
             disabled={isEdit}
-            label="Mã Khách Hàng"
-            placeholder="VD: KH0001"
-            name="ma_kh"
+            label="Mã Nhóm Người Nộp"
+            placeholder="VD: NNN001"
+            name="ma_nhom_nguoi_nop"
             register={register}
             required
-            errorMessage={errors?.ma_kh?.message}
+            errorMessage={errors?.ma_nhom_nguoi_nop?.message}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
-            label="Tên Khách Hàng"
-            placeholder="VD: Triều Tiên"
-            name="ten_kh"
+            label="Tên Nhóm Người Nộp"
+            placeholder="VD: Khách Hàng"
+            name="ten_nhom_nguoi_nop"
             register={register}
             required
-            errorMessage={errors?.ten_kh?.message}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            disabled={isEdit}
-            label="Số điện thoại"
-            placeholder="VD: 01694187654"
-            name="sdt"
-            register={register}
-            required
-            errorMessage={errors?.sdt?.message}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            label="Địa Chỉ"
-            placeholder="VD: Quận 9"
-            name="dia_chi"
-            register={register}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-          type='date'
-            label="Ngày Sinh"
-            name="ngay_sinh"
-            register={register}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <TextInput
-            label="Email"
-            placeholder="VD: ntt@gmail.com"
-            name="email"
-            register={register}
+            errorMessage={errors?.ten_nhom_nguoi_nop?.message}
           />
         </Grid>
        
@@ -141,4 +98,4 @@ function FormKH({
   );
 }
 
-export default FormKH;
+export default FormNNN;
