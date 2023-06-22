@@ -36,10 +36,9 @@ function InfoTab({
         <TextInput
           disabled={isEdit}
           label="Mã hàng hóa"
-          placeholder="VD: SP0001"
+          placeholder="Nhập hoặc tạo tự động"
           name="ma_vt"
           register={register}
-          required
           errorMessage={errors?.ma_vt?.message}
         />
       </Grid>

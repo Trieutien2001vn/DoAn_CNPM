@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Stack } from '@mui/material';
 import TableDisplay from '~/components/table/TableDisplay';
 import { numeralCustom } from '~/utils/helpers';
@@ -77,7 +77,7 @@ const columns = [
   },
 ];
 
-function DetailsTab({ details, setDetails, isEditMaster }) {
+function DetailsTab({ details, setDetails, isEditMaster, tienCkHoaDon = 0 }) {
   const [openForm, setOpenForm] = useState(false);
   const [defaultValues, setDefaultValues] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
@@ -89,13 +89,18 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
       alertSnackbar('error', 'Không thể chỉnh sửa, phiếu bán lẻ đã lưu vào sổ');
       return;
     }
-    const { vat_tu, don_vi_tinh, ...fields } = detail;
+    const { vat_tu, don_vi_tinh, lo, ...fields } = detail;
     const data = {
       ...fields,
       ma_vt: vat_tu.ma_vt,
       ten_vt: vat_tu.ten_vt,
+      ma_nvt: don_vi_tinh.ma_nvt,
+      ten_mvt: don_vi_tinh.ten_nvt,
       ma_dvt: don_vi_tinh.ma_dvt,
       ten_dvt: don_vi_tinh.ten_dvt,
+      gia_von: vat_tu.gia_von,
+      ma_lo: lo?.ma_lo || '',
+      ten_lo: lo?.ten_lo || ''  
     };
     if (isEdit) {
       const index = details.findIndex((item) => item.ma_vt === vat_tu.ma_vt);
@@ -135,6 +140,22 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
     setDefaultValues(null);
     setOpenForm(false);
   };
+  // so luong detail
+  const numberDetail = useMemo(() => {
+    return (details || []).reduce((acc, item) => {
+      return acc + item.sl_xuat
+    }, 0)
+  }, [details])
+  useEffect(() => {
+    const detailsClone = JSON.parse(JSON.stringify(details))
+    const tienCkPhanBo = tienCkHoaDon / numberDetail
+    detailsClone.forEach(detail => {
+      detail.tien_ck_phan_bo = tienCkPhanBo
+      detail.chi_phi = detail.sl_xuat * detail.gia_von
+    })
+    setDetails(detailsClone)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numberDetail, tienCkHoaDon])
 
   return (
     <>

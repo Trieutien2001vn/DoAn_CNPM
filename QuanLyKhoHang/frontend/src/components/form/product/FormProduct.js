@@ -18,7 +18,7 @@ const LoTab = lazy(() => import('./LoTab'));
 const KhoTab = lazy(() => import('./KhoTab'));
 
 const schema = yup.object({
-  ma_vt: yup.string().required('Vui lòng nhập mã hàng hóa'),
+  // ma_vt: yup.string().required('Vui lòng nhập mã hàng hóa'),
   ten_vt: yup.string().required('Vui lòng nhập tên hàng hóa'),
 });
 

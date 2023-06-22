@@ -32,8 +32,7 @@ import FormPTTT from '~/components/form/pttt/FormPTTT';
 import FilterPTTT from '~/components/filter/pttt/FilterPTTT';
 import FormKH from '~/components/form/khachhang/FormKH';
 import FilterKH from '~/components/filter/khachhang/FilterKH';
-import FormTTPBL from '~/components/form/trangthaipbl/FormTTPBL';
-import FormPBL from '~/components/form/pbl/FormPBL';
+import FormPBH from '~/components/form/pbh/FormPBH';
 
 const dsDanhMuc = {
   dmvt: {
@@ -751,10 +750,10 @@ const dsDanhMuc = {
       },
     ],
   },
-  dmpbl: {
-    title: 'phiếu bán lẻ',
+  dmpbh: {
+    title: 'phiếu bán hàng',
     uniqueKey: 'ma_phieu',
-    Form: FormPBL,
+    Form: FormPBH,
     // Filter: FilterPKK,
     columns: [
       {

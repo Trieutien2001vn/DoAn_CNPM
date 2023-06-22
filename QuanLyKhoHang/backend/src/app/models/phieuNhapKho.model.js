@@ -63,6 +63,14 @@ const phieuNhapKhoSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    ma_pptt: {
+      type: String,
+      default: '',
+    },
+    ten_pptt: {
+      type: String,
+      default: '',
+    },
     ma_trang_thai: {
       type: Number,
       default: 1,
@@ -243,10 +251,13 @@ phieuNhapKhoSchema.post('save', async function () {
       nhapKho: detail.so_luong_nhap,
       giaVon: detail.gia_von,
     });
-    await vatTuModel.updateOne({ma_vt: detail.ma_vt}, {
-      gia_von_cu: vatTu?.gia_von || 0,
-      gia_von: MAC
-    })
+    await vatTuModel.updateOne(
+      { ma_vt: detail.ma_vt },
+      {
+        gia_von_cu: vatTu?.gia_von || 0,
+        gia_von: MAC,
+      }
+    );
     // luu vao so kho
     await soKhoModel.create({
       ma_ct: pnk.ma_ct,
@@ -254,50 +265,58 @@ phieuNhapKhoSchema.post('save', async function () {
       ten_loai_ct: pnk.ten_loai_ct,
       ma_kho: pnk.ma_kho,
       ten_kho: pnk.ten_kho,
+      ngay_ct: pnk.ngay_ct,
+      nam,
+      quy,
+      thang,
+      ngay,
+      gio,
+      phut,
+      giay,
       ma_lo: detail.ma_lo,
       ten_lo: detail.ten_lo,
       ma_vt: detail.ma_vt,
       ten_vt: detail.ten_vt,
-      sl_nhap: detail.so_luong_nhap,
-      so_luong: detail.so_luong_nhap,
-      ma_ncc: pnk.ma_ncc,
-      ma_ncc: pnk.ten_ncc,
-      ngay_ct: pnk.ngay_ct,
-      nam,
-      thang,
-      ngay,
-      quy,
-      gio,
-      phut,
-      giay,
-    });
-    // luu vao so cai
-    await soCaiModel.create({
-      ma_ct: pnk.ma_ct,
-      ma_loai_ct: pnk.ma_loai_ct,
-      ten_loai_ct: pnk.ten_loai_ct,
-      ma_kho: pnk.ma_kho,
-      ten_kho: pnk.ten_kho,
-      ngay_ct: pnk.ngay_ct,
-      nam,
-      thang,
-      ngay,
-      quy,
-      gio,
-      phut,
-      giay,
-      ma_vt: detail.ma_vt,
-      ten_vt: detail.ten_vt,
-      ma_nvt: detail.ma_nvt,
-      ten_nvt: detail.ten_nvt,
-      ma_nv: '',
-      ten_nv: '',
       ma_ncc: pnk.ma_ncc,
       ten_ncc: pnk.ten_ncc,
       sl_nhap: detail.so_luong_nhap,
-      tien_hang: detail.tien_nhap,
-      tong_tien: detail.tien_nhap,
+      so_luong: detail.so_luong_nhap
     })
+    // luu vao so cai
+    // await soCaiModel.create({
+    //   ma_ct: pnk.ma_ct,
+    //   ma_loai_ct: pnk.ma_loai_ct,
+    //   ten_loai_ct: pnk.ten_loai_ct,
+    //   ma_kho: pnk.ma_kho,
+    //   ten_kho: pnk.ten_kho,
+    //   ngay_ct: pnk.ngay_ct,
+    //   nam,
+    //   quy,
+    //   thang,
+    //   ngay,
+    //   gio,
+    //   phut,
+    //   giay,
+    //   ma_vt: detail.ma_vt,
+    //   ten_vt: detail.ten_vt,
+    //   ma_dvt: detail.ma_dvt,
+    //   ten_dvt: detail.ten_dvt,
+    //   ma_nvt: detail.ma_nvt,
+    //   ten_nvt: detail.ten_nvt,
+    //   ma_lo: detail.ma_lo,
+    //   ten_lo: detail.ten_lo,
+    //   ma_pttt: pnk.ma_pttt,
+    //   ten_pttt: pnk.ten_pptt,
+    //   so_luong: detail.so_luong_nhap,
+    //   gia_von: detail.gia_von,
+    //   tien_hang: detail.tien_nhap,
+    //   thanh_tien: detail.tien_nhap,
+    //   thanh_tien_thue: 0,
+    //   // thông tin đặc thù
+    //   ma_ncc: pnk.ma_ncc,
+    //   ten_ncc: pnk.ten_ncc,
+    //   sl_nhap: detail.so_luong_nhap,
+    // });
   });
 });
 phieuNhapKhoSchema.pre('updateOne', async function (next) {

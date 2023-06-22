@@ -36,12 +36,12 @@ const validateCreateStore = ({ ma_kho, ten_kho }) => {
   return storeSchema.validate({ ma_kho, ten_kho });
 };
 // product
-const validateCreateProduct = ({ ma_vt, ten_vt }) => {
+const validateCreateProduct = ({  ten_vt }) => {
   const productSchema = joi.object({
-    ma_vt: joi.string().required(),
+    // ma_vt: joi.string().required(),
     ten_vt: joi.string().required(),
   });
-  return productSchema.validate({ ma_vt, ten_vt });
+  return productSchema.validate({ ten_vt });
 };
 // nhom vat tu
 const validateCreateNhomVatTu = ({ ma_nvt, ten_nvt }) => {

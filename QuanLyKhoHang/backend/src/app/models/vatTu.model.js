@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
 const soKhoModel = require('./soKho.model');
+const { generateUniqueValueUtil } = require('../../utils/myUtil');
 
 const productSchema = new mongoose.Schema(
   {
     ma_vt: {
       type: String,
-      required: true,
+      // required: true,
       unique: true,
       index: true,
     },
@@ -124,7 +125,21 @@ const productSchema = new mongoose.Schema(
   },
   { timestamps: true, collection: 'vat_tu' }
 );
-
+productSchema.pre('save', async function (next) {
+  try {
+    const vatTu = this;
+    if (!vatTu.ma_vt) {
+      const maVt = await generateUniqueValueUtil({
+        maDm: 'SP',
+        model: mongoose.model('VatTu', productSchema),
+        compareKey: 'ma_vt',
+      });
+      vatTu.ma_vt = maVt;
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 productSchema.post('save', function () {
   const vatTu = this;
   if (vatTu.ton_kho_ban_dau.length > 0) {

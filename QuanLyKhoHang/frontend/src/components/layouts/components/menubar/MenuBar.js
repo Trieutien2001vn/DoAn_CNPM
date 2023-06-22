@@ -49,7 +49,7 @@ function MenuBar() {
             primary
             startIcon={<BsBoxSeam fontSize="16px" />}
             menuColor={theme.palette.primary.second}
-            active={['/list/dmvt', '/list/dmlo', '/list/dmpbl', '/list/dmkb'].includes(location.pathname)}
+            active={['/list/dmvt', '/list/dmlo', '/list/dmpbh', '/list/dmkb'].includes(location.pathname)}
             popupOptions={[
               {
                 text: 'Danh sách hàng hóa',
@@ -66,11 +66,11 @@ function MenuBar() {
                 active: location.pathname.indexOf('dmlo') >= 0,
               },
               {
-                text: 'Phiếu bán lẻ',
+                text: 'Phiếu bán hàng',
                 startIcon: <TbFileInvoice fontSize="14px" />,
                 primary: true,
-                onClick: () => navigate('/list/dmpbl'),
-                active: location.pathname.indexOf('dmpbl') >= 0,
+                onClick: () => navigate('/list/dmpbh'),
+                active: location.pathname.indexOf('dmpbh') >= 0,
               },
               {
                 text: 'Kênh bán hàng',

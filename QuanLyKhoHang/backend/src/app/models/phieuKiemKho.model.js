@@ -4,8 +4,9 @@ const soKhoModel = require("./soKho.model");
 const chungTuModel = require("../models/chungTu.model");
 const loModel = require("../models/lo.model");
 const tonKhoController = require("../controllers/tonkho.controller");
-const { generateRandomCode } = require("../../utils/myUtil");
-const createHttpError = require("http-errors");
+const { generateRandomCode, getQuyByMonth } = require('../../utils/myUtil');
+const createHttpError = require('http-errors');
+const soCaiModel = require('./soCai.model');
 
 const phieuKiemKhoSchema = new mongoose.Schema(
   {
@@ -41,11 +42,11 @@ const phieuKiemKhoSchema = new mongoose.Schema(
     },
     ma_lo: {
       type: String,
-      default: "",
+      default: '',
     },
     ten_lo: {
       type: String,
-      default: "",
+      default: '',
     },
     ton_kho_so_sach: {
       type: Number,
@@ -69,20 +70,20 @@ const phieuKiemKhoSchema = new mongoose.Schema(
     },
     createdBy: {
       type: String,
-      default: "",
+      default: '',
     },
     updatedBy: {
       type: String,
-      default: "",
+      default: '',
     },
   },
-  { timestamps: true, collection: "phieu_kiem_kho" }
+  { timestamps: true, collection: 'phieu_kiem_kho' }
 );
 
 const generateUniqueValue = async () => {
-  let maChungTu = generateRandomCode(6, "pkk");
+  let maChungTu = generateRandomCode(6, 'pkk');
   const doc = await mongoose
-    .model("PhieuKiemKho", phieuKiemKhoSchema)
+    .model('PhieuKiemKho', phieuKiemKhoSchema)
     .findOne({ ma_ct: maChungTu });
   if (doc) {
     return await generateUniqueValue();
@@ -91,7 +92,7 @@ const generateUniqueValue = async () => {
   }
 };
 
-phieuKiemKhoSchema.pre("save", async function (next) {
+phieuKiemKhoSchema.pre('save', async function (next) {
   try {
     const pkk = this;
     let error;
@@ -123,7 +124,7 @@ phieuKiemKhoSchema.pre("save", async function (next) {
     } else {
       const maCt = await generateUniqueValue();
       pkk.ma_ct = maCt;
-      const chungTu = await chungTuModel.findOne({ ma_ct: "pkk" });
+      const chungTu = await chungTuModel.findOne({ ma_ct: 'pkk' });
       pkk.ma_loai_ct = chungTu.ma_ct;
       pkk.ten_loai_ct = chungTu.ten_ct;
       pkk.chenh_lech = (pkk.ton_kho_thuc_te || 0) - (pkk.ton_kho_so_sach || 0);
@@ -134,27 +135,76 @@ phieuKiemKhoSchema.pre("save", async function (next) {
   }
 });
 
-phieuKiemKhoSchema.post("save", async function () {
+phieuKiemKhoSchema.post('save', async function () {
   /*
     chênh lệnh = số lượng thực tế - số lượng sổ sách
     Lưu vào sổ kho với trường số lượng = chênh lệch
   */
   const pkk = this;
+  const ngay = pkk.ngay_ct.getDate();
+  const thang = pkk.ngay_ct.getMonth() + 1;
+  const nam = pkk.ngay_ct.getFullYear();
+  const quy = getQuyByMonth(thang);
+  const gio = pkk.ngay_ct.getHours();
+  const phut = pkk.ngay_ct.getMinutes();
+  const giay = pkk.ngay_ct.getSeconds();
+  // luu vao so kho
   await soKhoModel.create({
     ma_ct: pkk.ma_ct,
     ma_loai_ct: pkk.ma_loai_ct,
     ten_loai_ct: pkk.ten_loai_ct,
-    ngay_ct: pkk.ngay_ct,
     ma_kho: pkk.ma_kho,
     ten_kho: pkk.ten_kho,
-    ma_vt: pkk.ma_vt,
-    ten_vt: pkk.ten_vt,
-    so_luong: pkk.chenh_lech,
+    ngay_ct: pkk.ngay_ct,
+    nam,
+    quy,
+    thang,
+    ngay,
+    gio,
+    phut,
+    giay,
     ma_lo: pkk.ma_lo,
     ten_lo: pkk.ten_lo,
-  });
+    ma_vt: pkk.ma_vt,
+    ten_vt: pkk.ten_vt,
+    so_luong: pkk.ton_kho_thuc_te - pkk.ton_kho_so_sach
+  })
+  // await soCaiModel.create({
+  //   ma_ct: pkk.ma_ct,
+  //   ma_loai_ct: pkk.ma_loai_ct,
+  //   ten_loai_ct: pkk.ten_loai_ct,
+  //   ma_kho: pkk.ma_kho,
+  //   ten_kho: pkk.ten_kho,
+  //   ngay_ct: pkk.ngay_ct,
+  //   nam,
+  //   quy,
+  //   thang,
+  //   ngay,
+  //   gio,
+  //   phut,
+  //   giay,
+  //   ma_vt: pkk.ma_vt,
+  //   ten_vt: pkk.ten_vt,
+  //   ma_dvt: '',
+  //   ten_dvt: '',
+  //   ma_nvt: '',
+  //   ten_nvt: '',
+  //   ma_lo: pkk.ma_lo,
+  //   ten_lo: pkk.ten_lo,
+  //   ma_pttt: '',
+  //   ten_pttt: '',
+  //   so_luong: pkk.chenh_lech,
+  //   gia_von: 0,
+  //   tien_hang: 0,
+  //   thanh_tien: 0,
+  //   thanh_tien_thue: 0,
+  //   // thông tin đặc thù
+  //   ma_ncc: '',
+  //   ten_ncc: '',
+  //   sl_nhap: 0,
+  // });
 });
-phieuKiemKhoSchema.pre('updateMany', function () {
+phieuKiemKhoSchema.pre('updateMany', function (next) {
   try {
     return next(
       createHttpError(400, 'Không thể xóa, phiếu nhập kho đã lưu vào sổ')
@@ -163,7 +213,7 @@ phieuKiemKhoSchema.pre('updateMany', function () {
     next(error);
   }
 });
-phieuKiemKhoSchema.post('updateMany', async function (next) {
+phieuKiemKhoSchema.post('updateMany', async function () {
   try {
     const pkk = this;
     const _update = pkk.getUpdate();

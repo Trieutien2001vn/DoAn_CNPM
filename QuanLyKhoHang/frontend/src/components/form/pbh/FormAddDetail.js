@@ -52,7 +52,7 @@ function FormAddDetail({
                 ma_dvt: defaultValues.ma_dvt,
                 ten_dvt: defaultValues.ten_dvt,
                 theo_doi_lo: !!defaultValues.ma_lo,
-                gia_ban_le: defaultValues.gia_ban_le,
+                gia_ban_le: defaultValues.don_gia,
               }
             : null,
           lo: defaultValues.ma_lo
@@ -71,6 +71,8 @@ function FormAddDetail({
   const tienCk = watch('tien_ck');
   const tienCkPhanBo = watch('tien_ck_phan_bo');
   const tongTienCk = watch('tong_tien_ck');
+
+  console.log({ defaultValues });
 
   const handleSave = (values) => {
     return new Promise((resovle) => {
@@ -103,14 +105,14 @@ function FormAddDetail({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tienCkPhanBo, tienCk]);
   useEffect(() => {
-    const tongTienNew = (tienHang || 0) - (tongTienCk || 0);
-    setValue('tong_tien', tongTienNew);
+    const thanhTienNew = (tienHang || 0) - (tongTienCk || 0);
+    setValue('thanh_tien', thanhTienNew);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tongTienCk, tienHang]);
   useEffect(() => {
     if (!!vatTu) {
       setValue('tien_hang', vatTu.gia_ban_le * soLuongXuat);
-      setValue('gia_ban_le', vatTu.gia_ban_le);
+      setValue('don_gia', vatTu.gia_ban_le);
       setValue('don_vi_tinh', { ma_dvt: vatTu.ma_dvt, ten_dvt: vatTu.ten_dvt });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -196,19 +198,19 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="gia_ban_le"
+            name="don_gia"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
                 disabled
-                label="Giá bán lẻ (theo 1 đơn vị tính cơ sở)"
-                placeholder="Giá bán lẻ"
+                label="Đơn giá (theo 1 đơn vị tính cơ sở)"
+                placeholder="Đơn giá"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());
                 }}
-                errorMessage={errors?.gia_ban_le?.message}
+                errorMessage={errors?.don_gia?.message}
               />
             )}
           />
@@ -315,12 +317,12 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="tong_tien"
+            name="thanh_tien"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
                 required
-                label="Tổng tiền"
+                label="Thành tiền"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
                   onChange(numeralCustom(e.target.value).value());

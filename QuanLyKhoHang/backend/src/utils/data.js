@@ -34,6 +34,7 @@ const kenhBanModel = require('../app/models/kenhBan.model');
 const phuongThucThanhToanModel = require('../app/models/phuongThucThanhToan.model');
 const khachHangModel = require('../app/models/khachHang.model');
 const phieuBanHangModel = require('../app/models/phieuBanHang.model');
+const trangThaiPhieuBanHangModel = require('../app/models/trangThaiPhieuBanHang.model');
 
 const dsDanhMuc = [
   {
@@ -216,6 +217,13 @@ const dsDanhMuc = [
     model: phieuBanHangModel,
     validate: validateCreatePBH,
     fields: ['ma_phieu', 'ma_ct', 'ma_loai_ct', 'ten_loai_ct'],
+  },
+  {
+    maDanhMuc: 'dmttpbh',
+    uniqueField: 'ma_trang_thai',
+    model: trangThaiPhieuBanHangModel,
+    // validate: validateCreatePBH,
+    fields: ['ma_trang_thai', 'ten_trang_thai'],
   },
 ];
 module.exports = { dsDanhMuc };

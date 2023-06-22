@@ -13,7 +13,7 @@ function InfoTab({ register, control, isEdit, errors }) {
         <TextInput
           disabled={isEdit}
           label="Mã phiếu"
-          placeholder="Mã tạo tự động"
+          placeholder="Mã nhập hoặc tạo tự động"
           name="ma_phieu"
           register={register}
         />
@@ -145,6 +145,7 @@ function InfoTab({ register, control, isEdit, errors }) {
           name="tien_hang"
           render={({ field: { value, onChange } }) => (
             <TextInput
+              disabled
               value={numeralCustom(value).format()}
               onChange={(e) => {
                 const val = numeralCustom(e.target.value).value();
@@ -162,6 +163,7 @@ function InfoTab({ register, control, isEdit, errors }) {
           name="tien_ck_sp"
           render={({ field: { value, onChange } }) => (
             <TextInput
+              disabled
               value={numeralCustom(value).format()}
               onChange={(e) => {
                 const val = numeralCustom(e.target.value).value();
@@ -213,6 +215,7 @@ function InfoTab({ register, control, isEdit, errors }) {
           name="tong_tien_ck"
           render={({ field: { value, onChange } }) => (
             <TextInput
+              disabled
               value={numeralCustom(value).format()}
               onChange={(e) => {
                 const val = numeralCustom(e.target.value).value();
@@ -227,7 +230,7 @@ function InfoTab({ register, control, isEdit, errors }) {
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
-          name="tong_tien"
+          name="VAT"
           render={({ field: { value, onChange } }) => (
             <TextInput
               value={numeralCustom(value).format()}
@@ -235,8 +238,61 @@ function InfoTab({ register, control, isEdit, errors }) {
                 const val = numeralCustom(e.target.value).value();
                 onChange(val);
               }}
-              label="Tổng tiền"
+              label="VAT (%)"
+              placeholder="Thuế GTGT"
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="tien_van_chuyen"
+          render={({ field: { value, onChange } }) => (
+            <TextInput
+              value={numeralCustom(value).format()}
+              onChange={(e) => {
+                const val = numeralCustom(e.target.value).value();
+                onChange(val);
+              }}
+              label="Tiền vận chuyển"
+              placeholder="Tiền vận chuyển"
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="thanh_tien"
+          render={({ field: { value, onChange } }) => (
+            <TextInput
+              disabled
+              value={numeralCustom(value).format()}
+              onChange={(e) => {
+                const val = numeralCustom(e.target.value).value();
+                onChange(val);
+              }}
+              label="Thành tiền"
               placeholder="Tổng tiền"
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="t_thanh_tien"
+          render={({ field: { value, onChange } }) => (
+            <TextInput
+              disabled
+              value={numeralCustom(value).format()}
+              onChange={(e) => {
+                const val = numeralCustom(e.target.value).value();
+                onChange(val);
+              }}
+              label="Tổng thành tiền"
+              placeholder="Tổng thành tiền"
             />
           )}
         />
@@ -271,6 +327,27 @@ function InfoTab({ register, control, isEdit, errors }) {
               }}
               label="Tiền thối"
               placeholder="Tiền thối"
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="trang_thai"
+          render={({ field: { onChange, value } }) => (
+            <SelectApiInput
+              label="Trạng thái"
+              required
+              apiCode="dmttpbh"
+              placeholder="Trạng thái phiếu"
+              searchFileds={['ma_kho', 'ten_kho']}
+              getOptionLabel={(option) => option.ten_trang_thai}
+              selectedValue={value}
+              value={value || { ma_trang_thai: '', ten_trang_thai: '' }}
+              onSelect={onChange}
+              // FormAdd={dsDanhMuc['dmkho'].Form}
+              errorMessage={errors?.trang_thai?.message}
             />
           )}
         />
