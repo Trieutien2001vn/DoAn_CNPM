@@ -28,20 +28,20 @@ const generateRefreshToken = (user) => {
 };
 function generateRandomCode(length = 6, prefix = '') {
   const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
   for (let i = 0; i < length; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return `${prefix}${prefix ? '_' : ''}${code}`;
 }
-async function generateUniqueValueUtil({ maDm, model }) {
-  let maChungTu = generateRandomCode(6, maDm);
-  const doc = await model.findOne({ ma_ct: maChungTu });
+async function generateUniqueValueUtil({ maDm, model, compareKey='ma_ct' }) {
+  let uniqueValue = generateRandomCode(6, maDm);
+  const doc = await model.findOne({ [compareKey]: uniqueValue });
   if (doc) {
     return await generateUniqueValue();
   } else {
-    return maChungTu;
+    return uniqueValue;
   }
 }
 // get quy by month

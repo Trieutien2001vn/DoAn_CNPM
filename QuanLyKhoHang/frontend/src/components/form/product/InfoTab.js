@@ -25,6 +25,7 @@ function InfoTab({
   isEdit = false,
   dvts,
   setDvts,
+  tonKhoBanDau,
   setTonKhoBanDau,
 }) {
   const [showDvts, setShowDvts] = useState(true);
@@ -35,10 +36,9 @@ function InfoTab({
         <TextInput
           disabled={isEdit}
           label="Mã hàng hóa"
-          placeholder="VD: SP0001"
+          placeholder="Nhập hoặc tạo tự động"
           name="ma_vt"
           register={register}
-          required
           errorMessage={errors?.ma_vt?.message}
         />
       </Grid>
@@ -194,11 +194,13 @@ function InfoTab({
           </Collapse>
         </Paper>
       </Grid>
-      {!isEdit && (
-        <Grid item xs={12}>
-          <FirstStore setTonKhoBanDau={setTonKhoBanDau} />
-        </Grid>
-      )}
+      <Grid item xs={12}>
+        <FirstStore
+          isEdit={isEdit}
+          tonKhoBanDau={tonKhoBanDau}
+          setTonKhoBanDau={setTonKhoBanDau}
+        />
+      </Grid>
     </Grid>
   );
 }

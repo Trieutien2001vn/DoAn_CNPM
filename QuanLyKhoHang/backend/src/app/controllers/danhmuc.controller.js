@@ -34,14 +34,16 @@ const danhMucController = {
         return next(error);
       }
       let uniqueFieldValue = req.body[uniqueField];
-      uniqueFieldValue = await danhMucController.checkUniqueValueExisted(
-        model,
-        uniqueField,
-        uniqueFieldValue,
-        next
-      );
-      if (!uniqueFieldValue) {
-        return;
+      if (uniqueFieldValue) {
+        uniqueFieldValue = await danhMucController.checkUniqueValueExisted(
+          model,
+          uniqueField,
+          uniqueFieldValue,
+          next
+        );
+        if (!uniqueFieldValue) {
+          return;
+        }
       }
       const document = await model.create({
         ...req.body,

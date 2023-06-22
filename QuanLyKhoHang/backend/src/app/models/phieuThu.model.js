@@ -96,7 +96,7 @@ phieuThuSchema.pre('save', async function (next) {
     const pt = this;
     const maChungTu = await generateUniqueValueUtil(
       mongoose.model('Phiếu Thu', phieuThuSchema)
-    );.
+    );
     pt.ma_ct = maChungTu;
 
     if (error) {

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Grid } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { FiSave } from 'react-icons/fi';
 import { v4 } from 'uuid';
 import ButtonBase from '~/components/button/ButtonBase';
@@ -10,11 +10,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import useApisContext from '~/hooks/hookContext/useApisContext';
 
-const schemaBase = {
-  ma_pttt: yup.string().required('Vui lòng nhập mã phuong thúc thanh toán'),
-  ten_pttt:yup.string().required('Vui lòng nhập tên phuong thúc thanh toán'),
-
-};
+const schemaBase = yup.object({
+  ma_pttt: yup.string().required('Vui lòng nhập mã'),
+  ten_pttt: yup.string().required('Vui lòng nhập tên'),
+});
 
 function FormPTTT({
   open,
@@ -23,7 +22,6 @@ function FormPTTT({
   defaultValues,
   isEdit = false,
 }) {
-  const [schema, setSchema] = useState(() => yup.object(schemaBase));
   const {
     register,
     handleSubmit,
@@ -32,15 +30,14 @@ function FormPTTT({
   } = useForm({
     mode: 'onBlur',
     defaultValues: defaultValues,
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schemaBase),
   });
   const { asyncPostData } = useApisContext();
-
 
   // handle submit
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
-    await asyncPostData('dmpttt',values, method).then((resp) => {
+    await asyncPostData('dmpttt', values, method).then((resp) => {
       if (!resp.message) {
         handleClose();
         reset();
@@ -73,7 +70,7 @@ function FormPTTT({
         <Grid item xs={12} md={6}>
           <TextInput
             disabled={isEdit}
-            label="Mã Phuong Thuc Thanh Toán"
+            label="Mã"
             placeholder="VD: PTTT0001"
             name="ma_pttt"
             register={register}
@@ -83,16 +80,14 @@ function FormPTTT({
         </Grid>
         <Grid item xs={12} md={6}>
           <TextInput
-            label="Tên Phuong Thuc Thanh Toán"
-            placeholder="VD: Tiền mạc"
+            label="Tên"
+            placeholder="VD: Tiền mặc"
             name="ten_pttt"
             register={register}
             required
             errorMessage={errors?.ten_pttt?.message}
           />
         </Grid>
-       
-        
       </Grid>
     </ModalBase>
   );
