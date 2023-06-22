@@ -76,7 +76,7 @@ const theme = createTheme({
     body2: {
       color: '#171725',
     },
-    fontFamily: ['Open Sans', 'sans-serif'].join(', '),
+    fontFamily: ['Open Sans', 'sans-serif'].join(', ')
   },
   breakpoints: {
     values: {

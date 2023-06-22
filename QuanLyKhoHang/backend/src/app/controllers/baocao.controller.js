@@ -43,11 +43,11 @@
 const reportController = {
   // Báo cáo bán hàng
   //  - Báo cáo doanh thu
-  async reportByDate(req, res, next) {
+  async getRevenueByTime(req, res, next) {
     try {
-      const { date } = req.body;
-      if (!date) {
-      }
+      const {tu_ngay, den_ngay} = req.body
+      
+
     } catch (error) {
       next(error);
     }

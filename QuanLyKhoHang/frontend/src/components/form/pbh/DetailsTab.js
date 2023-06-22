@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Stack } from '@mui/material';
 import TableDisplay from '~/components/table/TableDisplay';
 import { numeralCustom } from '~/utils/helpers';
@@ -22,6 +22,12 @@ const columns = [
     wrap: true,
   },
   {
+    name: 'Số lượng',
+    selector: (row) => row.sl_xuat,
+    width: '100px',
+    center: true,
+  },
+  {
     name: 'Đơn vị tính',
     selector: (row) => row.ten_dvt,
     minWidth: '100px',
@@ -35,28 +41,43 @@ const columns = [
     format: (row) => numeralCustom(row.gia_ban_le).format(),
   },
   {
-    name: 'Giá xuất',
-    selector: (row) => row.gia_xuat,
+    name: 'Tiền hàng',
+    selector: (row) => row.tien_hang,
     width: '150px',
     center: true,
-    format: (row) => numeralCustom(row.gia_xuat).format(),
+    format: (row) => numeralCustom(row.tien_hang).format(),
   },
   {
-    name: 'Số lượng',
-    selector: (row) => row.so_luong_xuat,
-    width: '100px',
-    center: true,
-  },
-  {
-    name: 'Tiền xuất',
-    selector: (row) => row.tien_xuat,
+    name: 'Tiền chiết khấu',
+    selector: (row) => row.tien_ck,
     minWidth: '150px',
     center: true,
-    format: (row) => numeralCustom(row.tien_xuat).format(),
+    format: (row) => numeralCustom(row.tien_ck).format(),
+  },
+  {
+    name: 'Chiết khấu phân bổ',
+    selector: (row) => row.tien_ck_phan_bo,
+    minWidth: '150px',
+    center: true,
+    format: (row) => numeralCustom(row.tien_ck_phan_bo).format(),
+  },
+  {
+    name: 'Tổng chiết khấu',
+    selector: (row) => row.tong_tien_ck,
+    width: '150px',
+    center: true,
+    format: (row) => numeralCustom(row.tong_tien_ck).format(),
+  },
+  {
+    name: 'Tổng tiền',
+    selector: (row) => row.tong_tien,
+    minWidth: '150px',
+    center: true,
+    format: (row) => numeralCustom(row.tong_tien).format(),
   },
 ];
 
-function DetailsTab({ details, setDetails, isEditMaster }) {
+function DetailsTab({ details, setDetails, isEditMaster, tienCkHoaDon = 0 }) {
   const [openForm, setOpenForm] = useState(false);
   const [defaultValues, setDefaultValues] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
@@ -64,38 +85,40 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
 
   // add a detail
   const addDetail = (detail, isEdit = false) => {
-    const { vat_tu, don_vi_tinh, lo, ...detailValue } = detail;
-    if (!isEdit) {
+    if (isEditMaster) {
+      alertSnackbar('error', 'Không thể chỉnh sửa, phiếu bán lẻ đã lưu vào sổ');
+      return;
+    }
+    const { vat_tu, don_vi_tinh, lo, ...fields } = detail;
+    const data = {
+      ...fields,
+      ma_vt: vat_tu.ma_vt,
+      ten_vt: vat_tu.ten_vt,
+      ma_nvt: don_vi_tinh.ma_nvt,
+      ten_mvt: don_vi_tinh.ten_nvt,
+      ma_dvt: don_vi_tinh.ma_dvt,
+      ten_dvt: don_vi_tinh.ten_dvt,
+      gia_von: vat_tu.gia_von,
+      ma_lo: lo?.ma_lo || '',
+      ten_lo: lo?.ten_lo || ''  
+    };
+    if (isEdit) {
+      const index = details.findIndex((item) => item.ma_vt === vat_tu.ma_vt);
+      if (index >= 0) {
+        const detailsClone = cloneDeep(details);
+        detailsClone.splice(index, 1, data);
+        setDetails(detailsClone);
+      }
+    } else {
       const existed = details.find((item) => item.ma_vt === vat_tu.ma_vt);
       if (existed) {
         alertSnackbar(
           'error',
-          `Hàng hóa '${vat_tu.ma_vt}' đã tồn tại trong chi tiết`
+          `Hàng hóa '${vat_tu.ten_vt}' đã có trong chi tiết`
         );
-        return;
+      } else {
+        setDetails((prev) => [...prev, data]);
       }
-    }
-    const detailData = {
-      ...detailValue,
-      ma_vt: vat_tu.ma_vt,
-      ten_vt: vat_tu.ten_vt,
-      ma_dvt: don_vi_tinh.ma_dvt,
-      ten_dvt: don_vi_tinh.ten_dvt,
-      gia_ban_le: vat_tu.gia_ban_le,
-    };
-    if (lo) {
-      detailData.ma_lo = lo.ma_lo;
-      detailData.ten_lo = lo.ten_lo;
-    }
-    if (isEdit) {
-      const index = details.findIndex((item) => item.ma_vt === vat_tu.ma_vt);
-      if (index >= 0) {
-        const detailsCopy = cloneDeep(details);
-        detailsCopy.splice(index, 1, detailData);
-        setDetails(detailsCopy);
-      }
-    } else {
-      setDetails([...details, detailData]);
     }
   };
   // delete detail
@@ -117,6 +140,22 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
     setDefaultValues(null);
     setOpenForm(false);
   };
+  // so luong detail
+  const numberDetail = useMemo(() => {
+    return (details || []).reduce((acc, item) => {
+      return acc + item.sl_xuat
+    }, 0)
+  }, [details])
+  useEffect(() => {
+    const detailsClone = JSON.parse(JSON.stringify(details))
+    const tienCkPhanBo = tienCkHoaDon / numberDetail
+    detailsClone.forEach(detail => {
+      detail.tien_ck_phan_bo = tienCkPhanBo
+      detail.chi_phi = detail.sl_xuat * detail.gia_von
+    })
+    setDetails(detailsClone)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [numberDetail, tienCkHoaDon])
 
   return (
     <>
@@ -151,7 +190,7 @@ function DetailsTab({ details, setDetails, isEditMaster }) {
           data={details}
           columns={columns}
           onRowClicked={handleRowClicked}
-          handleDelete={isEditMaster ? undefined : handleDeleteDetail}
+          handleDelete={handleDeleteDetail}
           uniqueKey="ma_vt"
         />
       </Stack>

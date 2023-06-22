@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const trangThaiPhieuBanLeSchema = new mongoose.Schema(
+const trangThaiPhieuBanHangSchema = new mongoose.Schema(
   {
     ma_trang_thai: {
       type: Number,
@@ -13,6 +13,9 @@ const trangThaiPhieuBanLeSchema = new mongoose.Schema(
       unique: true,
     },
   },
-  { timestamps: true, collection: 'trang_thai_pbl' }
+  { timestamps: true, collection: 'trang_thai_pbh' }
 );
-module.exports = mongoose.model('TrangThaiPhieuBanLe', trangThaiPhieuBanLeSchema);
+module.exports = mongoose.model(
+  'TrangThaiPhieuBanHang',
+  trangThaiPhieuBanHangSchema
+);

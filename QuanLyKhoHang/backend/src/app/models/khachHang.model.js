@@ -5,7 +5,6 @@ const khachHangSchema = new mongoose.Schema(
   {
     ma_kh: {
       type: String,
-      required: true,
       unique: true,
     },
     ten_kh: {
@@ -41,6 +40,16 @@ const khachHangSchema = new mongoose.Schema(
   },
   { timestamps: true, collection: 'khach_hang' }
 );
+
+khachHangSchema.pre('save', async function (next) {
+  try {
+    const khachHang = this;
+    khachHang.ma_kh = khachHang.ma_kh || khachHang.sdt;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 khachHangSchema.index(
     { ma_kh: "text", ten_kh: "text",sdt:'text',dia_chi:'text',email:'text'},

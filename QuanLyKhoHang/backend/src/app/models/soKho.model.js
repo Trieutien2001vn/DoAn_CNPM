@@ -31,15 +31,12 @@ const soKhoSchema = new mongoose.Schema(
   {
     ma_ct: {
       type: String,
-      required: true,
     },
     ma_loai_ct: {
       type: String,
-      required: true,
     },
     ten_loai_ct: {
       type: String,
-      required: true,
     },
     ma_kho: {
       type: String,
@@ -52,23 +49,23 @@ const soKhoSchema = new mongoose.Schema(
     // bat dau ngay thang
     ngay_ct: {
       type: Date,
-      required: true,
+      default: null
     },
     nam: {
       type: Number,
-      required: true,
+      default: 0
     },
     quy: {
       type: Number,
-      required: true,
+      default: 0
     },
     thang: {
       type: Number,
-      required: true,
+      default: 0
     },
     ngay: {
       type: Number,
-      required: true,
+      default: 0
     },
     gio: {
       type: Number,

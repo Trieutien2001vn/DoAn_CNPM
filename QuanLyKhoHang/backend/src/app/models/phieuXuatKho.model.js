@@ -29,6 +29,14 @@ const phieuXuatKhoSchema = new mongoose.Schema(
       required: true,
       default: '',
     },
+    ma_nv: {
+      type: String,
+      default: '',
+    },
+    ten_nv: {
+      type: String,
+      default: '',
+    },
     ma_loai_ct: {
       type: String,
       default: '',
@@ -45,6 +53,14 @@ const phieuXuatKhoSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    tien_hang: {
+      type: Number,
+      default: 0
+    },
+    tong_tien_ck: {
+      type: Number,
+      default: 0
+    },
     tong_tien_xuat: {
       type: Number,
       default: 0,
@@ -60,19 +76,11 @@ const phieuXuatKhoSchema = new mongoose.Schema(
             type: Number,
             default: 0,
           },
-          gia_xuat: {
-            type: Number,
-            default: 0,
-          },
-          ty_le_ck: {
-            type: Number,
-            default: 0,
-          },
-          tien_ck: {
-            type: Number,
-            default: 0,
-          },
           gia_von: {
+            type: Number,
+            default: 0,
+          },
+          gia_xuat: {
             type: Number,
             default: 0,
           },
@@ -105,14 +113,6 @@ const phieuXuatKhoSchema = new mongoose.Schema(
             default: '',
           },
           ten_nvt: {
-            type: String,
-            default: '',
-          },
-          ma_nv: {
-            type: String,
-            default: '',
-          },
-          ten_nv: {
             type: String,
             default: '',
           },
@@ -174,13 +174,12 @@ phieuXuatKhoSchema.pre('save', async function (next) {
     }
     pxk.ma_loai_ct = chungTu.ma_ct;
     pxk.ten_loai_ct = chungTu.ten_ct;
-
     for (let i = 0; i < details.length; i++) {
       const detail = details[i];
-      const vatTu = await vatTuModel.findOne({ma_vt: detail.ma_vt})
-      if(!vatTu) {
-        error = createError(`Hàng hóa '${detail.ten_vt}' không tồn tại.`)
-        break
+      const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
+      if (!vatTu) {
+        error = createError(`Hàng hóa '${detail.ten_vt}' không tồn tại.`);
+        break;
       }
       const tonKhoResp = await tonKhoController.getInventoryOnStoreHelper({
         ma_vt: detail.ma_vt,
@@ -207,9 +206,9 @@ phieuXuatKhoSchema.pre('save', async function (next) {
           break;
         }
       }
-      detail.ma_nvt = vatTu.ma_nvt
-      detail.ten_nvt = vatTu.ten_nvt
-      detail.gia_von = vatTu.gia_von
+      detail.ma_nvt = vatTu.ma_nvt;
+      detail.ten_nvt = vatTu.ten_nvt;
+      detail.gia_von = vatTu.gia_von;
     }
     if (error) {
       return next(error);
@@ -232,8 +231,6 @@ phieuXuatKhoSchema.post('save', async function (next) {
     const phut = pxk.ngay_ct.getMinutes();
     const giay = pxk.ngay_ct.getSeconds();
     pxk.details.forEach(async (detail) => {
-      const tong_tien = detail.tien_xuat - detail.tien_ck
-      const chi_phi = detail.gia_von * detail.so_luong_xuat
       const soKho = {
         ma_ct: pxk.ma_ct,
         ma_loai_ct: pxk.ma_loai_ct,
@@ -250,8 +247,6 @@ phieuXuatKhoSchema.post('save', async function (next) {
         ten_nv: detail.ten_nv,
         sl_xuat: detail.so_luong_xuat,
         so_luong: -detail.so_luong_xuat,
-        ma_ncc: pxk.ma_ncc,
-        ma_ncc: pxk.ten_ncc,
         ngay_ct: pxk.ngay_ct,
         nam,
         thang,
@@ -260,11 +255,6 @@ phieuXuatKhoSchema.post('save', async function (next) {
         gio,
         phut,
         giay,
-        tien_hang: detail.tien_xuat,
-        tien_ck: detail.tien_ck,
-        tong_tien,
-        chi_phi,
-        loi_nhuan: tong_tien - chi_phi
       };
       await soKhoModel.create(soKho);
       // luu vao so quy

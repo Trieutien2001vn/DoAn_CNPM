@@ -36,12 +36,12 @@ const validateCreateStore = ({ ma_kho, ten_kho }) => {
   return storeSchema.validate({ ma_kho, ten_kho });
 };
 // product
-const validateCreateProduct = ({ ma_vt, ten_vt }) => {
+const validateCreateProduct = ({  ten_vt }) => {
   const productSchema = joi.object({
-    ma_vt: joi.string().required(),
+    // ma_vt: joi.string().required(),
     ten_vt: joi.string().required(),
   });
-  return productSchema.validate({ ma_vt, ten_vt });
+  return productSchema.validate({ ten_vt });
 };
 // nhom vat tu
 const validateCreateNhomVatTu = ({ ma_nvt, ten_nvt }) => {
@@ -199,13 +199,21 @@ const validateCreatePTTT = ({ ma_pttt, ten_pttt }) => {
   });
   return modelSchema.validate({ ma_pttt, ten_pttt });
 };
-const validateCreateKH = ({ ma_kh, ten_kh,sdt }) => {
+// khach hang
+const validateCreateKH = ({ ten_kh,sdt }) => {
   const modelSchema = joi.object({
-    ma_kh: joi.string().required(),
     ten_kh: joi.string().required(),
     sdt: joi.string().required(),
   });
-  return modelSchema.validate({ ma_kh, ten_kh,sdt });
+  return modelSchema.validate({ ten_kh,sdt });
+};
+// phieu ban le
+const validateCreatePBH= ({ ngay_ct, ngay_lap_phieu }) => {
+  const modelSchema = joi.object({
+    ngay_ct: joi.date().required(),
+    ngay_lap_phieu: joi.date().required(),
+  });
+  return modelSchema.validate({ ngay_ct, ngay_lap_phieu});
 };
 const validateCreateTTPBL = ({ ma_trang_thai,ten_trang_thai}) => {
   const modelSchema = joi.object({
@@ -237,4 +245,5 @@ module.exports = {
   validateCreatePTTT,
   validateCreateKH,
   validateCreateTTPBL,
+  validateCreatePBH
 };

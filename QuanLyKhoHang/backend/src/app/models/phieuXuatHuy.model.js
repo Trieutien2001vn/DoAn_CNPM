@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const mongooseDelete = require('mongoose-delete');
 const soKhoModel = require('./soKho.model');
 const chungTuModel = require('../models/chungTu.model');
-const loModel = require('../models/lo.model');
 const tonKhoController = require('../controllers/tonkho.controller');
 const { generateRandomCode } = require('../../utils/myUtil');
 const createHttpError = require('http-errors');
@@ -115,6 +114,13 @@ phieuXuatHuySchema.pre('save', async function (next) {
 
 phieuXuatHuySchema.post('save', async function () {
   const pxh = this;
+  const ngay = pdc.ngay_ct.getDate();
+  const thang = pnk.ngay_ct.getMonth() + 1;
+  const nam = pnk.ngay_ct.getFullYear();
+  const quy = getQuyByMonth(thang);
+  const gio = pnk.ngay_ct.getHours();
+  const phut = pnk.ngay_ct.getMinutes();
+  const giay = pnk.ngay_ct.getSeconds();
   await soKhoModel.create({
     ma_ct: pxh.ma_ct,
     ma_loai_ct: pxh.ma_loai_ct,
@@ -128,6 +134,13 @@ phieuXuatHuySchema.post('save', async function () {
     ten_vt: pxh.ten_vt,
     sl_xuat: pxh.sl_huy,
     so_luong: -pxh.sl_huy,
+    nam,
+    quy,
+    thang,
+    ngay,
+    gio,
+    phut,
+    giay,
   });
 });
 phieuXuatHuySchema.pre('updateMany', function () {

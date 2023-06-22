@@ -6,7 +6,7 @@ import VerifyEmailPage from '../pages/register/VerifyEmailPage';
 import PrivateRoute from './PrivateRoute';
 import RestrictedRoute from './RestrictedRoute';
 import ListDeleted from '~/pages/list/ListDeleted';
-import Bill from '~/pages/bill/Bill';
+// import Bill from '~/pages/bill/Bill';
 
 const restrictedRoutes = [
   {
@@ -65,15 +65,15 @@ const privateRoutes = [
       </PrivateRoute>
     ),
   },
-  {
-    id: 'bill',
-    path: '/bill',
-    page: (
-      <PrivateRoute>
-        <Bill/>
-      </PrivateRoute>
-    ),
-  },
+  // {
+  //   id: 'bill',
+  //   path: '/bill',
+  //   page: (
+  //     <PrivateRoute>
+  //       <Bill/>
+  //     </PrivateRoute>
+  //   ),
+  // },
   {
     id: 'list-deleted',
     path: '/list/:maDanhMuc/restore',
