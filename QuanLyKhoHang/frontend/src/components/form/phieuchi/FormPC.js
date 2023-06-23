@@ -18,29 +18,29 @@ const schemaBase = {
      .object()
      .typeError('Vui lòng chọn kho')
      .required('Vui lòng chọn kho'),
-   nhom_nguoi_nop: yup
+   nhom_nguoi_nhan: yup
    .object()
-   .typeError('Vui lòng chọn nhóm người nộp')
-   .required('Vui lòng chọn nhóm người nộp'),
-   nguoi_nop: yup
+   .typeError('Vui lòng chọn nhóm người nhận')
+   .required('Vui lòng chọn nhóm người nhận'),
+   nguoi_nhan: yup
    .object() 
-   .typeError('Vui lòng chọn người nộp')
-   .required('Vui lòng chọn người nộp'),
+   .typeError('Vui lòng chọn người nhận')
+   .required('Vui lòng chọn người nhận'),
 
    
    phuong_thuc_thanh_toan: yup
    .object()
    .typeError('Vui lòng chọn phương thức thanh toán')
    .required('Vui lòng chọn phương thức thanh toán'),
-   loai_phieu_thu: yup
+   loai_phieu_chi: yup
    .object()
-   .typeError('Vui lòng chọn loai phieu thu')
-   .required('Vui lòng chọn loai phieu thu'),
+   .typeError('Vui lòng chọn loai phieu chi')
+   .required('Vui lòng chọn loai phieu chi'),
    gia_tri: yup.number().typeError('Vui lòng nhập số').required('Vui lòng nhập số')
  
  };
 
-function FormPT({
+function FormPC({
   open,
   handleClose,
   setLoad = () => {},
@@ -63,23 +63,23 @@ function FormPT({
           ma_kho: defaultValues?.ma_kho,
           ten_kho: defaultValues?.ten_kho,
         },
-        nhom_nguoi_nop: {
-          ma_nhom_nguoi_nop: defaultValues?.ma_nhom_nguoi_nop,
-          ten_nhom_nguoi_nop: defaultValues?.ten_nhom_nguoi_nop,
+        nhom_nguoi_nhan: {
+          ma_nhom_nguoi_nhan: defaultValues?.ma_nhom_nguoi_nhan,
+          ten_nhom_nguoi_nhan: defaultValues?.ten_nhom_nguoi_nhan,
         },
         
-        nguoi_nop: defaultValues?.ma_nhom_nguoi_nop === 'ncc' ?{
-          ma_ncc: defaultValues?.ma_nguoi_nop,
-          ten_ncc: defaultValues?.ten_nguoi_nop,
-        }:(defaultValues?.ma_nhom_nguoi_nop === 'kh'? {
-          ma_kh: defaultValues?.ma_nguoi_nop,
-          ten_kh: defaultValues?.ten_nguoi_nop,
-        }: defaultValues.ten_nguoi_nop),
+        nguoi_nhan: defaultValues?.ma_nhom_nguoi_nhan === 'ncc' ?{
+          ma_ncc: defaultValues?.ma_nguoi_nhan,
+          ten_ncc: defaultValues?.ten_nguoi_nhan,
+        }:(defaultValues?.ma_nhom_nguoi_nhan === 'nv'? {
+          ma_kh: defaultValues?.ma_nguoi_nhan,
+          ten_kh: defaultValues?.ten_nguoi_nhan,
+        }: defaultValues.ten_nguoi_nhan),
         phuong_thuc_thanh_toan: {
           ma_pttt: defaultValues?.ma_pttt,
           ten_pttt: defaultValues?.ten_pttt,
         },
-        loai_phieu_thu: {
+        loai_phieu_chi: {
           ma_loai: defaultValues?.ma_loai,
           ten_loai: defaultValues?.ten_loai,
         },
@@ -92,36 +92,37 @@ function FormPT({
 
     resolver: yupResolver(schema),
   });
-  // console.log(getValues('nguoi_nop'));
+  console.log(defaultValues);
+  // console.log(getValues('nguoi_nhan'));
   const { asyncPostData } = useApisContext();
   const tabRef = useRef();
-  const nhomNguoiNop = watch('nhom_nguoi_nop');
+  const nhomNguoiNhan = watch('nhom_nguoi_nhan');
 
  
 
   const generateDataPost = (values) => {
-    const { kho,nhom_nguoi_nop,nguoi_nop,loai_phieu_thu,phuong_thuc_thanh_toan, ...data } = values;
+    const { kho,nhom_nguoi_nhan,nguoi_nhan,loai_phieu_chi,phuong_thuc_thanh_toan, ...data } = values;
     const result = {
       ...data,
       ma_kho: kho?.ma_kho || '',
       ten_kho: kho?.ten_kho || '',
-      ma_nhom_nguoi_nop: nhom_nguoi_nop?.ma_nhom_nguoi_nop || '',
-      ten_nhom_nguoi_nop: nhom_nguoi_nop?.ten_nhom_nguoi_nop || '',
-      // ma_nguoi_nop: nguoi_nop?.ma_kh || '',
-      // ten_nguoi_nop: nguoi_nop?.ten_kh || '',
-      ma_loai: loai_phieu_thu?.ma_loai || '',
-      ten_loai: loai_phieu_thu?.ten_loai || '',
+      ma_nhom_nguoi_nhan: nhom_nguoi_nhan?.ma_nhom_nguoi_nhan || '',
+      ten_nhom_nguoi_nhan: nhom_nguoi_nhan?.ten_nhom_nguoi_nhan || '',
+      // ma_nguoi_nhan: nguoi_nhan?.ma_kh || '',
+      // ten_nguoi_nhan: nguoi_nhan?.ten_kh || '',
+      ma_loai: loai_phieu_chi?.ma_loai || '',
+      ten_loai: loai_phieu_chi?.ten_loai || '',
       ma_pttt: phuong_thuc_thanh_toan?.ma_pttt || '',
       ten_pttt: phuong_thuc_thanh_toan?.ten_pttt || '',
     };
-    if(nguoi_nop){
-      if( typeof nguoi_nop === 'string' ){
-        result.ten_nguoi_nop = nguoi_nop || '';
+    if(nguoi_nhan){
+      if( typeof nguoi_nhan === 'string' ){
+        result.ten_nguoi_nhan = nguoi_nhan || '';
       }else{
-        if(nguoi_nop.ma_ncc){
-          result.ten_nguoi_nop = nguoi_nop?.ten_ncc || '';
+        if(nguoi_nhan.ma_ncc){
+          result.ten_nguoi_nhan = nguoi_nhan?.ten_ncc || '';
         }else {
-          result.ten_nguoi_nop = nguoi_nop?.ten_kh;
+          result.ten_nguoi_nhan = nguoi_nhan?.ten_kh;
         }
       }
     }
@@ -129,14 +130,14 @@ function FormPT({
     return result;
   };
   useEffect(() => {
-    if (nhomNguoiNop) {
-      if (nhomNguoiNop?.ma_nhom_nguoi_nop === 'khac') {
+    if (nhomNguoiNhan) {
+      if (nhomNguoiNhan?.ma_nhom_nguoi_nhan === 'khac') {
         setSchema(
           yup.object({
             ...schemaBase,
-            nguoi_nop: yup
-              .string('Vui lòng nhập người nộp')
-              .required('Vui lòng nhập người nộp'),
+            nguoi_nhan: yup
+              .string('Vui lòng nhập người nhận')
+              .required('Vui lòng nhập người nhận'),
           })
         );
       } else {
@@ -144,13 +145,13 @@ function FormPT({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nhomNguoiNop]);
+  }, [nhomNguoiNhan]);
 
   const handleSave = async (values) => {
     const method = isEdit ? 'put' : 'post';
      const dataPost = generateDataPost(values);
      console.log({dataPost});
-    await asyncPostData('dmpt', dataPost, method).then((resp) => {
+    await asyncPostData('dmpc', dataPost, method).then((resp) => {
       if (!resp.message) {
         handleClose();
         reset();
@@ -170,7 +171,7 @@ function FormPT({
       open={open}
       handleClose={handleClose}
       width="700px"
-      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} Phiếu thu`}
+      title={`${isEdit ? 'Chỉnh sửa' : 'Thêm'} Phiếu chi`}
       actions={[
         <ButtonBase
           key={v4()}
@@ -197,7 +198,7 @@ function FormPT({
             register={register}
             control={control}
             isEdit={isEdit}
-            nhomNguoiNop={nhomNguoiNop}
+            nhomNguoiNhan={nhomNguoiNhan}
             errors={errors}
           />
         </TabPanel>
@@ -210,4 +211,4 @@ function FormPT({
   );
 }
 
-export default FormPT;
+export default FormPC;

@@ -19,6 +19,8 @@ const {
   validateCreatePhieuThu,
   validateCreateNNN,
   validateCreatePBH,
+  validateCreateNNNHAN,
+  validateCreatePhieuChi,
 } = require('./validate');
 const khoModel = require('../app/models/kho.model');
 const vatTuModel = require('../app/models/vatTu.model');
@@ -36,11 +38,13 @@ const loaiPhieuChiModel = require('../app/models/loaiPhieuChi.model');
 const kenhBanModel = require('../app/models/kenhBan.model');
 const phuongThucThanhToanModel = require('../app/models/phuongThucThanhToan.model');
 const khachHangModel = require('../app/models/khachHang.model');
-const trangThaiPhieuBanLeModel = require('../app/models/trangThaiPhieuBanLe.model');
+// const trangThaiPhieuBanLeModel = require('../app/models/trangThaiPhieuBanHang.model');
 const phieuThuModel = require('../app/models/phieuThu.model');
 const nhomNguoiNopModel = require('../app/models/nhomNguoiNop.model');
 const phieuBanHangModel = require('../app/models/phieuBanHang.model');
 const trangThaiPhieuBanHangModel = require('../app/models/trangThaiPhieuBanHang.model');
+const phieuChiModel = require('../app/models/phieuChi.model');
+const nhomNguoiNhanModel = require('../app/models/nhomNguoiNhan.model');
 
 const dsDanhMuc = [
   {
@@ -218,6 +222,13 @@ const dsDanhMuc = [
     fields: ['ma_kh', 'ten_kh'],
   },
   {
+    maDanhMuc: 'dmpc',
+    uniqueField: 'ma_phieu',
+    model: phieuChiModel,
+    validate: validateCreatePhieuChi,
+    fields: ['ma_phieu'],
+  },
+  {
     maDanhMuc: 'dmpt',
     uniqueField: 'ma_phieu',
     model: phieuThuModel,
@@ -226,10 +237,19 @@ const dsDanhMuc = [
   },
   {
     maDanhMuc: 'dmnnn',
-    uniqueField: 'ten_nhom_nguoi_nop',
+    uniqueField: 'ma_nhom_nguoi_nop',
     model: nhomNguoiNopModel,
     validate: validateCreateNNN,
     fields: ['ma_nhom_nguoi_nop,ten_nhom_nguoi_nop'],
+  },
+  {
+    maDanhMuc: 'dmnnnh',
+    uniqueField: 'ma_nhom_nguoi_nhan',
+    model: nhomNguoiNhanModel,
+    validate: validateCreateNNNHAN,
+    fields: ['ma_nhom_nguoi_nhan,ten_nhom_nguoi_nhan'],
+  },
+  {
     maDanhMuc: 'dmpbh',
     uniqueField: 'ma_phieu',
     model: phieuBanHangModel,

@@ -7,40 +7,40 @@ import { dsDanhMuc } from '~/utils/data';
 import { numeralCustom } from '~/utils/helpers';
 
 
-function InfoTab({ register, control, errors,nhomNguoiNop,isEdit }){
+function InfoTab({ register, control, errors,nhomNguoiNhan,isEdit }){
   return (
       <Grid container spacing={2}>
         <Grid item xs={12} md={6}>
           <Controller
             control={control}
-            name="nhom_nguoi_nop"
+            name="nhom_nguoi_nhan"
             render={({ field: { onChange, value } }) => (
               <SelectApiInput
                 
-                label="Nhóm Người Nộp"
+                label="Nhóm Người Nhận"
                 required
-                apiCode="dmnnn"
+                apiCode="dmnnnh"
                 placeholder="Khách Hàng"
-                searchFileds={['ma_nhom_nguoi_nop', 'ten_nhom_nguoi_nop']}
-                getOptionLabel={(option) => option.ten_nhom_nguoi_nop}
+                searchFileds={['ma_nhom_nguoi_nhan', 'ten_nhom_nguoi_nhan']}
+                getOptionLabel={(option) => option.ten_nhom_nguoi_nhan}
                 selectedValue={value}
-                value={value || { ma_nhom_nguoi_nop: '', ten_nhom_nguoi_nop: '' }}
+                value={value || { ma_nhom_nguoi_nhan: '', ten_nhom_nguoi_nhan: '' }}
                 onSelect={onChange}
-                FormAdd={dsDanhMuc['dmnnn'].Form}
-                errorMessage={errors?.nhom_nguoi_nop?.message}
+                FormAdd={dsDanhMuc['dmnnnh'].Form}
+                errorMessage={errors?.nhom_nguoi_nhan?.message}
               />
             )}
           />
         </Grid>
-        {nhomNguoiNop?.ma_nhom_nguoi_nop === 'ncc' &&(
+        {nhomNguoiNhan?.ma_nhom_nguoi_nhan === 'ncc' &&(
           <Grid item xs={12} md={6}>
           <Controller
             control={control}
-            name="nguoi_nop"
+            name="nguoi_nhan"
             render={({ field: { onChange, value } }) => (
               <SelectApiInput
                
-                label="Tên Người Nộp"
+                label="Tên Người Nhận"
                 required
                 apiCode='dmncc'
                 placeholder="Tiên"
@@ -50,22 +50,22 @@ function InfoTab({ register, control, errors,nhomNguoiNop,isEdit }){
                 value={value || { ma_ncc: '', ten_ncc: '' }}
                 onSelect={onChange}
                 FormAdd={dsDanhMuc['dmncc'].Form}
-                errorMessage={errors?.nguoi_nop?.message}
+                errorMessage={errors?.nguoi_nhan?.message}
               />
             )}
           />
         </Grid>
         )
         }
-        {nhomNguoiNop?.ma_nhom_nguoi_nop === 'kh' &&(
+        {nhomNguoiNhan?.ma_nhom_nguoi_nhan === 'nv' &&(
           <Grid item xs={12} md={6}>
           <Controller
             control={control}
-            name="nguoi_nop"
+            name="nguoi_nhan"
             render={({ field: { onChange, value } }) => (
               <SelectApiInput
                
-                label="Tên Người Nộp"
+                label="Tên Người Nhận"
                 required
                 apiCode='dmkh'
                 placeholder="Tiên"
@@ -75,21 +75,21 @@ function InfoTab({ register, control, errors,nhomNguoiNop,isEdit }){
                 value={value || { ma_kh: '', ten_kh: '' }}
                 onSelect={onChange}
                 FormAdd={dsDanhMuc['dmkh'].Form}
-                errorMessage={errors?.nguoi_nop?.message}
+                errorMessage={errors?.nguoi_nhan?.message}
               />
             )}
           />
         </Grid>
         )
         }
-        {nhomNguoiNop?.ma_nhom_nguoi_nop === 'khac' &&(
+        {nhomNguoiNhan?.ma_nhom_nguoi_nhan === 'khac' &&(
            <Grid item xs={12} md={6}>
            <TextInput
              label="Tên Người Nộp"
-             name="nguoi_nop"
+             name="nguoi_nhan"
              register={register}
              required
-             errorMessage={errors?.nguoi_nop?.message}
+             errorMessage={errors?.nguoi_nhan?.message}
            />
          </Grid>
         )
@@ -120,21 +120,21 @@ function InfoTab({ register, control, errors,nhomNguoiNop,isEdit }){
         <Grid item xs={12} md={6}>
           <Controller
             control={control}
-            name="loai_phieu_thu"
+            name="loai_phieu_chi"
             render={({ field: { onChange, value } }) => (
               <SelectApiInput
           
-                label="Loại phiếu thu"
+                label="Loại phiếu chi"
                 required
-                apiCode="dmlpt"
-                placeholder="Thu tiền khác hàng"
+                apiCode="dmlpc"
+                placeholder="chi tiền khác hàng"
                 searchFileds={['ma_loai', 'ten_loai']}
                 getOptionLabel={(option) => option.ten_loai}
                 selectedValue={value}
                 value={value || { ma_loai: '', ten_loai: '' }}
                 onSelect={onChange}
-                FormAdd={dsDanhMuc['dmlpt'].Form}
-                errorMessage={errors?.loai_phieu_thu?.message}
+                FormAdd={dsDanhMuc['dmlpc'].Form}
+                errorMessage={errors?.loai_phieu_chi?.message}
               />
             )}
           />
