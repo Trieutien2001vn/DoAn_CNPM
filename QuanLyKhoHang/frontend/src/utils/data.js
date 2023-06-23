@@ -37,13 +37,10 @@ import FormNNN from '~/components/form/nhomnguoinop/FormNNN';
 import FilterPT from '~/components/filter/phieuThu/FilterPT';
 
 import FormPBH from '~/components/form/pbh/FormPBH';
-<<<<<<< HEAD
 import FormPC from '~/components/form/phieuchi/FormPC';
 import FormNNNHAN from '~/components/form/nhomnguoinhan/FormNNNHAN';
 import FilterPC from '~/components/filter/phieuChi/FilterPC';
-=======
 import FilterPBH from '~/components/filter/pbh/FilterPBH';
->>>>>>> 61e9d12656724ef6b8db957877d292753bfd6ea8
 
 const dsDanhMuc = {
   dmvt: {
@@ -953,18 +950,14 @@ const dsDanhMuc = {
         name: 'Mã nhóm người nộp',
         selector: (row) => row.ma_nhom_nguoi_nop,
         sortable: true,
-<<<<<<< HEAD
         minWidth: '100px',
-=======
         width: '140px',
         center: true,
->>>>>>> 61e9d12656724ef6b8db957877d292753bfd6ea8
       },
       {
         name: 'Tên nhóm người nộp',
         selector: (row) => row.ten_nhom_nguoi_nop,
         sortable: true,
-<<<<<<< HEAD
         minWidth: '100px',
       }
     ],
@@ -987,50 +980,6 @@ const dsDanhMuc = {
         sortable: true,
         minWidth: '100px',
       }
-=======
-        width: '140px',
-        center: true,
-      },
-      {
-        name: 'Tổng tiền',
-        selector: (row) => row.t_thanh_tien,
-        format: (row) => numeralCustom(row.t_thanh_tien).format(),
-        sortable: true,
-        center: true,
-        width: '120px',
-      },
-      {
-        name: 'Nhân viên',
-        selector: (row) => row.ten_nv,
-        sortable: true,
-        width: '140px',
-        wrap: true,
-        center: true,
-      },
-      {
-        name: 'Khách hàng',
-        selector: (row) => row.ten_kh,
-        sortable: true,
-        center: true,
-        wrap: true,
-        width: '140px',
-      },
-      {
-        name: 'Kênh bán',
-        selector: (row) => row.ten_kenh,
-        sortable: true,
-        width: '120px',
-        center: true,
-        wrap: true,
-      },
-      {
-        name: 'Phương thức thanh toán',
-        selector: (row) => row.ten_pttt,
-        sortable: true,
-        width: '180px',
-        right: true,
-      },
->>>>>>> 61e9d12656724ef6b8db957877d292753bfd6ea8
     ],
   },
 };
