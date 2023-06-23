@@ -9,6 +9,7 @@ const generateLoaiPhieuChi = require('./loaiphieuchi.seed');
 const generatePTTT = require('./pttt.seed');
 const generateKenhBan = require('./kenhban.seed');
 const generateTrangThaiPBH = require('./trangthaiPBH.seed');
+const generateNhomNguoiNhan = require('./nhomNguoiNhan.seed');
 
 const generateSeed = async () => {
   await generateTrangThai();
@@ -19,6 +20,7 @@ const generateSeed = async () => {
   await generateNguoiDung();
   await generateKho();
   await generateNhomNguoiNop();
+  await generateNhomNguoiNhan();
   await generatePTTT();
   await generateKenhBan();
   await generateTrangThaiPBH();

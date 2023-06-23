@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const { generateRandomCode, generateUniqueValueUtil} = require("../../utils/myUtil");
 const mongooseDelete = require('mongoose-delete');
 
-const phieuThuSchema = new mongoose.Schema(
+const phieuChiSchema = new mongoose.Schema(
   {
       ma_phieu: {
         type: String,
@@ -13,19 +13,19 @@ const phieuThuSchema = new mongoose.Schema(
         type: String,
        default:'',
       },
-      ma_nhom_nguoi_nop: {
+      ma_nhom_nguoi_nhan: {
         type: String,
         required: true,
       },
-      ten_nhom_nguoi_nop: {
+      ten_nhom_nguoi_nhan: {
         type: String,
        require
       },
-      ma_nguoi_nop: {
+      ma_nguoi_nhan: {
         type: String,
         default: ''
       },
-      ten_nguoi_nop: {
+      ten_nguoi_nhan: {
         type: String,
         default: ''
       },
@@ -78,26 +78,26 @@ const phieuThuSchema = new mongoose.Schema(
       default: '',
     },
   },
-  { timestamps: true, collection: 'phieu_thu' }
+  { timestamps: true, collection: 'phieu_chi' }
 );
-phieuThuSchema.index(
-  { ma_phieu: "text",ma_nhom_nguoi_nop:"text",ten_nhom_nguoi_nop:"text"},
+phieuChiSchema.index(
+  { ma_phieu: "text",ma_nhom_nguoi_nhan:"text",ten_nhom_nguoi_nhan:"text"},
   { default_language: "none" }
 );
-phieuThuSchema.plugin(mongooseDelete, {
+phieuChiSchema.plugin(mongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   deletedByType: String,
   overrideMethods: 'all',
 });
-phieuThuSchema.pre('save', async function (next) {
+phieuChiSchema.pre('save', async function (next) {
   try {
     let error;
-    const pt = this;
-    const maPhieu = await generateUniqueValueUtil({maDm: 'PT',model:mongoose.model('PhieuThu', phieuThuSchema),compareKey:'ma_phieu'});
-    const maChungTu = await generateUniqueValueUtil({maDm: 'CT',model:mongoose.model('PhieuThu', phieuThuSchema),compareKey:'ma_ct'});
-    pt.ma_phieu = maPhieu;
-    pt.ma_ct = maChungTu;
+    const pc= this;
+    const maPhieu = await generateUniqueValueUtil({maDm: 'PC',model:mongoose.model('PhieuChi', phieuChiSchema),compareKey:'ma_phieu'});
+    const maChungTu = await generateUniqueValueUtil({maDm: 'CT',model:mongoose.model('PhieuChi', phieuChiSchema),compareKey:'ma_ct'});
+    pc.ma_phieu = maPhieu;
+    pc.ma_ct = maChungTu;
 
     if (error) {
       return next(error);
@@ -109,4 +109,4 @@ phieuThuSchema.pre('save', async function (next) {
   }
 });
 
-module.exports = mongoose.model('PhieuThu', phieuThuSchema);
+module.exports = mongoose.model('PhieuChi', phieuChiSchema);

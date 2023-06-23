@@ -221,9 +221,8 @@ const validateCreateTTPBL = ({ ma_trang_thai,ten_trang_thai}) => {
   });
   return modelSchema.validate({ ma_trang_thai, ten_trang_thai});
 };
-const validateCreatePhieuThu = ({ ma_phieu,ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_nguoi_nop,ma_loai,ma_pttt,ten_pttt,gia_tri,ma_kho,ten_kho}) => {
+const validateCreatePhieuThu = ({ ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_loai,ma_pttt,ten_pttt,gia_tri,ma_kho,ten_kho}) => {
   const modelSchema = joi.object({
-    ma_phieu: joi.string().required(),
     ten_nhom_nguoi_nop: joi.string().required(),
     ma_nhom_nguoi_nop: joi.string().required(),
     ma_loai: joi.string().required(),
@@ -234,7 +233,21 @@ const validateCreatePhieuThu = ({ ma_phieu,ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,
     ten_kho: joi.string().required(),
 
   });
-  return modelSchema.validate({ma_phieu,ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_loai,ma_pttt,ten_pttt,gia_tri,ma_kho,ten_kho});
+  return modelSchema.validate({ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_loai,ma_pttt,ten_pttt,gia_tri,ma_kho,ten_kho});
+};
+  const validateCreatePhieuChi = ({ ma_nhom_nguoi_nhan,ten_nhom_nguoi_nhan,ma_loai,ma_pttt,ten_pttt,gia_tri,ma_kho,ten_kho}) => {
+    const modelSchema = joi.object({
+      ten_nhom_nguoi_nhan: joi.string().required(),
+      ma_nhom_nguoi_nhan: joi.string().required(),
+      ma_loai: joi.string().required(),
+      ma_pttt: joi.string().required(),
+      gia_tri: joi.number().required(),
+      ten_pttt: joi.string().required(),
+      ma_kho: joi.string().required(),
+      ten_kho: joi.string().required(),
+  
+    });
+  return modelSchema.validate({ma_nhom_nguoi_nhan,ten_nhom_nguoi_nhan,ma_loai,ma_pttt,ten_pttt,gia_tri,ma_kho,ten_kho});
 };
 const validateCreateNNN = ({ ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_danh_muc}) => {
   const modelSchema = joi.object({
@@ -243,6 +256,14 @@ const validateCreateNNN = ({ ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_danh_muc}) 
     ma_danh_muc: joi.string().required(),
   });
   return modelSchema.validate({ ma_nhom_nguoi_nop,ten_nhom_nguoi_nop,ma_danh_muc});
+};
+const validateCreateNNNHAN = ({ ma_nhom_nguoi_nhan,ten_nhom_nguoi_nhan,ma_danh_muc}) => {
+  const modelSchema = joi.object({
+    ma_nhom_nguoi_nhan: joi.string().required(),
+    ten_nhom_nguoi_nhan: joi.string().required(),
+    ma_danh_muc: joi.string().required(),
+  });
+  return modelSchema.validate({ ma_nhom_nguoi_nhan,ten_nhom_nguoi_nhan,ma_danh_muc});
 };
 module.exports = {
   validateCreatePhanQuyen,
@@ -268,6 +289,8 @@ module.exports = {
   validateCreateKH,
   validateCreateTTPBL,
   validateCreatePhieuThu,
+  validateCreatePhieuChi,
   validateCreateNNN,
+  validateCreateNNNHAN,
   validateCreatePBH
 };

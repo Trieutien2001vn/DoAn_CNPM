@@ -6,11 +6,11 @@ import { useEffect } from 'react';
 import FilterSelectApi from '../FilterSelectApi';
 import FilterTimeFromTo from '../FilterTimeFromTo';
 
-function FilterPT({ setCondition }) {
+function FilterPC({ setCondition }) {
   const [filter, setFilter] = useState({
    ma_phieu: "",
    kho: null,
-   nhom_nguoi_nop:null,
+   nhom_nguoi_nhan:null,
    ma_ct: "",
    timeFrom: '',
    timeTo: '',
@@ -34,8 +34,8 @@ function FilterPT({ setCondition }) {
     if(filter.kho){
     condition.ma_kho = filter.kho.ma_kho;
     };
-    if(filter.nhom_nguoi_nop){
-        condition.ma_nhom_nguoi_nop = filter.nhom_nguoi_nop.ma_nhom_nguoi_nop;
+    if(filter.nhom_nguoi_nhan){
+        condition.ma_nhom_nguoi_nhan = filter.nhom_nguoi_nhan.ma_nhom_nguoi_nhan;
     };
     if (filter.timeFrom || filter.timeTo) {
       if (filter.timeFrom && filter.timeTo) {
@@ -76,16 +76,16 @@ function FilterPT({ setCondition }) {
         onSelect={(value) => setFilter({ ...filter, kho: value })}
       />
        <FilterSelectApi
-        title="Nhóm Người Nộp"
-        apiCode="dmnnn"
+        title="Nhóm Người Nhận"
+        apiCode="dmnnnh"
         value={
-          filter.nhom_nguoi_nop
-            ? { ma_nhom_nguoi_nop: filter.nhom_nguoi_nop.ma_nhom_nguoi_nop, ten_nhom_nguoi_nop: filter.nhom_nguoi_nop.ten_nhom_nguoi_nop}
+          filter.nhom_nguoi_nhan
+            ? { ma_nhom_nguoi_nhan: filter.nhom_nguoi_nhan.ma_nhom_nguoi_nhan, ten_nhom_nguoi_nhan: filter.nhom_nguoi_nhan.ten_nhom_nguoi_nhan}
             : null
         }
-        searchFileds={['ma_nhom_nguoi_nop', 'ten_nhom_nguoi_nop']}
-        getOptionLabel={(option) => option.ten_nhom_nguoi_nop}
-        onSelect={(value) => setFilter({ ...filter, nhom_nguoi_nop: value })}
+        searchFileds={['ma_nhom_nguoi_nhan', 'ten_nhom_nguoi_nhan']}
+        getOptionLabel={(option) => option.ten_nhom_nguoi_nhan}
+        onSelect={(value) => setFilter({ ...filter, nhom_nguoi_nhan: value })}
       />
            <FilterTimeFromTo
         title="Ngày lập phiếu"
@@ -98,4 +98,4 @@ function FilterPT({ setCondition }) {
   );
 }
 
-export default FilterPT;
+export default FilterPC;
