@@ -7,16 +7,23 @@ const theme = createTheme({
     primary: {
       main: '#1DC071',
       second: '#4ACD8D',
-      third: '#77D9AA',
+      third: '',
       four: '#A5E6C6',
       fif: '#D2F2E3',
     },
     secondary: {
-      main: '#6F49FD',
+      main: '#6F49FD',  
       second: '#8C6DFD',
       third: '#A992FE',
       four: '#C5B6FE',
       fif: '#E2DBFF',
+    },
+    thirdly: {
+      main: '#D21312',
+      second: '#ED2B2A',
+      third: '#F48484',
+      four: '#FF8E9E',
+      fif: '#FFDEDE',
     },
     error: {
       main: '#EB5757',

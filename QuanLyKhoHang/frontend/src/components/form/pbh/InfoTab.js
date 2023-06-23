@@ -6,7 +6,14 @@ import TextInput from '~/components/input/TextInput';
 import { dsDanhMuc } from '~/utils/data';
 import { numeralCustom } from '~/utils/helpers';
 
-function InfoTab({ register, control, isEdit, errors }) {
+function InfoTab({
+  register,
+  control,
+  isEdit,
+  errors,
+  tienHang = 0,
+  setValue,
+}) {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
@@ -157,76 +164,26 @@ function InfoTab({ register, control, isEdit, errors }) {
           )}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="tien_ck_sp"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              disabled
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const val = numeralCustom(e.target.value).value();
-                onChange(val);
-              }}
-              label="Tiền chiết khẩu sản phẩm"
-              placeholder="Tiền chiết khẩu sản phẩm"
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="ty_le_ck_hd"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const val = numeralCustom(e.target.value).value();
-                onChange(val);
-              }}
-              label="Tỷ lệ chiết khẩu hóa đơn (%)"
-              placeholder="Tỷ lệ chiết khẩu hóa đơn"
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="tien_ck_hd"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const val = numeralCustom(e.target.value).value();
-                onChange(val);
-              }}
-              label="Tiền chiết khấu hóa đơn"
-              placeholder="Tiền chiết khấu hóa đơn"
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="tong_tien_ck"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              disabled
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const val = numeralCustom(e.target.value).value();
-                onChange(val);
-              }}
-              label="Tổng tiền chiết khẩu"
-              placeholder="Tổng tiền chiết khẩu"
-            />
-          )}
-        />
-      </Grid>
+      {isEdit && (
+        <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="tien_ck_sp"
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                disabled
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const val = numeralCustom(e.target.value).value();
+                  onChange(val);
+                }}
+                label="Tiền chiết khẩu sản phẩm"
+                placeholder="Tiền chiết khẩu sản phẩm"
+              />
+            )}
+          />
+        </Grid>
+      )}
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
@@ -247,6 +204,69 @@ function InfoTab({ register, control, isEdit, errors }) {
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
+          name="ty_le_ck_hd"
+          render={({ field: { value, onChange } }) => (
+            <TextInput
+              value={numeralCustom(value).format()}
+              onChange={(e) => {
+                // luu gia tri
+                const val = numeralCustom(e.target.value).value();
+                onChange(val);
+                // thay doi tien ck
+                const tienCkNew = (tienHang * val) / 100;
+                setValue('tien_ck_hd', tienCkNew);
+              }}
+              label="Tỷ lệ chiết khẩu hóa đơn (%)"
+              placeholder="Tỷ lệ chiết khẩu hóa đơn"
+            />
+          )}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
+          name="tien_ck_hd"
+          render={({ field: { value, onChange } }) => (
+            <TextInput
+              value={numeralCustom(value).format()}
+              onChange={(e) => {
+                // luu gia tri
+                const val = numeralCustom(e.target.value).value();
+                onChange(val);
+                // thay doi ty le ck
+                const tyLeCkNew = (val * 100) / tienHang;
+                setValue('ty_le_ck_hd', tyLeCkNew)
+              }}
+              label="Tiền chiết khấu hóa đơn"
+              placeholder="Tiền chiết khấu hóa đơn"
+            />
+          )}
+        />
+      </Grid>
+      {isEdit && (
+        <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="tong_tien_ck"
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                disabled
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const val = numeralCustom(e.target.value).value();
+                  onChange(val);
+                }}
+                label="Tổng tiền chiết khẩu"
+                placeholder="Tổng tiền chiết khẩu"
+              />
+            )}
+          />
+        </Grid>
+      )}
+
+      <Grid item xs={12} md={6}>
+        <Controller
+          control={control}
           name="tien_van_chuyen"
           render={({ field: { value, onChange } }) => (
             <TextInput
@@ -261,42 +281,46 @@ function InfoTab({ register, control, isEdit, errors }) {
           )}
         />
       </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="thanh_tien"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              disabled
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const val = numeralCustom(e.target.value).value();
-                onChange(val);
-              }}
-              label="Thành tiền"
-              placeholder="Tổng tiền"
-            />
-          )}
-        />
-      </Grid>
-      <Grid item xs={12} md={6}>
-        <Controller
-          control={control}
-          name="t_thanh_tien"
-          render={({ field: { value, onChange } }) => (
-            <TextInput
-              disabled
-              value={numeralCustom(value).format()}
-              onChange={(e) => {
-                const val = numeralCustom(e.target.value).value();
-                onChange(val);
-              }}
-              label="Tổng thành tiền"
-              placeholder="Tổng thành tiền"
-            />
-          )}
-        />
-      </Grid>
+      {isEdit && (
+        <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="thanh_tien"
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                disabled
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const val = numeralCustom(e.target.value).value();
+                  onChange(val);
+                }}
+                label="Thành tiền"
+                placeholder="Tổng tiền"
+              />
+            )}
+          />
+        </Grid>
+      )}
+      {isEdit && (
+        <Grid item xs={12} md={6}>
+          <Controller
+            control={control}
+            name="t_thanh_tien"
+            render={({ field: { value, onChange } }) => (
+              <TextInput
+                disabled
+                value={numeralCustom(value).format()}
+                onChange={(e) => {
+                  const val = numeralCustom(e.target.value).value();
+                  onChange(val);
+                }}
+                label="Tổng thành tiền"
+                placeholder="Tổng thành tiền"
+              />
+            )}
+          />
+        </Grid>
+      )}
       <Grid item xs={12} md={6}>
         <Controller
           control={control}
@@ -346,7 +370,6 @@ function InfoTab({ register, control, isEdit, errors }) {
               selectedValue={value}
               value={value || { ma_trang_thai: '', ten_trang_thai: '' }}
               onSelect={onChange}
-              // FormAdd={dsDanhMuc['dmkho'].Form}
               errorMessage={errors?.trang_thai?.message}
             />
           )}

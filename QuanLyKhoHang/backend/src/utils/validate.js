@@ -84,13 +84,12 @@ const validateCreateNhaCungCap = ({ ma_ncc, ten_ncc }) => {
   return modelSchema.validate({ ma_ncc, ten_ncc });
 };
 // phieu nhap kho
-const validateCreatePhieuNhapKho = ({ ma_phieu, ma_kho, ten_kho }) => {
+const validateCreatePhieuNhapKho = ({ ma_kho, ten_kho }) => {
   const modelSchema = joi.object({
-    ma_phieu: joi.string().required(),
     ma_kho: joi.string().required(),
     ten_kho: joi.string().required(),
   });
-  return modelSchema.validate({ ma_phieu, ma_kho, ten_kho });
+  return modelSchema.validate({ ma_kho, ten_kho });
 };
 // phieu xuat kho
 const validateCreatePhieuXuatKho = ({ ma_phieu, ma_kho, ten_kho }) => {
