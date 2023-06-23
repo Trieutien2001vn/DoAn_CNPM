@@ -11,6 +11,7 @@ function FilterTimeFromTo({
   defaultTimeTo,
   onSearch = () => {},
 }) {
+  const [dot, setDot] = useState(false);
   const [time, setTime] = useState({
     timeFrom: defaultTimeFrom || '',
     timeTo: defaultTimeTo || '',
@@ -19,13 +20,17 @@ function FilterTimeFromTo({
   const handleTimeChange = ({ target: { name, value } }) => {
     setTime({ ...time, [name]: value });
   };
+  const handleFilterTime = () => {
+    onSearch(time);
+    setDot(!!time.timeFrom || !!time.timeTo);
+  };
   useEffect(() => {
     onSearch(time);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <FilterBox title={title}>
+    <FilterBox title={title} dot={dot}>
       <Stack spacing="10px" sx={{ padding: '10px 0' }}>
         <TextInput
           label="Từ ngày"
@@ -41,7 +46,7 @@ function FilterTimeFromTo({
           value={time.timeTo}
           onChange={handleTimeChange}
         />
-        <ButtonBase onClick={() => onSearch(time)}>Lọc</ButtonBase>
+        <ButtonBase onClick={handleFilterTime}>Lọc</ButtonBase>
       </Stack>
     </FilterBox>
   );

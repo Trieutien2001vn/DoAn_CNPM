@@ -22,7 +22,6 @@ export default function FormPNK({
   isEdit = false,
 }) {
   const schema = yup.object({
-    ma_phieu: yup.string().required('Vui lòng nhập mã phiếu'),
     kho: yup
       .object()
       .typeError('Vui lòng chọn kho')
