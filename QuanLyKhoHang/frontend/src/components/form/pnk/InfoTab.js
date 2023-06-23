@@ -13,10 +13,9 @@ function InfoTab({ register, control, isEdit, errors }) {
         <TextInput
           disabled={isEdit}
           label="Mã phiếu"
-          placeholder="VD: PNK0001"
+          placeholder='Nhập hoặc tạo tự động'
           name="ma_phieu"
           register={register}
-          required
           errorMessage={errors?.ma_phieu?.message}
         />
       </Grid>

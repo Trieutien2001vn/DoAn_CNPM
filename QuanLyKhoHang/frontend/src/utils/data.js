@@ -37,6 +37,7 @@ import FormNNN from '~/components/form/nhomnguoinop/FormNNN';
 import FilterPT from '~/components/filter/phieuThu/FilterPT';
 
 import FormPBH from '~/components/form/pbh/FormPBH';
+import FilterPBH from '~/components/filter/pbh/FilterPBH';
 
 const dsDanhMuc = {
   dmvt: {
@@ -806,7 +807,7 @@ const dsDanhMuc = {
     title: 'phiếu bán hàng',
     uniqueKey: 'ma_phieu',
     Form: FormPBH,
-    // Filter: FilterPKK,
+    Filter: FilterPBH,
     columns: [
       {
         name: 'Mã phiếu',
@@ -815,11 +816,18 @@ const dsDanhMuc = {
         minWidth: '100px',
       },
       {
+        name: 'Mã chứng từ',
+        selector: (row) => row.ma_ct,
+        sortable: true,
+        minWidth: '120px',
+      },
+      {
         name: 'Kho',
         selector: (row) => row.ten_kho,
         sortable: true,
         minWidth: '120px',
         wrap: true,
+        center: true,
       },
       {
         name: 'Ngày chứng từ',
@@ -852,6 +860,7 @@ const dsDanhMuc = {
         format: (row) => formatDateDisplay(row.ngay_ct),
         sortable: true,
         width: '140px',
+        center: true,
       },
       {
         name: 'Ngày lập phiếu',
@@ -859,22 +868,21 @@ const dsDanhMuc = {
         format: (row) => formatDateDisplay(row.ngay_lap_phieu),
         sortable: true,
         width: '140px',
-        center: true
+        center: true,
       },
       {
         name: 'Tổng tiền',
-        selector: (row) => row.tong_tien,
-        format: (row) => numeralCustom(row.tong_tien).format(),
+        selector: (row) => row.t_thanh_tien,
+        format: (row) => numeralCustom(row.t_thanh_tien).format(),
         sortable: true,
         center: true,
         width: '120px',
       },
-      
       {
         name: 'Nhân viên',
         selector: (row) => row.ten_nv,
         sortable: true,
-        width: '120px',
+        width: '140px',
         wrap: true,
         center: true,
       },
@@ -884,7 +892,7 @@ const dsDanhMuc = {
         sortable: true,
         center: true,
         wrap: true,
-        width: '120px',
+        width: '140px',
       },
       {
         name: 'Kênh bán',

@@ -10,6 +10,7 @@ const trangThaiPBHModel = require('./trangThaiPhieuBanHang.model');
 const tonKhoController = require('../controllers/tonkho.controller');
 const createHttpError = require('http-errors');
 const soCaiModel = require('./soCai.model');
+const soKhoModel = require('./soKho.model');
 
 const phieuBanHangSchema = new mongoose.Schema(
   {
@@ -23,11 +24,11 @@ const phieuBanHangSchema = new mongoose.Schema(
     },
     ma_loai_ct: {
       type: String,
-      default: 'pbh'
+      default: 'pbh',
     },
     ten_loai_ct: {
       type: String,
-      default: 'Phiếu bán hàng'
+      default: 'Phiếu bán hàng',
     },
     ma_kho: {
       type: String,
@@ -77,7 +78,8 @@ const phieuBanHangSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    tien_hang: { // tổng tiền hàng trong detail 
+    tien_hang: {
+      // tổng tiền hàng trong detail
       type: Number,
       default: 0,
     },
@@ -85,33 +87,39 @@ const phieuBanHangSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    tien_ck_hd: { // tien_hang * ty_le_ck_hd / 100
+    tien_ck_hd: {
+      // tien_hang * ty_le_ck_hd / 100
       type: Number,
       default: 0,
     },
-    tien_ck_sp: { // tổng tiền chiêt khấu trong detail
+    tien_ck_sp: {
+      // tổng tiền chiêt khấu trong detail
       type: Number,
       default: 0,
     },
-    tong_tien_ck: { // tổng tiền chiết khẩu + tiền chiết khấu hóa đơn
+    tong_tien_ck: {
+      // tổng tiền chiết khẩu + tiền chiết khấu hóa đơn
       type: Number,
       default: 0,
     },
     VAT: {
       type: Number,
-      default: 0
+      default: 0,
     },
-    thanh_tien: {  // tien_hang - tong_tien_ck
+    thanh_tien: {
+      // tien_hang - tong_tien_ck
       type: Number,
       default: 0,
     },
-    t_thanh_tien: { // thanh_tien + thue + tien_van_chuyen
+    t_thanh_tien: {
+      // thanh_tien + thue + tien_van_chuyen
       type: Number,
-      default: 0
+      default: 0,
     },
-    chi_phi: { // tổng số lượng detail * giá vốn
+    chi_phi: {
+      // tổng số lượng detail * giá vốn
       type: Number,
-      default: 0
+      default: 0,
     },
     tien_thu: {
       type: Number,
@@ -210,7 +218,7 @@ const phieuBanHangSchema = new mongoose.Schema(
           },
           chi_phi: {
             type: Number,
-            default: 0
+            default: 0,
           },
           ghi_chu: {
             type: String,
@@ -236,18 +244,57 @@ phieuBanHangSchema.pre('save', async function (next) {
   try {
     let error;
     const pbh = this;
+    let tienChietKhauTrenTungSanPham = 0;
+    if (pbh.tien_ck_hd) {
+      const numberDetail = pbh.details.reduce((acc, item) => {
+        return acc + item.sl_xuat;
+      }, 0);
+      tienChietKhauTrenTungSanPham = pbh.tien_ck_hd / numberDetail;
+    }
     for (let i = 0; i < pbh.details.length; i++) {
       const detail = pbh.details[i];
-      const tonKho = await tonKhoController.getInventoryOnStoreHelper({
-        ma_vt: detail.ma_vt,
-        ma_kho: pbh.ma_kho,
-      });
-      if (tonKho.ton_kho < detail.sl_xuat) {
+      if (detail.ma_lo) {
+        const tonKho = await tonKhoController.getInventoryByConsigmentHelper({
+          ma_vt: detail.ma_vt,
+          ma_lo: detail.ma_lo,
+        });
+        if (tonKho.ton_kho < detail.sl_xuat) {
+          error = createHttpError(
+            400,
+            `Hàng hóa '${detail.ten_vt}' chỉ tồn ${tonKho.ton_kho} ở lô '${detail.ten_lo}'`
+          );
+          break;
+        }
+      } else {
+        const tonKho = await tonKhoController.getInventoryOnStoreHelper({
+          ma_vt: detail.ma_vt,
+          ma_kho: pbh.ma_kho,
+        });
+        if (tonKho.ton_kho < detail.sl_xuat) {
+          error = createHttpError(
+            400,
+            `Hàng hóa '${detail.ten_vt}' chỉ tồn ${tonKho.ton_kho} tại kho '${pbh.ten_kho}'`
+          );
+          break;
+        }
+      }
+      const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
+      if (!vatTu) {
         error = createHttpError(
           400,
-          `Hàng hóa '${detail.ten_vt}' chỉ tồn ${tonKho.ton_kho} tại kho '${pbh.ten_kho}'`
+          `Mã hàng hóa '${detail.ma_vt}' không tồn tại`
         );
         break;
+      } else {
+        detail.ma_dvt = vatTu.ma_dvt;
+        detail.ten_dvt = vatTu.ten_dvt;
+        detail.ma_nvt = vatTu.ma_nvt;
+        detail.ten_nvt = vatTu.ten_nvt;
+        detail.gia_von = vatTu.gia_von;
+        detail.tien_ck_phan_bo = tienChietKhauTrenTungSanPham * detail.sl_xuat;
+        detail.tong_tien_ck = detail.tien_ck + detail.tien_ck_phan_bo;
+        detail.thanh_tien = detail.tien_hang - detail.tong_tien_ck;
+        detail.chi_phi = detail.gia_von * detail.sl_xuat;
       }
     }
     if (error) {
@@ -255,43 +302,45 @@ phieuBanHangSchema.pre('save', async function (next) {
     } else {
       if (!pbh.ma_phieu) {
         const maPhieu = await generateUniqueValueUtil({
-          maDm: 'pbh',
+          maDm: 'PBH',
           model: mongoose.model('PhieuBanHang', phieuBanHangSchema),
           compareKey: 'ma_phieu',
         });
         pbh.ma_phieu = maPhieu;
       }
       const maChungTu = await generateUniqueValueUtil({
-        maDm: 'pbh',
+        maDm: 'PBH',
         model: mongoose.model('PhieuBanHang', phieuBanHangSchema),
         compareKey: 'ma_ct',
       });
       pbh.ma_ct = maChungTu;
       // tinh tien hang
       const tienHang = pbh.details.reduce((acc, item) => {
-        return acc + (item.don_gia * item.sl_xuat)
-      }, 0)
-      pbh.tien_hang = tienHang
+        return acc + item.don_gia * item.sl_xuat;
+      }, 0);
+      pbh.tien_hang = tienHang;
       // tinh tien ck san pham
       const tienCkSp = pbh.details.reduce((acc, item) => {
-        return acc + item.tien_ck
-      }, 0)
-      pbh.tien_ck_sp = tienCkSp
+        return acc + item.tien_ck;
+      }, 0);
+      pbh.tien_ck_sp = tienCkSp;
       // tinh tong tien ck
-      const tongCk = pbh.tien_ck_hd + pbh.tien_ck_sp
-      pbh.tong_tien_ck = tongCk
-      next();
+      const tongCk = pbh.tien_ck_hd + pbh.tien_ck_sp;
+      pbh.tong_tien_ck = tongCk;
       // tinh thanh tien
-      const thanhTien = pbh.tien_hang - pbh.tong_tien_ck
-      pbh.thanh_tien = thanhTien
+      const thanhTien = pbh.tien_hang - pbh.tong_tien_ck;
+      pbh.thanh_tien = thanhTien;
+      // tinh tien VAT
+      const tienVAT = (pbh.tien_hang * pbh.VAT) / 100;
       // tinh tong thanh tien
-      const tongThanhTien = pbh.thanh_tien + pbh.VAT + pbh.tien_van_chuyen
-      pbh.t_thanh_tien = tongThanhTien
+      const tongThanhTien = pbh.thanh_tien + tienVAT + pbh.tien_van_chuyen;
+      pbh.t_thanh_tien = tongThanhTien;
       // tinh chi phi
       const chiPhi = pbh.details.reduce((acc, item) => {
-        return acc + (item.sl_xuat * item.gia_von)
-      }, 0)
-      pbh.chi_phi = chiPhi
+        return acc + item.sl_xuat * item.gia_von;
+      }, 0);
+      pbh.chi_phi = chiPhi;
+      next();
     }
   } catch (error) {
     next(error);
@@ -299,86 +348,174 @@ phieuBanHangSchema.pre('save', async function (next) {
 });
 phieuBanHangSchema.post('save', async function () {
   const pbh = this;
-  const ngay = pbh.ngay_ct.getDate();
-  const thang = pbh.ngay_ct.getMonth() + 1;
-  const nam = pbh.ngay_ct.getFullYear();
-  const quy = getQuyByMonth(thang);
-  const gio = pbh.ngay_ct.getHours();
-  const phut = pbh.ngay_ct.getMinutes();
-  const giay = pbh.ngay_ct.getSeconds();
+  if (pbh.ma_trang_thai === 2) {
+    const ngay = pbh.ngay_ct.getDate();
+    const thang = pbh.ngay_ct.getMonth() + 1;
+    const nam = pbh.ngay_ct.getFullYear();
+    const quy = getQuyByMonth(thang);
+    const gio = pbh.ngay_ct.getHours();
+    const phut = pbh.ngay_ct.getMinutes();
+    const giay = pbh.ngay_ct.getSeconds();
 
-  const numberDetail = pbh.details.reduce((acc, item) => {
-    return acc + item.sl_xuat;
-  }, 0);
-
-  pbh.details.forEach(async (detail) => {
-    const thanhTienChietKhau =
-      detail.tien_hang - detail.tien_ck - detail.tien_ck_phan_bo;
-    const thue = pbh.thue / numberDetail;
-    const tienVanChuyen = pbh.tien_van_chuyen / numberDetail;
-    const thanhTien = thanhTienChietKhau + thue + tienVanChuyen;
-    const chiPhi = detail.sl_xuat * detail.gia_von;
-    await soCaiModel.create({
-      ma_ct: pbh.ma_ct,
-      ma_loai_ct: pbh.ma_loai_ct,
-      ten_loai_ct: pbh.ten_loai_ct,
-      ma_kho: pbh.ma_kho,
-      ten_kho: pbh.ten_kho,
-      ngay_ct: pbh.ngay_ct,
-      nam,
-      quy,
-      thang,
-      ngay,
-      gio,
-      phut,
-      giay,
-      ma_vt: detail.ma_vt,
-      ten_vt: detail.ten_vt,
-      ma_dvt: detail.ma_dvt,
-      ten_dvt: detail.ten_dvt,
-      ma_nvt: detail.ma_nvt,
-      ten_nvt: detail.ten_nvt,
-      ma_lo: detail.ma_lo,
-      ten_lo: detail.ten_lo,
-      ma_pttt: pbh.ma_pttt,
-      ten_pttt: pbh.ten_pttt,
-      so_luong: -detail.sl_xuat,
-      gia_von: detail.gia_von,
-      tien_hang: detail.tien_hang,
-      thanh_tien: thanhTien,
-      thanh_tien_thue: thanhTien - thue,
-      thue: '',
-      // dac thu
-      ma_nv: pbh.ma_nv,
-      ten_nv: pbh.ten_nv,
-      ma_kh: pbh.ma_kh,
-      ten_kh: pbh.ten_kh,
-      ma_kenh: pbh.ma_kenh,
-      ten_kenh: pbh.ten_kenh,
-      sl_xuat: detail.sl_xuat,
-      chi_phi: chiPhi,
-      don_gia: detail.gia_ban_le,
-      ty_le_ck: detail.ty_le_ck,
-      tien_ck: detail.tien_ck,
-      tien_ck_phan_bo: detail.tien_ck_phan_bo,
-      tien_van_chuyen: tienVanChuyen,
-      tien_hang_ck: thanhTienChietKhau,
-      loi_nhuan: thanhTienChietKhau - chiPhi,
+    pbh.details.forEach(async (detail) => {
+      await soKhoModel.create({
+        ma_ct: pbh.ma_ct,
+        ma_loai_ct: pbh.ma_loai_ct,
+        ten_loai_ct: pbh.ten_loai_ct,
+        ma_kho: pbh.ma_kho,
+        ten_kho: pbh.ten_kho,
+        ngay_ct: pbh.ngay_ct,
+        nam,
+        quy,
+        thang,
+        ngay,
+        gio,
+        phut,
+        giay,
+        ma_lo: detail.ma_lo,
+        ten_lo: detail.ten_lo,
+        ma_vt: detail.ma_vt,
+        ten_vt: detail.ten_vt,
+        sl_xuat: detail.sl_xuat,
+        so_luong: -detail.sl_xuat,
+      });
     });
-  });
+  }
 });
-phieuBanHangSchema.pre('updateOne', function (next) {
+phieuBanHangSchema.pre('updateOne', async function (next) {
   try {
+    let error;
+    const pbh = this.getUpdate();
     const filter = this.getFilter();
-    const pbh = this.model.findOne(filter);
-    if (pbh?.ma_trang_thai === 3) {
+    const oldPbh = await this.model.findOne(filter);
+    if (oldPbh.ma_trang_thai === 2) {
       return next(
-        createHttpError(400, 'Không thể chỉnh sửa, phiếu bán lẻ đã lưu vào sổ')
+        createHttpError(400, 'Không thể chỉnh sửa phiếu bán hàng đã thanh toán')
       );
     }
-    next();
+    let tienChietKhauTrenTungSanPham = 0;
+    if (pbh.tien_ck_hd) {
+      const numberDetail = pbh.details.reduce((acc, item) => {
+        return acc + item.sl_xuat;
+      }, 0);
+      tienChietKhauTrenTungSanPham = pbh.tien_ck_hd / numberDetail;
+    }
+    for (let i = 0; i < pbh.details.length; i++) {
+      const detail = pbh.details[i];
+
+      if (detail.ma_lo) {
+        const tonKho = await tonKhoController.getInventoryByConsigmentHelper({
+          ma_vt: detail.ma_vt,
+          ma_lo: detail.ma_lo,
+        });
+        if (tonKho.ton_kho < detail.sl_xuat) {
+          error = createHttpError(
+            400,
+            `Hàng hóa '${detail.ten_vt}' chỉ tồn ${tonKho.ton_kho} ở lô '${detail.ten_lo}'`
+          );
+          break;
+        }
+      } else {
+        const tonKho = await tonKhoController.getInventoryOnStoreHelper({
+          ma_vt: detail.ma_vt,
+          ma_kho: pbh.ma_kho,
+        });
+        if (tonKho.ton_kho < detail.sl_xuat) {
+          error = createHttpError(
+            400,
+            `Hàng hóa '${detail.ten_vt}' chỉ tồn ${tonKho.ton_kho} tại kho '${pbh.ten_kho}'`
+          );
+          break;
+        }
+      }
+      const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
+      if (!vatTu) {
+        error = createHttpError(
+          400,
+          `Mã hàng hóa '${detail.ma_vt}' không tồn tại`
+        );
+        break;
+      } else {
+        detail.ma_dvt = vatTu.ma_dvt;
+        detail.ten_dvt = vatTu.ten_dvt;
+        detail.ma_nvt = vatTu.ma_nvt;
+        detail.ten_nvt = vatTu.ten_nvt;
+        detail.gia_von = vatTu.gia_von;
+        detail.tien_ck_phan_bo = tienChietKhauTrenTungSanPham * detail.sl_xuat;
+        detail.tong_tien_ck = detail.tien_ck + detail.tien_ck_phan_bo;
+        detail.thanh_tien = detail.tien_hang - detail.tong_tien_ck;
+        detail.chi_phi = detail.gia_von * detail.sl_xuat;
+      }
+    }
+    if (error) {
+      return next(error);
+    } else {
+      // tinh tien hang
+      const tienHang = pbh.details.reduce((acc, item) => {
+        return acc + item.don_gia * item.sl_xuat;
+      }, 0);
+      pbh.tien_hang = tienHang;
+      // tinh tien ck san pham
+      const tienCkSp = pbh.details.reduce((acc, item) => {
+        return acc + item.tien_ck;
+      }, 0);
+      pbh.tien_ck_sp = tienCkSp;
+      // tinh tong tien ck
+      const tongCk = pbh.tien_ck_hd + pbh.tien_ck_sp;
+      pbh.tong_tien_ck = tongCk;
+      // tinh thanh tien
+      const thanhTien = pbh.tien_hang - pbh.tong_tien_ck;
+      pbh.thanh_tien = thanhTien;
+      // tinh tien VAT
+      const tienVAT = (pbh.tien_hang * pbh.VAT) / 100;
+      // tinh tong thanh tien
+      const tongThanhTien = pbh.thanh_tien + tienVAT + pbh.tien_van_chuyen;
+      pbh.t_thanh_tien = tongThanhTien;
+      // tinh chi phi
+      const chiPhi = pbh.details.reduce((acc, item) => {
+        return acc + item.sl_xuat * item.gia_von;
+      }, 0);
+      pbh.chi_phi = chiPhi;
+      next();
+    }
   } catch (error) {
     next(error);
+  }
+});
+phieuBanHangSchema.post('updateOne', async function () {
+  const pbh = this.getUpdate().$set;
+  if (pbh.ma_trang_thai === 2) {
+    const ngay = pbh.ngay_ct.getDate();
+    const thang = pbh.ngay_ct.getMonth() + 1;
+    const nam = pbh.ngay_ct.getFullYear();
+    const quy = getQuyByMonth(thang);
+    const gio = pbh.ngay_ct.getHours();
+    const phut = pbh.ngay_ct.getMinutes();
+    const giay = pbh.ngay_ct.getSeconds();
+
+    pbh.details.forEach(async (detail) => {
+      await soCaiModel.updateOne(
+        { ma_ct: pbh.ma_ct, ma_vt: detail.ma_vt },
+        {
+          ma_kho: pbh.ma_kho,
+          ten_kho: pbh.ten_kho,
+          ngay_ct: pbh.ngay_ct,
+          nam,
+          quy,
+          thang,
+          ngay,
+          gio,
+          phut,
+          giay,
+          ma_lo: detail.ma_lo,
+          ten_lo: detail.ten_lo,
+          ma_vt: detail.ma_vt,
+          ten_vt: detail.ten_vt,
+          sl_xuat: detail.sl_xuat,
+          so_luong: -detail.sl_xuat,
+        }
+      );
+    });
   }
 });
 phieuBanHangSchema.pre('updateMany', function (next) {
