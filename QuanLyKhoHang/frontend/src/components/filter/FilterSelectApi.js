@@ -12,7 +12,7 @@ function FilterSelectApi({
   FormAdd,
 }) {
   return (
-    <FilterBox title={title}>
+    <FilterBox title={title} dot={!!value}>
       <SelectApiInput
         title={title}
         apiCode={apiCode}

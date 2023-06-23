@@ -6,7 +6,7 @@ const trangThaiModel = require('../models/trangThai.model');
 const loModel = require('./lo.model');
 const tonKhoController = require('../controllers/tonkho.controller');
 const createError = require('http-errors');
-const { generateRandomCode, getQuyByMonth } = require('../../utils/myUtil');
+const { generateRandomCode, getQuyByMonth, generateUniqueValueUtil } = require('../../utils/myUtil');
 const vatTuModel = require('./vatTu.model');
 const soCaiModel = require("./soCai.model");
 
@@ -17,9 +17,7 @@ const phieuNhapKhoSchema = new mongoose.Schema(
     },
     ma_phieu: {
       type: String,
-      required: true,
       unique: true,
-      index: true,
     },
     ma_kho: {
       type: String,
@@ -159,6 +157,14 @@ phieuNhapKhoSchema.pre('save', async function (next) {
   try {
     let error;
     const pnk = this;
+    if(!pnk.ma_phieu) {
+      const maPhieu = await generateUniqueValueUtil({
+        maDm: 'PNK',
+        model: mongoose.model("PhieuNhapKho", phieuNhapKhoSchema),
+        compareKey: 'ma_phieu'
+      })
+      pnk.ma_phieu = maPhieu
+    }
     const maChungTu = await generateUniqueValue();
     pnk.ma_ct = maChungTu;
     const details = pnk.details || [];

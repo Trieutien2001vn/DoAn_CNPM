@@ -65,14 +65,10 @@ function FormAddDetail({
   });
 
   const vatTu = watch('vat_tu');
-  const soLuongXuat = watch('sl_xuat');
-  const tienHang = watch('tien_hang');
-  const tyLeCk = watch('ty_le_ck');
-  const tienCk = watch('tien_ck');
-  const tienCkPhanBo = watch('tien_ck_phan_bo');
-  const tongTienCk = watch('tong_tien_ck');
-
-  console.log({ defaultValues });
+  const donGia = watch('don_gia')
+  const soLuongXuat = watch('sl_xuat')
+  const tienHang = watch('tien_hang')
+  const tyLeCk = watch('ty_le_ck')
 
   const handleSave = (values) => {
     return new Promise((resovle) => {
@@ -85,38 +81,25 @@ function FormAddDetail({
   };
 
   useEffect(() => {
-    setValue('ty_le_ck', 0);
-    setValue('tien_ck', 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tienHang]);
+    setValue('don_gia', vatTu?.gia_ban_le || 0)
+    setValue('don_vi_tinh', {ma_dvt: vatTu?.ma_dvt || '', ten_dvt: vatTu?.ten_dvt || ''})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vatTu])
+
   useEffect(() => {
-    const tienCkNew = (tienHang * tyLeCk) / 100;
-    setValue('tien_ck', tienCkNew);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tyLeCk]);
+    const tienHang = (donGia || 0) * (soLuongXuat || 0)
+    setValue('tien_hang', tienHang)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [donGia, soLuongXuat])
+
   useEffect(() => {
-    const tyLeCkNew = Number((tienCk * 100) / tienHang);
-    setValue('ty_le_ck', tyLeCkNew);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tienCk]);
-  useEffect(() => {
-    const tongTienCk = (tienCk || 0) + (tienCkPhanBo || 0);
-    setValue('tong_tien_ck', tongTienCk);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tienCkPhanBo, tienCk]);
-  useEffect(() => {
-    const thanhTienNew = (tienHang || 0) - (tongTienCk || 0);
-    setValue('thanh_tien', thanhTienNew);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tongTienCk, tienHang]);
-  useEffect(() => {
-    if (!!vatTu) {
-      setValue('tien_hang', vatTu.gia_ban_le * soLuongXuat);
-      setValue('don_gia', vatTu.gia_ban_le);
-      setValue('don_vi_tinh', { ma_dvt: vatTu.ma_dvt, ten_dvt: vatTu.ten_dvt });
+    if(tyLeCk) {
+      const tienCkNew = (tienHang || 0) * tyLeCk / 100
+      setValue('tien_ck', tienCkNew)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [vatTu, soLuongXuat]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tienHang])
+
   useEffect(() => {
     if (vatTu?.theo_doi_lo) {
       setSchema(
@@ -130,7 +113,7 @@ function FormAddDetail({
       );
     }
   }, [vatTu]);
-
+  
   return (
     <ModalBase
       open={open}
@@ -174,28 +157,28 @@ function FormAddDetail({
             )}
           />
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
-            control={control}
-            name="don_vi_tinh"
-            render={({ field: { value, onChange } }) => (
-              <SelectApiInput
-                disabled
-                label="Đơn vị tính"
-                required
-                apiCode="dmdvt"
-                placeholder="Đơn vị tính"
-                searchFileds={['ma_dvt', 'ten_dvt']}
-                getOptionLabel={(option) => option.ten_dvt}
-                selectedValue={value}
-                value={value || { ma_dvt: '', ten_dvt: '' }}
-                onSelect={onChange}
-                FormAdd={dsDanhMuc.dmdvt.Form}
-                errorMessage={errors?.don_vi_tinh?.message}
-              />
-            )}
-          />
-        </Grid>
+          <Grid item xs={12} md={6}>
+            <Controller
+              control={control}
+              name="don_vi_tinh"
+              render={({ field: { value, onChange } }) => (
+                <SelectApiInput
+                  disabled
+                  label="Đơn vị tính"
+                  required
+                  apiCode="dmdvt"
+                  placeholder="Đơn vị tính"
+                  searchFileds={['ma_dvt', 'ten_dvt']}
+                  getOptionLabel={(option) => option.ten_dvt}
+                  selectedValue={value}
+                  value={value || { ma_dvt: '', ten_dvt: '' }}
+                  onSelect={onChange}
+                  FormAdd={dsDanhMuc.dmdvt.Form}
+                  errorMessage={errors?.don_vi_tinh?.message}
+                />
+              )}
+            />
+          </Grid>
         <Grid item xs={12} md={6}>
           <Controller
             name="don_gia"
@@ -234,40 +217,6 @@ function FormAddDetail({
         </Grid>
         <Grid item xs={12} md={6}>
           <Controller
-            name="tien_hang"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextInput
-                disabled
-                required
-                label="Tiền hàng"
-                value={numeralCustom(value).format()}
-                onChange={(e) => {
-                  onChange(numeralCustom(e.target.value).value());
-                }}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="tien_ck_phan_bo"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextInput
-                disabled
-                label="Tiền chiết khấu phân bổ"
-                value={numeralCustom(value).format()}
-                onChange={(e) => {
-                  const value = numeralCustom(e.target.value).value();
-                  onChange(value);
-                }}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
             name="ty_le_ck"
             control={control}
             render={({ field: { value, onChange } }) => (
@@ -275,8 +224,12 @@ function FormAddDetail({
                 label="Tỷ lệ chiết khấu (%)"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
+                  // luu gia tri
                   const value = numeralCustom(e.target.value).value();
                   onChange(value);
+                  // tinh lai tien ck
+                  const tienCkNew = tienHang * value / 100
+                  setValue('tien_ck', tienCkNew)
                 }}
               />
             )}
@@ -291,46 +244,91 @@ function FormAddDetail({
                 label="Tiền chiết khấu"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
+                  // luu gia tri
                   const value = numeralCustom(e.target.value).value();
                   onChange(value);
+                  // tinh lai ty le
+                  const tyLeCkNew = value * 100 / tienHang
+                  setValue('ty_le_ck', tyLeCkNew)
                 }}
               />
             )}
           />
         </Grid>
+        {isEditMaster && (
+          <Grid item xs={12} md={6}>
+            <Controller
+              name="tien_ck_phan_bo"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextInput
+                  disabled
+                  label="Tiền chiết khấu phân bổ"
+                  value={numeralCustom(value).format()}
+                  onChange={(e) => {
+                    const value = numeralCustom(e.target.value).value();
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+          </Grid>
+        )}
         <Grid item xs={12} md={6}>
           <Controller
-            name="tong_tien_ck"
+            name="tien_hang"
             control={control}
             render={({ field: { value, onChange } }) => (
               <TextInput
-                label="Tổng tiền chiết khấu"
                 disabled
-                value={numeralCustom(value).format()}
-                onChange={(e) => {
-                  const value = numeralCustom(e.target.value).value();
-                  onChange(value);
-                }}
-              />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="thanh_tien"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextInput
                 required
-                label="Thành tiền"
+                label="Tiền hàng"
                 value={numeralCustom(value).format()}
                 onChange={(e) => {
+                  // luu gia tri
                   onChange(numeralCustom(e.target.value).value());
                 }}
               />
             )}
           />
         </Grid>
+        {isEditMaster && (
+          <Grid item xs={12} md={6}>
+            <Controller
+              name="tong_tien_ck"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextInput
+                  label="Tổng tiền chiết khấu"
+                  disabled
+                  value={numeralCustom(value).format()}
+                  onChange={(e) => {
+                    const value = numeralCustom(e.target.value).value();
+                    onChange(value);
+                  }}
+                />
+              )}
+            />
+          </Grid>
+        )}
+        {isEditMaster && (
+          <Grid item xs={12} md={6}>
+            <Controller
+              name="thanh_tien"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <TextInput
+                  required
+                  label="Thành tiền"
+                  value={numeralCustom(value).format()}
+                  onChange={(e) => {
+                    onChange(numeralCustom(e.target.value).value());
+                  }}
+                />
+              )}
+            />
+          </Grid>
+        )}
         {vatTu?.theo_doi_lo && (
           <Grid item xs={12} md={6}>
             <Controller
