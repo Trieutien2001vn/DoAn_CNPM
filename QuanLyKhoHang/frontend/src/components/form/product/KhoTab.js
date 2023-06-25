@@ -236,6 +236,7 @@ function KhoTab({ maVt, theoDoiLo }) {
           ma_vt: maVt,
         },
       });
+      console.log(resp.data);
       if (resp) {
         setPnkOptions({
           ...pnkOptions,

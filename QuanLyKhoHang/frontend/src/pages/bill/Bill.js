@@ -5,11 +5,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { AiFillLeftCircle, AiFillRightCircle, AiOutlineFieldTime, AiOutlinePlus, AiOutlinePlusCircle } from 'react-icons/ai';
 import { BiDotsVerticalRounded, BiMap, BiPencil } from 'react-icons/bi';
 import { BsTranslate, BsTrash, BsUpcScan } from 'react-icons/bs';
-import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaLastfm } from 'react-icons/fa';
-import { HiTrendingDown } from 'react-icons/hi';
 import { SlReload } from 'react-icons/sl';
 import { TbArrowBigLeftFilled } from 'react-icons/tb';
-import { TfiReload } from 'react-icons/tfi';
 import { TiDelete, TiFlash, TiMediaRecord } from 'react-icons/ti';
 import ButtonBase from '~/components/button/ButtonBase';
 import ImageTab from '~/components/form/product/ImageTab';

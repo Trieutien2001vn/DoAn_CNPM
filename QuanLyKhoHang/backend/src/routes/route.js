@@ -8,6 +8,7 @@ const tonKhoRoute = require("./tonKho.route");
 const nhapkhoRoute = require("./nhapkho.route");
 const xuatkhoRoute = require("./xuatkho.route");
 const reportRoute = require('./baocao.route');
+const soQuyRoute = require('./soQuy.route');
 const createError = require('http-errors');
 
 const initApiRoute = (app) => {
@@ -21,6 +22,7 @@ const initApiRoute = (app) => {
   app.use('/api/v1/nhapkho', nhapkhoRoute);
   app.use('/api/v1/xuatkho', xuatkhoRoute);
   app.use('/api/v1/baocao', reportRoute);
+  app.use('/api/v1/soquy', soQuyRoute);
 
   // handle error
   app.use((req, res, next) => {
