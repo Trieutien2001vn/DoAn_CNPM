@@ -32,7 +32,14 @@ import FormPTTT from '~/components/form/pttt/FormPTTT';
 import FilterPTTT from '~/components/filter/pttt/FilterPTTT';
 import FormKH from '~/components/form/khachhang/FormKH';
 import FilterKH from '~/components/filter/khachhang/FilterKH';
+import FormPT from '~/components/form/phieuthu/FormPT';
+import FormNNN from '~/components/form/nhomnguoinop/FormNNN';
+import FilterPT from '~/components/filter/phieuThu/FilterPT';
+
 import FormPBH from '~/components/form/pbh/FormPBH';
+import FormPC from '~/components/form/phieuchi/FormPC';
+import FormNNNHAN from '~/components/form/nhomnguoinhan/FormNNNHAN';
+import FilterPC from '~/components/filter/phieuChi/FilterPC';
 import FilterPBH from '~/components/filter/pbh/FilterPBH';
 
 const dsDanhMuc = {
@@ -415,7 +422,7 @@ const dsDanhMuc = {
         minWidth: '150px',
       },
       {
-        name: 'Tổng tiền xuất',
+        name: 'tiền xuất',
         selector: (row) => row.tong_tien_xuat,
         sortable: true,
         center: true,
@@ -751,6 +758,151 @@ const dsDanhMuc = {
       },
     ],
   },
+  dmpt:{
+    title: 'Phiếu Thu',
+    uniqueKey: 'ma_phieu',
+    Form: FormPT,
+    Filter: FilterPT,
+    columns: [
+      {
+        name: 'Mã phiếu thu',
+        selector: (row) => row.ma_phieu,
+        sortable: true,
+        left:true,
+        minWidth: '120px',
+
+      },
+      {
+        name: 'Mã chứng từ',
+        selector: (row) => row.ma_ct,
+        sortable: true,
+        minWidth: '120px',
+      },
+      {
+        name: 'Nhóm Người Nộp',
+        selector: (row) => row.ten_nhom_nguoi_nop,
+        sortable: true,
+        left:true,
+        minWidth: '150px',
+      },
+      {
+        name: 'Loại phiếu',
+        selector: (row) => row.ten_loai,
+        sortable: true,
+        left:true,
+        minWidth: '150px',
+      },
+      {
+        name: 'Phương thức thanh toán',
+        selector: (row) => row.ten_pttt,
+        sortable: true,
+        center:true,
+        minWidth: '200px',
+      },
+      {
+        name: 'Người nộp',
+        selector: (row) => row.ten_nguoi_nop,
+        sortable: true,
+        left:true,
+        minWidth: '120px',
+      },
+      {
+        name: 'Ngày chứng từ',
+        selector: (row) => row.ngay_ct,
+        sortable: true,
+        minWidth: '150px',
+        left:true,
+        format: (row) => formatDateDisplay(row.ngay_ct),
+      },
+      {
+        name: 'Ngày lập phiếu',
+        selector: (row) => row.ngay_lap_phieu,
+        sortable: true,
+        minWidth: '150px',
+        left:true,
+        format: (row) => formatDateDisplay(row.ngay_lap_phieu),
+      },
+      {
+        name: 'Diễn giải',
+        selector: (row) => row.dien_giai,
+        sortable: true,
+        right:true,
+        minWidth: '120px',
+      },
+  ]},
+  dmpc:{
+      title: 'Phiếu Chi',
+      uniqueKey: 'ma_phieu',
+      Form: FormPC,
+      Filter: FilterPC,
+      columns: [
+        {
+          name: 'Mã phiếu chi',
+          selector: (row) => row.ma_phieu,
+          sortable: true,
+          left:true,
+          minWidth: '120px',
+  
+        },
+        {
+          name: 'Mã chứng từ',
+          selector: (row) => row.ma_ct,
+          sortable: true,
+          minWidth: '120px',
+        },
+        {
+          name: 'Nhóm Người Nhận',
+          selector: (row) => row.ten_nhom_nguoi_nhan,
+          sortable: true,
+          left:true,
+          minWidth: '150px',
+        },
+        {
+          name: 'Loại phiếu',
+          selector: (row) => row.ten_loai,
+          sortable: true,
+          left:true,
+          minWidth: '150px',
+        },
+        {
+          name: 'Phương thức thanh toán',
+          selector: (row) => row.ten_pttt,
+          sortable: true,
+          center:true,
+          minWidth: '200px',
+        },
+        {
+          name: 'Người nhận',
+          selector: (row) => row.ten_nguoi_nhan,
+          sortable: true,
+          left:true,
+          minWidth: '120px',
+        },
+        {
+          name: 'Ngày chứng từ',
+          selector: (row) => row.ngay_ct,
+          sortable: true,
+          minWidth: '150px',
+          left:true,
+          format: (row) => formatDateDisplay(row.ngay_ct),
+        },
+        {
+          name: 'Ngày lập phiếu',
+          selector: (row) => row.ngay_lap_phieu,
+          sortable: true,
+          minWidth: '150px',
+          left:true,
+          format: (row) => formatDateDisplay(row.ngay_lap_phieu),
+        },
+        {
+          name: 'Diễn giải',
+          selector: (row) => row.dien_giai,
+          sortable: true,
+          right:true,
+          minWidth: '200px',
+        },
+  ]},
+      
   dmpbh: {
     title: 'phiếu bán hàng',
     uniqueKey: 'ma_phieu',
@@ -780,58 +932,54 @@ const dsDanhMuc = {
       {
         name: 'Ngày chứng từ',
         selector: (row) => row.ngay_ct,
+        sortable: true,
+        minWidth: '150px',
+        right:true,
         format: (row) => formatDateDisplay(row.ngay_ct),
+      },
+   
+    ],
+  },
+  dmnnn:{
+    title: 'Nhóm người nộp',
+    uniqueKey: 'ten_nhom_nguoi_nop',
+    Form: FormNNN,
+    // Filter: FilterPTTT,
+    columns: [
+      {
+        name: 'Mã nhóm người nộp',
+        selector: (row) => row.ma_nhom_nguoi_nop,
         sortable: true,
+        minWidth: '100px',
         width: '140px',
         center: true,
       },
       {
-        name: 'Ngày lập phiếu',
-        selector: (row) => row.ngay_lap_phieu,
-        format: (row) => formatDateDisplay(row.ngay_lap_phieu),
+        name: 'Tên nhóm người nộp',
+        selector: (row) => row.ten_nhom_nguoi_nop,
         sortable: true,
-        width: '140px',
-        center: true,
+        minWidth: '100px',
+      }
+    ],
+  },
+  dmnnnh:{
+    title: 'Nhóm người nhận',
+    uniqueKey: 'ma_nhom_nguoi_nhan',
+    Form: FormNNNHAN,
+    // Filter: FilterPTTT,
+    columns: [
+      {
+        name: 'Mã nhóm người nhận',
+        selector: (row) => row.ma_nhom_nguoi_nhan,
+        sortable: true,
+        minWidth: '100px',
       },
       {
-        name: 'Tổng tiền',
-        selector: (row) => row.t_thanh_tien,
-        format: (row) => numeralCustom(row.t_thanh_tien).format(),
+        name: 'Tên nhóm người nhận',
+        selector: (row) => row.ten_nhom_nguoi_nhan,
         sortable: true,
-        center: true,
-        width: '120px',
-      },
-      {
-        name: 'Nhân viên',
-        selector: (row) => row.ten_nv,
-        sortable: true,
-        width: '140px',
-        wrap: true,
-        center: true,
-      },
-      {
-        name: 'Khách hàng',
-        selector: (row) => row.ten_kh,
-        sortable: true,
-        center: true,
-        wrap: true,
-        width: '140px',
-      },
-      {
-        name: 'Kênh bán',
-        selector: (row) => row.ten_kenh,
-        sortable: true,
-        width: '120px',
-        center: true,
-        wrap: true,
-      },
-      {
-        name: 'Phương thức thanh toán',
-        selector: (row) => row.ten_pttt,
-        sortable: true,
-        width: '180px',
-        right: true,
-      },
+        minWidth: '100px',
+      }
     ],
   },
 };

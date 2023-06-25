@@ -4,10 +4,12 @@ const generateLoaiPhieuThu = require('./loaiphieuthu.seed');
 const generateNguoiDung = require('./nguoidung.seed');
 const generatePhanQuyen = require('./phanquyen.seed');
 const generateKho = require('./kho.seed');
+const generateNhomNguoiNop = require('./nhomnguoinop.seed');
 const generateLoaiPhieuChi = require('./loaiphieuchi.seed');
 const generatePTTT = require('./pttt.seed');
 const generateKenhBan = require('./kenhban.seed');
 const generateTrangThaiPBH = require('./trangthaiPBH.seed');
+const generateNhomNguoiNhan = require('./nhomNguoiNhan.seed');
 const generateKhachHang = require('./khachhang.seed');
 
 const generateSeed = async () => {
@@ -18,6 +20,8 @@ const generateSeed = async () => {
   await generatePhanQuyen();
   await generateNguoiDung();
   await generateKho();
+  await generateNhomNguoiNop();
+  await generateNhomNguoiNhan();
   await generatePTTT();
   await generateKenhBan();
   await generateTrangThaiPBH();

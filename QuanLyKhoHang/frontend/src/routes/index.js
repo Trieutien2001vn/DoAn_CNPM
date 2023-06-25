@@ -8,7 +8,7 @@ import RestrictedRoute from './RestrictedRoute';
 import ListDeleted from '~/pages/list/ListDeleted';
 import ReportPage from '~/pages/report/ReportPage';
 import ReportXNTPage from '~/pages/report/ReportXNTPage';
-// import Bill from '~/pages/bill/Bill';
+import SoQuy from '~/pages/soquy/SoQuy';
 
 const restrictedRoutes = [
   {
@@ -64,6 +64,15 @@ const privateRoutes = [
     page: (
       <PrivateRoute>
         <List />
+      </PrivateRoute>
+    ),
+  },
+  {
+    id: 'soquy',
+    path: '/soquy',
+    page: (
+      <PrivateRoute>
+        <SoQuy/>
       </PrivateRoute>
     ),
   },

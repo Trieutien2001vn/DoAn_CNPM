@@ -30,12 +30,13 @@ function FormKH({
     formState: { isSubmitting, errors },
   } = useForm({
     mode: 'onBlur',
-    defaultValues: defaultValues
-      ? {
-          ...defaultValues,
-          ngay_sinh: moment(defaultValues.ngay_sinh).format('YYYY-MM-DD'),
-        }
-      : null,
+    defaultValues: defaultValues ?{
+        ...defaultValues,
+        ngay_sinh: moment(defaultValues.ngay_sinh).format('YYYY-MM-DD'),
+    }: {
+      ngay_sinh: moment().format('YYYY-MM-DD'),
+    }
+,
     resolver: yupResolver(schema),
   });
   const { asyncPostData } = useApisContext();

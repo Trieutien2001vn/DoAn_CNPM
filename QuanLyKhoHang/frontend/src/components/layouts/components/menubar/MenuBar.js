@@ -161,7 +161,7 @@ function MenuBar() {
             startIcon={<AiOutlineDollarCircle fontSize="16px" />}
             menuColor={theme.palette.primary.second}
             active={[
-              '/list/dmptt',
+              '/list/dmpt',
               '/list/dmpct',
               '/list/dmlpt',
               '/list/dmlpc',
@@ -171,8 +171,8 @@ function MenuBar() {
                 text: 'Phiếu thu',
                 startIcon: <HiOutlineDocumentPlus fontSize="14px" />,
                 primary: true,
-                onClick: () => navigate('/list/dmptt'),
-                active: location.pathname.indexOf('dmptt') >= 0,
+                onClick: () => navigate('/list/dmpt'),
+                active: location.pathname.indexOf('dmpt') >= 0,
               },
               {
                 text: 'Loại phiếu thu',
@@ -185,8 +185,8 @@ function MenuBar() {
                 text: 'Phiếu chi',
                 startIcon: <HiOutlineDocumentMinus fontSize="14px" />,
                 primary: true,
-                onClick: () => navigate('/list/dmpct'),
-                active: location.pathname.indexOf('dmpct') >= 0,
+                onClick: () => navigate('/list/dmpc'),
+                active: location.pathname.indexOf('dmpc') >= 0,
               },
               {
                 text: 'Loại phiếu chi',
@@ -199,7 +199,7 @@ function MenuBar() {
                 text: 'Sổ quỹ',
                 startIcon: <BsCashCoin fontSize="14px" />,
                 primary: true,
-                onClick: () => navigate('/list/soquy'),
+                onClick: () => navigate('/soquy'),
                 active: location.pathname.indexOf('soquy') >= 0,
               },
             ]}
