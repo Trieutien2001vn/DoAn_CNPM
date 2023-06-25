@@ -187,7 +187,7 @@ function MenuBar() {
                 text: 'Sổ quỹ',
                 startIcon: <BsCashCoin fontSize="14px" />,
                 primary: true,
-                onClick: () => navigate('/list/soquy'),
+                onClick: () => navigate('/soquy'),
                 active: location.pathname.indexOf('soquy') >= 0,
               },
             ]}

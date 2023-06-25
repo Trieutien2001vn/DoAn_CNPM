@@ -10,6 +10,15 @@ import { numeralCustom } from '~/utils/helpers';
 function InfoTab({ register, control, errors,nhomNguoiNop,isEdit }){
   return (
       <Grid container spacing={2}>
+         <Grid item xs={12} md={6}>
+          <TextInput
+          disabled={isEdit}
+          label="Mã phiếu"
+          placeholder="Mã nhập hoặc tạo tự động"
+          name="ma_phieu"
+          register={register}
+          />
+        </Grid>
         <Grid item xs={12} md={6}>
           <Controller
             control={control}
