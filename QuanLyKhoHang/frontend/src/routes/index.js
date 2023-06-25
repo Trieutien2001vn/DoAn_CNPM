@@ -6,6 +6,8 @@ import VerifyEmailPage from '../pages/register/VerifyEmailPage';
 import PrivateRoute from './PrivateRoute';
 import RestrictedRoute from './RestrictedRoute';
 import ListDeleted from '~/pages/list/ListDeleted';
+import ReportPage from '~/pages/report/ReportPage';
+import ReportXNTPage from '~/pages/report/ReportXNTPage';
 import SoQuy from '~/pages/soquy/SoQuy';
 
 const restrictedRoutes = [
@@ -89,6 +91,24 @@ const privateRoutes = [
     page: (
       <PrivateRoute>
         <ListDeleted />
+      </PrivateRoute>
+    ),
+  },
+  {
+    id: 'report',
+    path: '/report/xnt',
+    page: (
+      <PrivateRoute>
+        <ReportXNTPage />
+      </PrivateRoute>
+    ),
+  },
+  {
+    id: 'report',
+    path: '/report/:report',
+    page: (
+      <PrivateRoute>
+        <ReportPage />
       </PrivateRoute>
     ),
   },

@@ -3,14 +3,13 @@ const mongooseDelete = require('mongoose-delete');
 const {
   generateUniqueValueUtil,
   getQuyByMonth,
+  generateTimeByDate,
 } = require('../../utils/myUtil');
-const chungTuModel = require('./chungTu.model');
 const vatTuModel = require('./vatTu.model');
-const trangThaiPBHModel = require('./trangThaiPhieuBanHang.model');
 const tonKhoController = require('../controllers/tonkho.controller');
 const createHttpError = require('http-errors');
-const soCaiModel = require('./soCai.model');
 const soKhoModel = require('./soKho.model');
+const moment = require('moment');
 
 const phieuBanHangSchema = new mongoose.Schema(
   {
@@ -145,6 +144,34 @@ const phieuBanHangSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    nam: {
+      type: Number,
+      default: 0,
+    },
+    thang: {
+      type: Number,
+      default: 0,
+    },
+    ngay: {
+      type: Number,
+      default: 0,
+    },
+    quy: {
+      type: Number,
+      default: 0,
+    },
+    gio: {
+      type: Number,
+      default: 0,
+    },
+    phut: {
+      type: Number,
+      default: 0,
+    },
+    giay: {
+      type: Number,
+      default: 0,
+    },
     details: {
       type: [
         {
@@ -243,7 +270,7 @@ const phieuBanHangSchema = new mongoose.Schema(
 phieuBanHangSchema.pre('save', async function (next) {
   try {
     let error;
-    const pbh = this;
+    let pbh = this;
     let tienChietKhauTrenTungSanPham = 0;
     if (pbh.tien_ck_hd) {
       const numberDetail = pbh.details.reduce((acc, item) => {
@@ -314,6 +341,7 @@ phieuBanHangSchema.pre('save', async function (next) {
         compareKey: 'ma_ct',
       });
       pbh.ma_ct = maChungTu;
+
       // tinh tien hang
       const tienHang = pbh.details.reduce((acc, item) => {
         return acc + item.don_gia * item.sl_xuat;
@@ -340,6 +368,16 @@ phieuBanHangSchema.pre('save', async function (next) {
         return acc + item.sl_xuat * item.gia_von;
       }, 0);
       pbh.chi_phi = chiPhi;
+      const { nam, quy, thang, ngay, gio, phut, giay } = generateTimeByDate(
+        pbh.ngay_ct
+      );
+      pbh.nam = nam;
+      pbh.quy = quy;
+      pbh.thang = thang;
+      pbh.ngay = ngay;
+      pbh.gio = gio;
+      pbh.phut = phut;
+      pbh.giay = giay;
       next();
     }
   } catch (error) {
@@ -385,7 +423,8 @@ phieuBanHangSchema.post('save', async function () {
 phieuBanHangSchema.pre('updateOne', async function (next) {
   try {
     let error;
-    const pbh = this.getUpdate();
+    let pbh = this.getUpdate();
+    console.log({ pbh });
     const filter = this.getFilter();
     const oldPbh = await this.model.findOne(filter);
     if (oldPbh.ma_trang_thai === 2) {
@@ -402,7 +441,6 @@ phieuBanHangSchema.pre('updateOne', async function (next) {
     }
     for (let i = 0; i < pbh.details.length; i++) {
       const detail = pbh.details[i];
-
       if (detail.ma_lo) {
         const tonKho = await tonKhoController.getInventoryByConsigmentHelper({
           ma_vt: detail.ma_vt,
@@ -476,6 +514,14 @@ phieuBanHangSchema.pre('updateOne', async function (next) {
         return acc + item.sl_xuat * item.gia_von;
       }, 0);
       pbh.chi_phi = chiPhi;
+      const { nam, quy, thang, ngay, gio, phut, giay } = generateTimeByDate(new Date(pbh.ngay_ct));
+      pbh.nam = nam;
+      pbh.quy = quy;
+      pbh.thang = thang;
+      pbh.ngay = ngay;
+      pbh.gio = gio;
+      pbh.phut = phut;
+      pbh.giay = giay;
       next();
     }
   } catch (error) {
@@ -483,7 +529,7 @@ phieuBanHangSchema.pre('updateOne', async function (next) {
   }
 });
 phieuBanHangSchema.post('updateOne', async function () {
-  const pbh = this.getUpdate().$set;
+  let pbh = this.getUpdate().$set;
   if (pbh.ma_trang_thai === 2) {
     const ngay = pbh.ngay_ct.getDate();
     const thang = pbh.ngay_ct.getMonth() + 1;
@@ -494,27 +540,27 @@ phieuBanHangSchema.post('updateOne', async function () {
     const giay = pbh.ngay_ct.getSeconds();
 
     pbh.details.forEach(async (detail) => {
-      await soCaiModel.updateOne(
-        { ma_ct: pbh.ma_ct, ma_vt: detail.ma_vt },
-        {
-          ma_kho: pbh.ma_kho,
-          ten_kho: pbh.ten_kho,
-          ngay_ct: pbh.ngay_ct,
-          nam,
-          quy,
-          thang,
-          ngay,
-          gio,
-          phut,
-          giay,
-          ma_lo: detail.ma_lo,
-          ten_lo: detail.ten_lo,
-          ma_vt: detail.ma_vt,
-          ten_vt: detail.ten_vt,
-          sl_xuat: detail.sl_xuat,
-          so_luong: -detail.sl_xuat,
-        }
-      );
+      await soKhoModel.create({
+        ma_ct: pbh.ma_ct,
+        ma_loai_ct: pbh.ma_loai_ct,
+        ten_loai_ct: pbh.ten_loai_ct,
+        ma_kho: pbh.ma_kho,
+        ten_kho: pbh.ten_kho,
+        ngay_ct: pbh.ngay_ct,
+        nam,
+        quy,
+        thang,
+        ngay,
+        gio,
+        phut,
+        giay,
+        ma_lo: detail.ma_lo,
+        ten_lo: detail.ten_lo,
+        ma_vt: detail.ma_vt,
+        ten_vt: detail.ten_vt,
+        sl_xuat: detail.sl_xuat,
+        so_luong: -detail.sl_xuat,
+      });
     });
   }
 });

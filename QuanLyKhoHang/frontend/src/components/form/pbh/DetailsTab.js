@@ -35,10 +35,10 @@ const columns = [
   },
   {
     name: 'Giá bán lẻ',
-    selector: (row) => row.gia_ban_le,
+    selector: (row) => row.don_gia,
     width: '150px',
     center: true,
-    format: (row) => numeralCustom(row.gia_ban_le).format(),
+    format: (row) => numeralCustom(row.don_gia).format(),
   },
   {
     name: 'Tiền hàng',
@@ -70,10 +70,10 @@ const columns = [
   },
   {
     name: 'Tổng tiền',
-    selector: (row) => row.tong_tien,
+    selector: (row) => row.tien_hang,
     minWidth: '150px',
     center: true,
-    format: (row) => numeralCustom(row.tong_tien).format(),
+    format: (row) => numeralCustom(row.tien_hang).format(),
   },
 ];
 
@@ -85,10 +85,6 @@ function DetailsTab({ details, setDetails, isEditMaster, tienCkHoaDon = 0 }) {
 
   // add a detail
   const addDetail = (detail, isEdit = false) => {
-    // if (isEditMaster) {
-    //   alertSnackbar('error', 'Không thể chỉnh sửa, phiếu bán lẻ đã lưu vào sổ');
-    //   return;
-    // }
     const { vat_tu, don_vi_tinh, lo, ...detailFields } = detail;
     const data = {
       ...detailFields,

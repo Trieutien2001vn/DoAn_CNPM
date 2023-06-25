@@ -3,6 +3,7 @@ const createError = require("http-errors");
 const multer = require("multer");
 const fs = require("fs");
 const { v4 } = require("uuid");
+const moment = require('moment');
 
 const generateAccessToken = (user) => {
   return jwt.sign(
@@ -12,7 +13,7 @@ const generateAccessToken = (user) => {
       ma_phan_quyen: user.ma_phan_quyen,
     },
     process.env.JWT_ACCESS_KEY,
-    { expiresIn: "1d" }
+    { expiresIn: '1d' }
   );
 };
 const generateRefreshToken = (user) => {
@@ -23,19 +24,18 @@ const generateRefreshToken = (user) => {
       ma_phan_quyen: user.ma_phan_quyen,
     },
     process.env.JWT_REFRESH_KEY,
-    { expiresIn: "30d" }
+    { expiresIn: '30d' }
   );
 };
 function generateRandomCode(length = 6, prefix = '') {
-  const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let code = '';
   for (let i = 0; i < length; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return `${prefix}${prefix ? '_' : ''}${code}`;
 }
-async function generateUniqueValueUtil({ maDm, model, compareKey='ma_ct' }) {
+async function generateUniqueValueUtil({ maDm, model, compareKey = 'ma_ct' }) {
   let uniqueValue = generateRandomCode(6, maDm);
   const doc = await model.findOne({ [compareKey]: uniqueValue });
   if (doc) {
@@ -102,6 +102,50 @@ const deleteFile = (path) => {
     }
   });
 };
+// lấy ra các quý trang khoảng thời gian
+
+// lấy ra tất cả các tháng trong khoảng thời gian
+const getMonthsByPeriod = ({ tu_ngay, den_ngay }) => {
+  let startDate;
+  let endDate;
+  const months = [];
+  if (tu_ngay && den_ngay) {
+    startDate = moment(tu_ngay);
+    endDate = moment(den_ngay);
+    let currentMonth = startDate.clone().startOf('month');
+    while (currentMonth.isSameOrBefore(endDate, 'month')) {
+      months.push(currentMonth.format('YYYY-MM-DD')); // Thêm tên tháng vào mảng
+      currentMonth.add(1, 'month');
+    }
+  }
+  return months;
+};
+// lấy ra các ngày trong một tháng
+const getDatesInMonth = ({ tu_ngay, den_ngay }) => {
+  let startDate;
+  let endDate;
+  const days = [];
+  if (tu_ngay && den_ngay) {
+    startDate = moment(tu_ngay);
+    endDate = moment(den_ngay);
+    let currentDate = startDate.clone();
+    while (currentDate.isSameOrBefore(endDate, 'day')) {
+      days.push(currentDate.format('YYYY-MM-DD')); // Thêm ngày vào mảng
+      currentDate.add(1, 'day');
+    }
+  }
+  return days;
+};
+const generateTimeByDate = (date) => {
+  const nam = date.getFullYear();
+  const thang = date.getMonth() + 1;
+  const ngay = date.getDate();
+  const quy = getQuyByMonth(thang);
+  const gio = date.getHours();
+  const phut = date.getMinutes();
+  const giay = date.getSeconds();
+  return { nam, quy, thang, ngay, gio, phut, giay };
+};
 
 module.exports = {
   generateAccessToken,
@@ -109,6 +153,9 @@ module.exports = {
   generateRandomCode,
   generateUniqueValueUtil,
   getQuyByMonth,
+  getDatesInMonth,
   upload,
   deleteFile,
+  getMonthsByPeriod,
+  generateTimeByDate
 };

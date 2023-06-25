@@ -1,31 +1,38 @@
 const router = require("express").Router();
 const tonKhoController = require("../app/controllers/tonkho.controller");
 const authMiddleware = require("../app/middlewares/auth.middleware");
+const roleMiddleWare = require('../app/middlewares/role.middware');
 
 router.post(
-  "/tongtonkho",
+  '/tongtonkho',
   authMiddleware.verifyToken,
   tonKhoController.getTotalInventory
 );
 router.post(
-  "/tonchitiet",
+  '/tonchitiet',
   authMiddleware.verifyToken,
   tonKhoController.getDetailInventory
 );
 router.post(
-  "/tontheokho",
+  '/tontheokho',
   authMiddleware.verifyToken,
   tonKhoController.getInventoryOnStore
 );
 router.post(
-  "/tontheolo",
+  '/tontheolo',
   authMiddleware.verifyToken,
   tonKhoController.getInventoryByConsignment
 );
 router.post(
-  "/tonchitietlo",
+  '/tonchitietlo',
   authMiddleware.verifyToken,
   tonKhoController.getDetailInventoryByConsignment
+);
+router.post(
+  '/xnt',
+  authMiddleware.verifyToken,
+  roleMiddleWare.checkAdminOrManager,
+  tonKhoController.reportXNT
 );
 
 module.exports = router;

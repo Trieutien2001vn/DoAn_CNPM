@@ -10,6 +10,7 @@ const generatePTTT = require('./pttt.seed');
 const generateKenhBan = require('./kenhban.seed');
 const generateTrangThaiPBH = require('./trangthaiPBH.seed');
 const generateNhomNguoiNhan = require('./nhomNguoiNhan.seed');
+const generateKhachHang = require('./khachhang.seed');
 
 const generateSeed = async () => {
   await generateTrangThai();
@@ -24,6 +25,7 @@ const generateSeed = async () => {
   await generatePTTT();
   await generateKenhBan();
   await generateTrangThaiPBH();
+  await generateKhachHang()
   console.log('Khởi tạo dữ liệu thành công');
 };
 module.exports = generateSeed;

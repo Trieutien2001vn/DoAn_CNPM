@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
 const soKhoModel = require('./soKho.model');
-const { generateUniqueValueUtil } = require('../../utils/myUtil');
+const {
+  generateUniqueValueUtil,
+  generateTimeByDate,
+} = require('../../utils/myUtil');
+const moment = require('moment');
 
 const productSchema = new mongoose.Schema(
   {
@@ -142,6 +146,8 @@ productSchema.pre('save', async function (next) {
 });
 productSchema.post('save', function () {
   const vatTu = this;
+  const ngayCt = new Date();
+  const { nam, quy, thang, ngay, gio, phut, giay } = generateTimeByDate(ngayCt);
   if (vatTu.ton_kho_ban_dau.length > 0) {
     vatTu.ton_kho_ban_dau.map(async (item) => {
       await soKhoModel.create({
@@ -151,6 +157,14 @@ productSchema.post('save', function () {
         ten_vt: vatTu.ten_vt,
         sl_nhap: item.ton_kho,
         so_luong: item.ton_kho,
+        ngay_ct: ngayCt,
+        nam,
+        quy,
+        thang,
+        ngay,
+        gio,
+        phut,
+        giay,
       });
     });
   }

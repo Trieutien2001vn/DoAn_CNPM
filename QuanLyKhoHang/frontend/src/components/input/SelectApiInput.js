@@ -18,6 +18,7 @@ import ButtonBase from '../button/ButtonBase';
 import ListBase from '../listBase/ListBase';
 import { dsDanhMuc } from '~/utils/data';
 import ModalBase from '../modal/ModalBase';
+import { useEffect } from 'react';
 
 const AutoCompleteStyled = styled(Autocomplete)`
   width: 100%;
@@ -144,6 +145,9 @@ function SelectApiInput({
       clearTimeout(timerRef.current);
     };
   }, [searchText]);
+  useEffect(() => {
+    setOptions([]);
+  }, [apiCode]);
 
   return (
     <>

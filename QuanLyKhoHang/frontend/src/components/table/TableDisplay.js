@@ -18,6 +18,7 @@ function TableDisplay({
   onRowClicked,
   handleDelete,
   uniqueKey,
+  fixedHeaderScrollHeight = '300px',
 }) {
   const theme = useTheme();
   const [hoveredRowId, setHoveredRowId] = useState(null);
@@ -83,7 +84,7 @@ function TableDisplay({
     <DataTable
       persistTableHead
       fixedHeader
-      fixedHeaderScrollHeight="300px"
+      fixedHeaderScrollHeight={fixedHeaderScrollHeight}
       striped
       pointerOnHover
       highlightOnHover

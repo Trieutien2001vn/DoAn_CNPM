@@ -196,5 +196,99 @@ const tonKhoController = {
       return next(error);
     }
   },
+  async reportXNT(req, res, next) {
+    try {
+      let { tu_ngay, den_ngay, page, limit, ...condition } = req.body;
+      let startDate;
+      let endDate;
+      if (!page) {
+        page = 1;
+      }
+      if (!limit) {
+        limit = 20;
+      }
+      const skip = (page - 1) * limit;
+      startDate = tu_ngay ? new Date(tu_ngay) : new Date();
+      endDate = den_ngay ? new Date(den_ngay) : new Date();
+
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+
+      const result = [];
+
+      const matchObj = {
+        $match: { ngay_ct: { $gte: startDate, $lte: endDate }, ...condition },
+      };
+
+      let nhapXuatKhos = await soKhoModel.aggregate([
+        matchObj,
+        {
+          $group: {
+            _id: '$ma_vt',
+            ma_vt: { $first: '$ma_vt' },
+            ten_vt: { $first: '$ten_vt' },
+            nhap_kho: { $sum: '$sl_nhap' },
+            xuat_kho: { $sum: '$sl_xuat' },
+          },
+        },
+        { $project: { _id: 0 } },
+        { $skip: skip },
+        { $limit: limit },
+      ]);
+      let count = await soKhoModel.aggregate([
+        matchObj,
+        {
+          $group: {
+            _id: '$ma_vt',
+            ma_vt: { $first: '$ma_vt' },
+            ten_vt: { $first: '$ten_vt' },
+            nhap_kho: { $sum: '$sl_nhap' },
+            xuat_kho: { $sum: '$sl_xuat' },
+          },
+        },
+      ]);
+      const matchObjDauKy = {
+        $match: { ngay_ct: { $lt: startDate }, ...condition },
+      };
+      const tonDauKys = await soKhoModel.aggregate([
+        matchObjDauKy,
+        {
+          $group: {
+            _id: '$ma_vt',
+            ma_vt: { $first: '$ma_vt' },
+            ton_dau_ky: { $sum: '$so_luong' },
+          },
+        },
+        { $project: { _id: 0 } },
+      ]);
+      const matchObjCuoiKy = {
+        $match: { ngay_ct: { $lte: endDate }, ...condition },
+      };
+      const tonCuoiKys = await soKhoModel.aggregate([
+        matchObjCuoiKy,
+        {
+          $group: {
+            _id: '$ma_vt',
+            ma_vt: { $first: '$ma_vt' },
+            ton_cuoi_ky: { $sum: '$so_luong' },
+          },
+        },
+        { $project: { _id: 0 } },
+      ]);
+      for (let i = 0; i < nhapXuatKhos.length; i++) {
+        const maVt = nhapXuatKhos[i].ma_vt;
+        const tonDauKy = tonDauKys.find((item) => item.ma_vt === maVt);
+        const tonCuoiKy = tonCuoiKys.find((item) => item.ma_vt === maVt);
+        result.push({
+          ...nhapXuatKhos[i],
+          ton_dau_ky: tonDauKy?.ton_dau_ky || 0,
+          ton_cuoi_ky: tonCuoiKy?.ton_cuoi_ky || 0,
+        });
+      }
+      return res.json({ data: result, count: count.length });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 module.exports = tonKhoController;
