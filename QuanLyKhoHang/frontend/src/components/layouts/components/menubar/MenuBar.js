@@ -16,15 +16,22 @@ import {
   BsBoxArrowUp,
   BsBoxArrowInDown,
   BsCashCoin,
+  BsBarChartLine,
 } from 'react-icons/bs';
 import { BiTransferAlt } from 'react-icons/bi';
 import { CgCloseR } from 'react-icons/cg';
-import { AiOutlineDollarCircle, AiOutlinePieChart } from 'react-icons/ai';
+import {
+  AiOutlineAppstoreAdd,
+  AiOutlineDollarCircle,
+  AiOutlineLineChart,
+  AiOutlinePieChart,
+} from 'react-icons/ai';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { TiDocumentText } from 'react-icons/ti';
 import { RiUser2Line } from 'react-icons/ri';
 import { TbFileInvoice } from 'react-icons/tb';
 import { VscTelescope } from 'react-icons/vsc';
+import { MdOutlineSell } from 'react-icons/md';
 
 function MenuBar() {
   const theme = useTheme();
@@ -49,7 +56,12 @@ function MenuBar() {
             primary
             startIcon={<BsBoxSeam fontSize="16px" />}
             menuColor={theme.palette.primary.second}
-            active={['/list/dmvt', '/list/dmlo', '/list/dmpbh', '/list/dmkb'].includes(location.pathname)}
+            active={[
+              '/list/dmvt',
+              '/list/dmlo',
+              '/list/dmpbh',
+              '/list/dmkb',
+            ].includes(location.pathname)}
             popupOptions={[
               {
                 text: 'Danh sách hàng hóa',
@@ -223,6 +235,43 @@ function MenuBar() {
             style={{ borderRadius: '4px' }}
             primary
             startIcon={<AiOutlinePieChart fontSize="16px" />}
+            menuColor={theme.palette.primary.second}
+            active={[
+              '/report/hanghoa',
+              '/report/doanhthu',
+              '/report/loinhuan',
+              '/report/xnt',
+            ].includes(location.pathname)}
+            popupOptions={[
+              {
+                text: 'Báo cáo hàng hóa',
+                startIcon: <MdOutlineSell fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/report/hanghoa'),
+                active: location.pathname.indexOf('/report/hanghoa') >= 0,
+              },
+              {
+                text: 'Báo cáo doanh thu',
+                startIcon: <BsBarChartLine fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/report/doanhthu'),
+                active: location.pathname.indexOf('/report/doanhthu') >= 0,
+              },
+              {
+                text: 'Báo cáo lợi nhuận',
+                startIcon: <AiOutlineLineChart fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/report/loinhuan'),
+                active: location.pathname.indexOf('/report/loinhuan') >= 0,
+              },
+              {
+                text: 'Tổng hợp xuất, nhập, tồn',
+                startIcon: <AiOutlineAppstoreAdd fontSize="14px" />,
+                primary: true,
+                onClick: () => navigate('/report/xnt'),
+                active: location.pathname.indexOf('/report/xnt') >= 0,
+              },
+            ]}
           >
             Báo cáo
           </ButtonOption>

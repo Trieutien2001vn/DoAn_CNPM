@@ -25,6 +25,9 @@ function FilterTimeFromTo({
     setDot(!!time.timeFrom || !!time.timeTo);
   };
   useEffect(() => {
+    if (time.timeFrom || time.timeTo) {
+      setDot(true);
+    }
     onSearch(time);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

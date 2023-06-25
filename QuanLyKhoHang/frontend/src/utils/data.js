@@ -761,13 +761,13 @@ const dsDanhMuc = {
         name: 'Mã phiếu',
         selector: (row) => row.ma_phieu,
         sortable: true,
-        minWidth: '100px',
+        minWidth: '130px',
       },
       {
         name: 'Mã chứng từ',
         selector: (row) => row.ma_ct,
         sortable: true,
-        minWidth: '120px',
+        minWidth: '130px',
       },
       {
         name: 'Kho',

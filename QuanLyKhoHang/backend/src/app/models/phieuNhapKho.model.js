@@ -31,11 +31,11 @@ const phieuNhapKhoSchema = new mongoose.Schema(
     },
     ma_loai_ct: {
       type: String,
-      default: '',
+      default: 'pnk',
     },
     ten_loai_ct: {
       type: String,
-      default: '',
+      default: 'Phiếu nhập kho',
     },
     ngay_ct: {
       type: Date,
@@ -179,12 +179,7 @@ phieuNhapKhoSchema.pre('save', async function (next) {
     pnk.ma_trang_thai = trangThai?.ma_trang_thai || 1;
     pnk.ten_trang_thai = trangThai?.ten_trang_thai || '';
     // lưu tồn kho cho các sản phẩm
-    const chungTu = await chungTuModel.findOne({ ma_ct: 'pnk' });
-    if (!chungTu) {
-      return next(createError(404, `Chứng từ 'pnk' không tồn tại`));
-    }
-    pnk.ma_loai_ct = chungTu.ma_ct;
-    pnk.ten_loai_ct = chungTu.ten_ct;
+  
     for (let i = 0; i < details.length; i++) {
       const detail = details[i];
       const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });

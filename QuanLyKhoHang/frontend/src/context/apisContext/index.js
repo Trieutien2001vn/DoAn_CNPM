@@ -118,6 +118,22 @@ function ApisProvider({ children }) {
       alertSnackbar('error', error?.message || 'Server error');
     }
   };
+  const asyncReport = async ({ version = 'v1', endpoint = '', data = {} }) => {
+    try {
+      const resp = await axiosPrivate.post(
+        `/${version}/baocao/${endpoint}`,
+        data
+      );
+      if (resp && resp.status === 200) {
+        return resp.data;
+      } else {
+        alertSnackbar('error', resp?.response?.data?.message || 'Server error');
+        return resp.response.data;
+      }
+    } catch (error) {
+      alertSnackbar('error', error?.message || 'Server error');
+    }
+  };
   const uploadFile = async (formData, enpoint, folder, version = 'v1') => {
     try {
       const resp = await axiosPrivate.post(
@@ -163,6 +179,7 @@ function ApisProvider({ children }) {
         asyncDelete,
         asyncDestroy,
         asyncRestore,
+        asyncReport,
         uploadFile,
         callApi,
       }}
