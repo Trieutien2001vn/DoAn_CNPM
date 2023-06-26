@@ -9,7 +9,7 @@ function FilterRadios({
   values = [{ value: '', label: '' }],
   defaultValue,
 }) {
-  const [value, setValue] = useState(values[0].value);
+  const [value, setValue] = useState(defaultValue);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -19,12 +19,7 @@ function FilterRadios({
 
   return (
     <FilterBox title={title}>
-      <RadioGroup
-        name="radio"
-        defaultValue={defaultValue}
-        value={value}
-        onChange={handleChange}
-      >
+      <RadioGroup name="radio" value={value} onChange={handleChange}>
         {values.map((item) => (
           <FormControlLabel
             key={item.value}

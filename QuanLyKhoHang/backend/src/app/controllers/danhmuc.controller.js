@@ -220,11 +220,11 @@ const danhMucController = {
     const session = await mongoose.startSession();
     try {
       if (!req?.file?.path) {
-        return next(createError(400, "Không có file import"));
+        return next(createError(400, 'Không có file import'));
       }
       const { model, uniqueField, fields, validate } = req.danhMuc;
       if (!model) {
-        return next(400, "Không có model cho danh mục này");
+        return next(400, 'Không có model cho danh mục này');
       }
       /*
         mode = 1: check trùng mã và báo lỗi, rollback tất cả
