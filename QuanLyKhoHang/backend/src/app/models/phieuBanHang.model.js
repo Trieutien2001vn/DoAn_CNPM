@@ -10,6 +10,8 @@ const tonKhoController = require('../controllers/tonkho.controller');
 const createHttpError = require('http-errors');
 const soKhoModel = require('./soKho.model');
 const moment = require('moment');
+const soQuyModel = require('./soQuy.model');
+const phieuThuModel = require('./phieuThu.model');
 
 const phieuBanHangSchema = new mongoose.Schema(
   {
@@ -59,11 +61,11 @@ const phieuBanHangSchema = new mongoose.Schema(
     },
     ten_kh: {
       type: String,
-      default: '',
+      default: 'khachle',
     },
     ma_kenh: {
       type: String,
-      default: '',
+      default: 'Khách lẻ',
     },
     ten_kenh: {
       type: String,
@@ -395,7 +397,23 @@ phieuBanHangSchema.post('save', async function () {
     const phut = pbh.ngay_ct.getMinutes();
     const giay = pbh.ngay_ct.getSeconds();
 
+    // luu vao phieu thu
+    await phieuThuModel.create({
+      ma_loai: 'LPT0001',
+      ten_loai: 'Thu tiền khách hàng',
+      ngay_ct: pbh.ngay_ct,
+      ngay_lap_phieu: pbh.ngay_ct,
+      gia_tri: pbh.t_thanh_tien,
+      ma_pttt: pbh.ma_pttt,
+      ten_pttt: pbh.ten_pttt,
+      ma_kho: pbh.ma_kho,
+      ten_kho: pbh.ten_kho,
+      dien_giai: 'Phiếu tạo tự động khi thanh toán hóa đơn bán hàng',
+    });
+
+    // luu vao so kho
     pbh.details.forEach(async (detail) => {
+      const giaTriBan = detail.sl_xuat * detail.thanh_tien;
       await soKhoModel.create({
         ma_ct: pbh.ma_ct,
         ma_loai_ct: pbh.ma_loai_ct,
@@ -416,6 +434,9 @@ phieuBanHangSchema.post('save', async function () {
         ten_vt: detail.ten_vt,
         sl_xuat: detail.sl_xuat,
         so_luong: -detail.sl_xuat,
+        ma_kh: pbh.ma_kh,
+        gia_tri_ban: giaTriBan,
+        chi_phi: detail.chi_phi,
       });
     });
   }
@@ -514,7 +535,9 @@ phieuBanHangSchema.pre('updateOne', async function (next) {
         return acc + item.sl_xuat * item.gia_von;
       }, 0);
       pbh.chi_phi = chiPhi;
-      const { nam, quy, thang, ngay, gio, phut, giay } = generateTimeByDate(new Date(pbh.ngay_ct));
+      const { nam, quy, thang, ngay, gio, phut, giay } = generateTimeByDate(
+        new Date(pbh.ngay_ct)
+      );
       pbh.nam = nam;
       pbh.quy = quy;
       pbh.thang = thang;
@@ -539,7 +562,24 @@ phieuBanHangSchema.post('updateOne', async function () {
     const phut = pbh.ngay_ct.getMinutes();
     const giay = pbh.ngay_ct.getSeconds();
 
+    // luu vao phieu thu
+    // luu vao phieu thu
+    await phieuThuModel.create({
+      ma_loai: 'LPT0001',
+      ten_loai: 'Thu tiền khách hàng',
+      ngay_ct: pbh.ngay_ct,
+      ngay_lap_phieu: pbh.ngay_ct,
+      gia_tri: pbh.t_thanh_tien,
+      ma_pttt: pbh.ma_pttt,
+      ten_pttt: pbh.ten_pttt,
+      ma_kho: pbh.ma_kho,
+      ten_kho: pbh.ten_kho,
+      dien_giai: 'Phiếu tạo tự động khi thanh toán hóa đơn bán hàng',
+    });
+
+    // luu vao so kho
     pbh.details.forEach(async (detail) => {
+      const giaTriBan = detail.sl_xuat * detail.thanh_tien;
       await soKhoModel.create({
         ma_ct: pbh.ma_ct,
         ma_loai_ct: pbh.ma_loai_ct,
@@ -560,6 +600,9 @@ phieuBanHangSchema.post('updateOne', async function () {
         ten_vt: detail.ten_vt,
         sl_xuat: detail.sl_xuat,
         so_luong: -detail.sl_xuat,
+        ma_kh: pbh.ma_kh,
+        gia_tri_ban: giaTriBan,
+        chi_phi: detail.chi_phi,
       });
     });
   }

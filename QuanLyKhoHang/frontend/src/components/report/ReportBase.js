@@ -10,14 +10,12 @@ import FilterRadios from '../filter/FilterRadios';
 const concerns = [
   { value: '0', label: 'Tất cả' },
   { value: '1', label: 'Chi nhánh' },
-  { value: '2', label: 'Hàng hóa' },
-  { value: '3', label: 'Khách hàng' },
-  { value: '4', label: 'Kênh bán' },
-  { value: '5', label: 'Phương thức thanh toán' },
-  { value: '6', label: 'Nhân viên' },
+  { value: '2', label: 'Khách hàng' },
+  { value: '3', label: 'Kênh bán' },
+  { value: '4', label: 'Phương thức thanh toán' },
+  { value: '5', label: 'Nhân viên' },
 ];
 const filterBase = {
-  vatTu: null,
   kho: null,
   khachhang: null,
   kenhban: null,
@@ -68,21 +66,6 @@ function ReportBase({ reportCode, report }) {
       case '2':
         return (
           <FilterSelectApi
-            title="Hàng hóa"
-            apiCode="dmvt"
-            value={
-              filter.vatTu
-                ? { ma_vt: filter.vatTu.ma_vt, ten_vt: filter.vatTu.ten_vt }
-                : null
-            }
-            searchFileds={['ma_vt', 'ten_vt']}
-            getOptionLabel={(option) => option.ten_vt}
-            onSelect={(value) => setFilter({ ...filter, vatTu: value })}
-          />
-        );
-      case '3':
-        return (
-          <FilterSelectApi
             title="Khách hàng"
             apiCode="dmkh"
             value={
@@ -98,7 +81,7 @@ function ReportBase({ reportCode, report }) {
             onSelect={(value) => setFilter({ ...filter, khachhang: value })}
           />
         );
-      case '4':
+      case '3':
         return (
           <FilterSelectApi
             title="Kênh bán"
@@ -116,7 +99,7 @@ function ReportBase({ reportCode, report }) {
             onSelect={(value) => setFilter({ ...filter, kenhban: value })}
           />
         );
-      case '5':
+      case '4':
         return (
           <FilterSelectApi
             title="Phương thức thanh toán"
@@ -148,13 +131,6 @@ function ReportBase({ reportCode, report }) {
       }
       if (filter.timeTo) {
         condition.den_ngay = filter.timeTo;
-      }
-      if (filter.vatTu) {
-        condition.details = {
-          $elemMatch: {
-            ma_vt: filter.vatTu.ma_vt,
-          },
-        };
       }
       if (filter.kho) {
         condition.ma_kho = filter.kho.ma_kho;
@@ -213,6 +189,7 @@ function ReportBase({ reportCode, report }) {
               <FilterRadios
                 title="Mối quan tâm"
                 values={concerns}
+                defaultValue={concern}
                 onChange={(value) => {
                   setConcern(value);
                 }}

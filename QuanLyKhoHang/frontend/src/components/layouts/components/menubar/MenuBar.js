@@ -13,7 +13,6 @@ import {
   BsBoxSeam,
   BsGrid3X3,
   BsBuilding,
-  BsBoxArrowUp,
   BsBoxArrowInDown,
   BsCashCoin,
   BsBarChartLine,
@@ -21,7 +20,6 @@ import {
 import { BiTransferAlt } from 'react-icons/bi';
 import { CgCloseR } from 'react-icons/cg';
 import {
-  AiOutlineAppstoreAdd,
   AiOutlineDollarCircle,
   AiOutlineLineChart,
   AiOutlinePieChart,
@@ -102,7 +100,6 @@ function MenuBar() {
             menuColor={theme.palette.primary.second}
             active={[
               '/list/dmpnk',
-              '/list/dmpxk',
               '/list/dmpkk',
               '/list/dmpxdc',
               '/list/dmpxh',
@@ -115,13 +112,6 @@ function MenuBar() {
                 primary: true,
                 onClick: () => navigate('/list/dmpnk'),
                 active: location.pathname.indexOf('dmpnk') >= 0,
-              },
-              {
-                text: 'Xuất kho',
-                startIcon: <BsBoxArrowUp fontSize="14px" />,
-                primary: true,
-                onClick: () => navigate('/list/dmpxk'),
-                active: location.pathname.indexOf('dmpxk') >= 0,
               },
               {
                 text: 'Kiểm kho',
@@ -162,9 +152,10 @@ function MenuBar() {
             menuColor={theme.palette.primary.second}
             active={[
               '/list/dmpt',
-              '/list/dmpct',
+              '/list/dmpc',
               '/list/dmlpt',
               '/list/dmlpc',
+              '/soquy',
             ].includes(location.pathname)}
             popupOptions={[
               {
@@ -200,7 +191,7 @@ function MenuBar() {
                 startIcon: <BsCashCoin fontSize="14px" />,
                 primary: true,
                 onClick: () => navigate('/soquy'),
-                active: location.pathname.indexOf('soquy') >= 0,
+                active: location.pathname.indexOf('/soquy') >= 0,
               },
             ]}
           >
@@ -240,7 +231,6 @@ function MenuBar() {
               '/report/hanghoa',
               '/report/doanhthu',
               '/report/loinhuan',
-              '/report/xnt',
             ].includes(location.pathname)}
             popupOptions={[
               {
@@ -263,14 +253,7 @@ function MenuBar() {
                 primary: true,
                 onClick: () => navigate('/report/loinhuan'),
                 active: location.pathname.indexOf('/report/loinhuan') >= 0,
-              },
-              {
-                text: 'Tổng hợp xuất, nhập, tồn',
-                startIcon: <AiOutlineAppstoreAdd fontSize="14px" />,
-                primary: true,
-                onClick: () => navigate('/report/xnt'),
-                active: location.pathname.indexOf('/report/xnt') >= 0,
-              },
+              }
             ]}
           >
             Báo cáo

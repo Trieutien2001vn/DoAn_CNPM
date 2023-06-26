@@ -1,76 +1,83 @@
 const mongoose = require('mongoose');
-const { generateRandomCode, generateUniqueValueUtil} = require("../../utils/myUtil");
+const { generateUniqueValueUtil } = require('../../utils/myUtil');
 const mongooseDelete = require('mongoose-delete');
 const soQuyModel = require('./soQuy.model');
-const soQuyController = require('../controllers/soquy.controller');
 
 const phieuThuSchema = new mongoose.Schema(
   {
-      ma_phieu: {
-        type: String,
-        default:'',
-        unique: true,
-      },
-      ma_ct: {
-        type: String,
-       default:'',
-      },
-      ma_nhom_nguoi_nop: {
-        type: String,
-        required: true,
-      },
-      ten_nhom_nguoi_nop: {
-        type: String,
-       require
-      },
-      ma_nguoi_nop: {
-        type: String,
-        default: ''
-      },
-      ten_nguoi_nop: {
-        type: String,
-        default: ''
-      },
-      ma_loai: {
-        type: String,
-        required: true,
-      },
-      ten_loai: {
-        type: String,
-        default:'',
-      },
-      ngay_ct: {
-        type: Date,
-        default: null,
-      },
-      ngay_lap_phieu: {
-        type: Date,
-        default: null,
-      },
-      gia_tri: {
-        type: Number,
-        required: true,
-      },
-      ma_pttt: {
-        type: String,
-        default:''
-      },
-      ten_pttt: {
-        type: String,
-         default:'',
-      },
-      ma_kho: {
-        type: String,
-        required: true,
-      },
-      ten_kho: {
-        type: String,
-        required: true,
-      },
-      dien_giai: {
-        type: String,
-        default: '',
-      },
+    ma_phieu: {
+      type: String,
+      default: '',
+      unique: true,
+    },
+    ma_ct: {
+      type: String,
+      default: '',
+    },
+    ma_loai_ct: {
+      type: String,
+      default: 'ptt',
+    },
+    ten_loai_ct: {
+      type: String,
+      default: 'Phiếu thu tiền',
+    },
+    ma_nhom_nguoi_nop: {
+      type: String,
+      default: '',
+    },
+    ten_nhom_nguoi_nop: {
+      type: String,
+      default: '',
+    },
+    ma_nguoi_nop: {
+      type: String,
+      default: '',
+    },
+    ten_nguoi_nop: {
+      type: String,
+      default: '',
+    },
+    ma_loai: {
+      type: String,
+      default: '',
+    },
+    ten_loai: {
+      type: String,
+      default: '',
+    },
+    ngay_ct: {
+      type: Date,
+      default: null,
+    },
+    ngay_lap_phieu: {
+      type: Date,
+      default: null,
+    },
+    gia_tri: {
+      type: Number,
+      required: true,
+    },
+    ma_pttt: {
+      type: String,
+      default: '',
+    },
+    ten_pttt: {
+      type: String,
+      default: '',
+    },
+    ma_kho: {
+      type: String,
+      required: true,
+    },
+    ten_kho: {
+      type: String,
+      required: true,
+    },
+    dien_giai: {
+      type: String,
+      default: '',
+    },
     createdBy: {
       type: String,
       default: '',
@@ -83,8 +90,8 @@ const phieuThuSchema = new mongoose.Schema(
   { timestamps: true, collection: 'phieu_thu' }
 );
 phieuThuSchema.index(
-  { ma_phieu: "text",ma_nhom_nguoi_nop:"text",ten_nhom_nguoi_nop:"text"},
-  { default_language: "none" }
+  { ma_phieu: 'text', ma_nhom_nguoi_nop: 'text', ten_nhom_nguoi_nop: 'text' },
+  { default_language: 'none' }
 );
 phieuThuSchema.plugin(mongooseDelete, {
   deletedAt: true,
@@ -95,7 +102,7 @@ phieuThuSchema.plugin(mongooseDelete, {
 phieuThuSchema.pre('save', async function (next) {
   try {
     let error;
-    const pt= this;
+    const pt = this;
     if (!pt.ma_phieu) {
       const maPhieu = await generateUniqueValueUtil({
         maDm: 'PT',
@@ -120,35 +127,35 @@ phieuThuSchema.pre('save', async function (next) {
   }
 });
 phieuThuSchema.post('save', async function () {
-  const pt= this;
+  const pt = this;
   // luu vao so quy
   await soQuyModel.create({
     ma_ct: pt.ma_ct,
-    ma_loai_ct: pt.ma_loai,
-    ten_loai_ct: pt.ten_loai,
+    ma_loai_ct: pt.ma_loai_ct,
+    ten_loai_ct: pt.ten_loai_ct,
     ten_nguoi_nop_nhan: pt.ten_nguoi_nop,
-    ten_pttt:pt.ten_pttt,
+    ten_pttt: pt.ten_pttt,
     ngay_ct: pt.ngay_ct,
     ngay_lap_phieu: pt.ngay_lap_phieu,
-    gia_tri:pt.gia_tri,
+    gia_tri: pt.gia_tri,
     tien: pt.gia_tri,
-    dien_giai: pt.dien_giai
-  })
+    dien_giai: pt.dien_giai,
+  });
 });
 phieuThuSchema.post('updateOne', async function () {
   const pt = this.getUpdate().$set;
-  const soQuy = await soQuyModel.findOne({ ma_ct: pt.ma_ct });
-  soQuy.ma_ct= pt.ma_ct,
-  soQuy.ma_loai_ct= pt.ma_loai,
-  soQuy.ten_loai_ct= pt.ten_loai,
-  soQuy.ten_nguoi_nop_nhan=pt.ten_nguoi_nhan,
-  soQuy.ngay_ct= pt.ngay_ct,
-  soQuy.ngay_lap_phieu=pt.ngay_lap_phieu,
-  soQuy.ten_pttt=pt.ten_pttt,
-  soQuy.dien_giai=pt.dien_giai,
-  soQuy.gia_tri=pt.gia_tri,
-  soQuy.tien=  pt.gia_tri
-  await soQuy.save();
+  await soQuyModel.updateOne(
+    { ma_ct: pt.ma_ct },
+    {
+      ten_nguoi_nop_nhan: pt.ten_nguoi_nop,
+      ten_pttt: pt.ten_pttt,
+      ngay_ct: pt.ngay_ct,
+      ngay_lap_phieu: pt.ngay_lap_phieu,
+      gia_tri: pt.gia_tri,
+      tien: pt.gia_tri,
+      dien_giai: pt.dien_giai,
+    }
+  );
 });
 
 module.exports = mongoose.model('PhieuThu', phieuThuSchema);

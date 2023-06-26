@@ -6,6 +6,7 @@ import ButtonBase from '~/components/button/ButtonBase';
 import { TbTableExport } from 'react-icons/tb';
 import TableBase from '~/components/table/TableBase';
 import useApisContext from '~/hooks/hookContext/useApisContext';
+import ModalImportExcel from '../modal/ModalImportExcel';
 
 function ListBase({
   title,
@@ -27,6 +28,7 @@ function ListBase({
   const [isEdit, setIsEdit] = useState(false);
   const [defaultValues, setDefaultValues] = useState();
   const [condition, setCondition] = useState({});
+  const [openExcel, setOpenExcel] = useState(false);
   const [paginationOption, setPaginationOption] = useState({
     limit: 20,
     page: 1,
@@ -83,6 +85,14 @@ function ListBase({
           isEdit={isEdit}
         />
       )}
+      {openExcel && (
+        <ModalImportExcel
+          open={openExcel}
+          handleClose={() => setOpenExcel(false)}
+          maDm={maDanhMuc}
+          setLoad={setLoad}
+        />
+      )}
       <Box sx={{ padding: '10px 0' }}>
         <Grid container spacing="10px" alignItems="flex-start">
           <Grid item xs={5} sm={4} md={2.5}>
@@ -117,14 +127,15 @@ function ListBase({
                     </ButtonBase>
                     <ButtonBase
                       startIcon={<SiMicrosoftexcel fontSize="14px" />}
+                      onClick={() => setOpenExcel(true)}
                     >
                       Import excel
                     </ButtonBase>
                   </>
                 )}
-                <ButtonBase startIcon={<TbTableExport fontSize="14px" />}>
+                {/* <ButtonBase startIcon={<TbTableExport fontSize="14px" />}>
                   Export excel
-                </ButtonBase>
+                </ButtonBase> */}
               </Stack>
             </Stack>
             <Box>

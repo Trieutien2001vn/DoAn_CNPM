@@ -13,5 +13,11 @@ router.post(
   reportMiddleWare.specifyReport,
   reportController.getReport
 );
+router.post(
+  '/hanghoa/tonghop',
+  authMiddleWare.verifyToken,
+  roleMiddleWare.checkAdminOrManager,
+  reportController.reportHangHoa
+);
 
 module.exports = router;

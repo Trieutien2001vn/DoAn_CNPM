@@ -1,31 +1,5 @@
 const mongoose = require("mongoose");
 const mongooseDelete = require("mongoose-delete");
-/**
- {
-  ma_ct: '',
-  ma_loai_ct: '',
-  ten_loai_ct: '',
-  ma_kho: '',
-  ten_kho: '',
-  ngay_ct: '',
-  nam: 0,
-  quy: 0,
-  thang: 0,
-  ngay: 0,
-  gio: 0,
-  phut: 0,
-  giay: 0,
-  ma_lo: '',
-  ten_lo: '',
-  ma_vt: '',
-  ten_vt: '',
-  ma_ncc: '',
-  ten_ncc: '',
-  sl_nhap: 0,
-  sl_xuat: 0,
-  so_luong: 0,
- }
- */
 
 const soKhoSchema = new mongoose.Schema(
   {
@@ -115,6 +89,22 @@ const soKhoSchema = new mongoose.Schema(
       default: 0,
       require: true,
     },
+    ma_kh: {
+      type: String,
+      default: ''
+    },
+    gia_tri_ban: {
+      type: Number,
+      default: 0
+    },
+    gia_tri_nhap: {
+      type: Number,
+      default: 0
+    },
+    chi_phi: {
+      type: Number,
+      default: 0
+    },
     createdBy: {
       type: String,
       default: '',
@@ -126,6 +116,11 @@ const soKhoSchema = new mongoose.Schema(
   },
   { timestamps: true, collection: 'so_kho' }
 );
+/**
+  - gia_tri_ban: sl_xuat * giá bán đã trừ đi chiết khấu
+  - chi_phi: để tính lợi nhuận
+  - ma_kh: để tổng hợp theo hàng bán
+ */
 
 soKhoSchema.plugin(mongooseDelete, {
   deletedAt: true,

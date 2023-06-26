@@ -9,6 +9,7 @@ const createError = require('http-errors');
 const { generateRandomCode, getQuyByMonth, generateUniqueValueUtil } = require('../../utils/myUtil');
 const vatTuModel = require('./vatTu.model');
 const soCaiModel = require("./soCai.model");
+const phieuChiModel = require('./phieuChi.model');
 
 const phieuNhapKhoSchema = new mongoose.Schema(
   {
@@ -157,13 +158,13 @@ phieuNhapKhoSchema.pre('save', async function (next) {
   try {
     let error;
     const pnk = this;
-    if(!pnk.ma_phieu) {
+    if (!pnk.ma_phieu) {
       const maPhieu = await generateUniqueValueUtil({
         maDm: 'PNK',
-        model: mongoose.model("PhieuNhapKho", phieuNhapKhoSchema),
-        compareKey: 'ma_phieu'
-      })
-      pnk.ma_phieu = maPhieu
+        model: mongoose.model('PhieuNhapKho', phieuNhapKhoSchema),
+        compareKey: 'ma_phieu',
+      });
+      pnk.ma_phieu = maPhieu;
     }
     const maChungTu = await generateUniqueValue();
     pnk.ma_ct = maChungTu;
@@ -179,7 +180,7 @@ phieuNhapKhoSchema.pre('save', async function (next) {
     pnk.ma_trang_thai = trangThai?.ma_trang_thai || 1;
     pnk.ten_trang_thai = trangThai?.ten_trang_thai || '';
     // lưu tồn kho cho các sản phẩm
-  
+
     for (let i = 0; i < details.length; i++) {
       const detail = details[i];
       const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
@@ -242,6 +243,18 @@ phieuNhapKhoSchema.post('save', async function () {
   const gio = pnk.ngay_ct.getHours();
   const phut = pnk.ngay_ct.getMinutes();
   const giay = pnk.ngay_ct.getSeconds();
+  // tạo phiếu chi tiền
+  await phieuChiModel.create({
+    ma_loai: 'LPC0001',
+    ten_loai: 'Chi tiền nhập hàng',
+    ngay_ct: pnk.ngay_ct,
+    ngay_lap_phieu: pnk.ngay_ct,
+    gia_tri: pnk.tong_tien_nhap,
+    ma_kho: pnk.ma_kho,
+    ten_kho: pnk.ten_kho,
+    dien_giai: 'Phiếu tạo tự động khi nhập hàng',
+  });
+  // lưu vào sổ kho
   pnk.details.forEach(async (detail) => {
     const tonKho = await tonKhoController.getTotalInventoryHelper(detail.ma_vt);
     const vatTu = await vatTuModel.findOne({ ma_vt: detail.ma_vt });
@@ -259,7 +272,6 @@ phieuNhapKhoSchema.post('save', async function () {
         gia_von: MAC,
       }
     );
-    // luu vao so kho
     await soKhoModel.create({
       ma_ct: pnk.ma_ct,
       ma_loai_ct: pnk.ma_loai_ct,
@@ -281,43 +293,9 @@ phieuNhapKhoSchema.post('save', async function () {
       ma_ncc: pnk.ma_ncc,
       ten_ncc: pnk.ten_ncc,
       sl_nhap: detail.so_luong_nhap,
-      so_luong: detail.so_luong_nhap
-    })
-    // luu vao so cai
-    // await soCaiModel.create({
-    //   ma_ct: pnk.ma_ct,
-    //   ma_loai_ct: pnk.ma_loai_ct,
-    //   ten_loai_ct: pnk.ten_loai_ct,
-    //   ma_kho: pnk.ma_kho,
-    //   ten_kho: pnk.ten_kho,
-    //   ngay_ct: pnk.ngay_ct,
-    //   nam,
-    //   quy,
-    //   thang,
-    //   ngay,
-    //   gio,
-    //   phut,
-    //   giay,
-    //   ma_vt: detail.ma_vt,
-    //   ten_vt: detail.ten_vt,
-    //   ma_dvt: detail.ma_dvt,
-    //   ten_dvt: detail.ten_dvt,
-    //   ma_nvt: detail.ma_nvt,
-    //   ten_nvt: detail.ten_nvt,
-    //   ma_lo: detail.ma_lo,
-    //   ten_lo: detail.ten_lo,
-    //   ma_pttt: pnk.ma_pttt,
-    //   ten_pttt: pnk.ten_pptt,
-    //   so_luong: detail.so_luong_nhap,
-    //   gia_von: detail.gia_von,
-    //   tien_hang: detail.tien_nhap,
-    //   thanh_tien: detail.tien_nhap,
-    //   thanh_tien_thue: 0,
-    //   // thông tin đặc thù
-    //   ma_ncc: pnk.ma_ncc,
-    //   ten_ncc: pnk.ten_ncc,
-    //   sl_nhap: detail.so_luong_nhap,
-    // });
+      so_luong: detail.so_luong_nhap,
+      gia_tri_nhap: detail.tien_nhap,
+    });
   });
 });
 phieuNhapKhoSchema.pre('updateOne', async function (next) {
